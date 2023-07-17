@@ -2,46 +2,28 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
-  class Store extends Model {
+  class Store_like extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Menu, Order, Review, Store_like }) {
+    static associate({ User, Store }) {
       this.belongsTo(User, {
         targetKey: 'id',
         foreignKey: 'user_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.hasOne(Order, {
-        sourceKey: 'id',
-        foreignKey: 'store_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      this.hasMany(Menu, {
-        sourceKey: 'id',
-        foreignKey: 'store_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      this.hasMany(Review, {
-        sourceKey: 'id',
-        foreignKey: 'store_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      this.hasMany(Store_like, {
-        sourceKey: 'id',
+      this.belongsTo(Store, {
+        targetKey: 'id',
         foreignKey: 'store_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
     }
   }
-  Store.init(
+  Store_like.init(
     {
       id: {
         allowNull: false,
@@ -53,26 +35,9 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      store_name: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      store_img: {
-        type: Sequelize.STRING,
-      },
-      store_address: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      opening_date: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      total_sales: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0,
       },
       create_at: {
         allowNull: false,
@@ -86,11 +51,11 @@ module.exports = (sequelize) => {
       },
     },
     {
-      sequelize,
       timestamps: false,
-      tableName: 'stores',
-      modelName: 'Store',
+      sequelize,
+      tableName: 'store_likes',
+      modelName: 'Store_like',
     }
   );
-  return Store;
+  return Store_like;
 };
