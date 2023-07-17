@@ -8,11 +8,44 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+<<<<<<< HEAD
     static associate(models) {
       // define association here
       this.hasMany(models.Review, {
         sourceKey: 'id',
         foreignKey: 'user_id',
+=======
+    static associate({ Store, Order, Review, Review_like, Store_like }) {
+      this.hasOne(Store, {
+        sourceKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Order, {
+        sourceKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Review, {
+        sourceKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Review_like, {
+        sourceKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Store_like, {
+        sourceKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+>>>>>>> 23cb54db999c1e04a98e26de2e192bd14d6ef1ac
       });
     }
   }
@@ -26,8 +59,8 @@ module.exports = (sequelize) => {
       },
       email: {
         type: Sequelize.STRING,
-        unique: true,
         allowNull: false,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
@@ -37,39 +70,41 @@ module.exports = (sequelize) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       point: {
-        type: Sequelize.BIGINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      profile_img: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        defaultValue: 1000000,
       },
       is_seller: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
       },
-      store_id: {
+      business_registration_number: {
         type: Sequelize.INTEGER,
-        allowNull: true,
       },
-      created_at: {
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      profile_img: {
+        type: Sequelize.STRING,
+      },
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {
       sequelize,
       timestamps: false,
-      underscored: true,
+      tableName: 'users',
       modelName: 'User',
     }
   );

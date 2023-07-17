@@ -2,31 +2,34 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
-  class reviews extends Model {
+  class Review extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
-      this.belongsTo(models.User, {
+    static associate({ User, Store, Review_like }) {
+      this.belongsTo(User, {
         targetKey: 'id',
         foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       });
-
-      this.belongsTo(models.Order, {
-        targetKey: 'id',
-        foreignKey: 'order_id',
-      });
-
-      this.belongsTo(models.Store, {
+      this.belongsTo(Store, {
         targetKey: 'id',
         foreignKey: 'store_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Review_like, {
+        sourceKey: 'id',
+        foreignKey: 'review_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       });
     }
   }
-  reviews.init(
+  Review.init(
     {
       id: {
         allowNull: false,
@@ -34,11 +37,11 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      store_id: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      user_id: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -47,30 +50,34 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       review: {
-        type: Sequelize.TEXT,
-      },
-      star: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.STRING,
         allowNull: false,
+      },
+      rating: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       review_img: {
         type: Sequelize.STRING,
       },
-      created_at: {
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {
-      sequelize,
       timestamps: false,
-      underscored: true,
-      modelName: 'reviews',
+      sequelize,
+      tableName: 'reviews',
+      modelName: 'Review',
     }
   );
-  return reviews;
+  return Review;
 };

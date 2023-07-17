@@ -8,8 +8,25 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
+    static associate({ User, Store, Menu }) {
+      this.belongsTo(User, {
+        targetKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.belongsTo(Store, {
+        targetKey: 'id',
+        foreignKey: 'store_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.belongsTo(Menu, {
+        targetKey: 'id',
+        foreignKey: 'menu_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Order.init(
@@ -20,19 +37,11 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      store_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      address_id: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -40,23 +49,31 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      is_delivered: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       quantity: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1,
       },
-      created_at: {
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {
-      sequelize,
       timestamps: false,
-      underscored: true,
+      sequelize,
+      tableName: 'orders',
       modelName: 'Order',
     }
   );

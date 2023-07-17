@@ -1,0 +1,7 @@
+npx sequelize model:generate --name User --attributes email:STRING,password:STRING,name:STRING,point:INTEGER,is_seller:BOOLEAN,business_registration_number:INTEGER,address:STRING,profile_img:STRING
+npx sequelize model:generate --name Store --attributes user_id:INTEGER,store_name:STRING,store_img:STRING,store_address:STRING,opening_date:date,total_sales:INTEGER
+npx sequelize model:generate --name Menu --attributes store_id:INTEGER,menu:STRING,menu_img:STRING,price:INTEGER,option:STRING,category:STRING
+npx sequelize model:generate --name Order --attributes user_id:INTEGER,store_id:INTEGER,menu_id:INTEGER,is_delivered:BOOLEAN,quantity:INTEGER
+npx sequelize model:generate --name Review --attributes user_id:INTEGER,store_id:INTEGER,order_id:INTEGER,review:STRING,rating:INTEGER,review_img:STRING
+npx sequelize model:generate --name Store_like --attributes user_id:INTEGER,store_id:INTEGER
+npx sequelize model:generate --name Review_like --attributes user_id:INTEGER,review_id:INTEGER
