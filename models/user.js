@@ -13,6 +13,12 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
     {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
       email: {
         type: Sequelize.STRING,
         unique: true,
@@ -26,29 +32,39 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       point: {
         type: Sequelize.BIGINT,
         allowNull: false,
       },
-      isSeller: {
+      profile_img: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      is_seller: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     },
     {
       sequelize,
+      timestamps: false,
+      underscored: true,
       modelName: "User",
     }
   );

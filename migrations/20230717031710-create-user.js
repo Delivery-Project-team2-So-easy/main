@@ -22,23 +22,31 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       point: {
         type: Sequelize.BIGINT,
         allowNull: false,
       },
-      isSeller: {
+      profile_img: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      is_seller: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },

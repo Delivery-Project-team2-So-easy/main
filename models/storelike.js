@@ -13,26 +13,28 @@ module.exports = (sequelize, DataTypes) => {
   }
   StoreLike.init(
     {
-      userId: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     },
     {
       sequelize,
-      modelName: "StoreLike",
+      timestamps: false,
+      underscored: true,
+      modelName: "Like",
     }
   );
   return StoreLike;

@@ -9,23 +9,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      isDelivered: {
+      is_delivered: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      userId: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      addressId: {
+      address_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menuId: {
+      menu_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -33,11 +33,11 @@ module.exports = {
         type: Sequelize.SMALLINT,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },

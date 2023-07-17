@@ -17,11 +17,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menuImg: {
+      menu_img: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -32,11 +32,11 @@ module.exports = {
       category: {
         type: Sequelize.STRING,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },

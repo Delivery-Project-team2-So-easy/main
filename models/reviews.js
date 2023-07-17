@@ -19,15 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      storeId: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      userId: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      orderId: {
+      order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -38,20 +38,22 @@ module.exports = (sequelize, DataTypes) => {
         type: Sequelize.SMALLINT,
         allowNull: false,
       },
-      reviewImg: {
+      review_img: {
         type: Sequelize.STRING,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     },
     {
       sequelize,
+      timestamps: false,
+      underscored: true,
       modelName: "reviews",
     }
   );

@@ -9,31 +9,31 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      storeName: {
+      store_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      storeAddress: {
+      store_address: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      storeImg: {
+      store_img: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      openingDate: {
+      opening_date: {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      companyResistrationNumber: {
+      company_resistration_number: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
