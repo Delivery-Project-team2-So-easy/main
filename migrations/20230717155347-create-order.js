@@ -45,7 +45,7 @@ module.exports = {
         defaultValue: false,
       },
       quantity: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.TINYINT,
         allowNull: false,
         defaultValue: 1,
       },
