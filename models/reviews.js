@@ -10,6 +10,20 @@ module.exports = (sequelize) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User, {
+        targetKey: 'id',
+        foreignKey: 'user_id',
+      });
+
+      this.belongsTo(models.Order, {
+        targetKey: 'id',
+        foreignKey: 'order_id',
+      });
+
+      this.belongsTo(models.Store, {
+        targetKey: 'id',
+        foreignKey: 'store_id',
+      });
     }
   }
   reviews.init(
