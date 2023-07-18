@@ -11,10 +11,12 @@ const db = require('./models');
 
 app.set('port', PORT);
 
+
 db.sequelize.sync({});
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use('/', [userRouter, storeRouter, reviewRouter, orderRouter]);
 
 app.use((err, req, res, next) => {
