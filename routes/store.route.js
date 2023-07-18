@@ -1,20 +1,25 @@
 const express = require('express');
 const router = express.Router();
+const reviewRouter = require('./review.route');
 const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
 
-// router.post('/store/registration', storeController.postStore);
-// router.patch('/store/registration', storeController.updateStore);
-// router.delete('/store/registration', storeController.deleteStore);
-// router.post('/store/registration', storeController.postMenu);
-// router.patch('/store/menu/:menuId', storeController.updateMenu);
-// router.delete('/store/menu/:menuId', storeController.deleteMenu);
+//auth 미들웨어 추가 필요
+router.post('/registration', storeController.registerStore);
+//auth 미들웨어 추가 필요
+router.patch('/registration', storeController.updateStore);
+//auth 미들웨어 추가 필요
+router.delete('/registration', storeController.deleteStore);
+//auth 미들웨어 추가 필요
+router.post('/menu', storeController.registerMenu);
+//auth 미들웨어 추가 필요
+router.patch('/menu/:menuId', storeController.updateMenu);
+//auth 미들웨어 추가 필요
+router.delete('/menu/:menuId', storeController.deleteMenu);
 
-// router.get('/store', storeController.getAllStores);
-// router.get('/store/:storeId', storeController.getDetailStore);
-// router.get('/store/search', storeController.searchStore);
-
-// router.post('/store/:storeId/like', storeController.likeStore);
-// router.get('/store/likeStores', storeController.getLikeStores);
+router.use('/:storeId/reviews', reviewRouter);
+router.get('/', storeController.getStore);
+router.get('/:storeId', storeController.getStoreDetail);
+router.post('/search', storeController.search);
 
 module.exports = router;
