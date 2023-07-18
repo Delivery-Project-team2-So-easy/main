@@ -85,35 +85,48 @@ class StoreRepository {
 
   deleteMenu = async (storeId, menuId) => {
     await Menu.destroy({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
-    getStore = async () => {
-      const allStoreData = await Store.findAll({});
+  };
+  getStore = async () => {
+    const allStoreData = await Store.findAll({});
 
-      return allStoreData;
-    };
+    return allStoreData;
+  };
+  getStoreDetail = async (storeId) => {
+    const oneStoreData = await Store.findOne({ where: { id: storeId } });
 
-    getStoreDetail = async (storeId) => {
-      const oneStoreData = await Store.findOne({ where: { id: storeId } });
+    return oneStoreData;
+  };
 
-      return oneStoreData;
-    };
+  searchStore = async (searchKeyword) => {
+    const searchStore = await Store.findAll({
+      where: { store_name: { [Op.substring]: searchKeyword } },
+    });
+    return searchStore;
+  };
+  searchMenu = async (searchKeyword) => {
+    const searchMenu = await Menu.findAll({
+      where: {
+        [Op.or]: [
+          { menu: { [Op.substring]: searchKeyword } },
+          { category: { [Op.substring]: searchKeyword } },
+        ],
+      },
+    });
+    return searchMenu;
+  };
 
-    searchStore = async (searchKeyword) => {
-      const searchStore = await Store.findAll({
-        where: { store_name: { [Op.substring]: searchKeyword } },
-      });
-      return searchStore;
-    };
-    searchMenu = async (searchKeyword) => {
-      const searchMenu = await Menu.findAll({
-        where: {
-          [Op.or]: [
-            { menu: { [Op.substring]: searchKeyword } },
-            { category: { [Op.substring]: searchKeyword } },
-          ],
-        },
-      });
-      return searchMenu;
-    };
+  getStoreInfo = async (userId) => {
+    const storeInfo = await Store.findOne({ where: { user_id: userId } });
+    return storeInfo;
+  };
+
+  getMenuInfo = async (storeId, menuId) => {
+    const menuInfo = await Menu.findOne({ where: { id: menuId, store_id: storeId } });
+    return menuInfo;
+  };
+
+  increaseInSales = async (userId, price) => {
+    await Store.update({ total_sales: price }, { where: { user_id: userId } });
   };
 }
 

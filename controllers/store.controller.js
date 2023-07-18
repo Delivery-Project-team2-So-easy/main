@@ -20,6 +20,7 @@ class StoreController {
     // auth미들웨어 완성시 수정 필요
     // const {userId} = res.locals.user;
     const { storeName, storeAddress, openingDate, storeImg, companyRegistrationNumber } = req.body;
+    console.log(storeAddress, storeName);
     if (!storeName || !storeAddress || !openingDate || !companyRegistrationNumber)
       return res.status(400).json({ message: '매장 정보를 모두 입력해주세요.' });
     const { code, message, errorMessage } = await this.storeService.registerStore(

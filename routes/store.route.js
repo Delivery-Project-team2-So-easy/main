@@ -3,9 +3,10 @@ const router = express.Router();
 const reviewRouter = require('./review.route');
 const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
+const uploadMiddleware = require('../middlewares/upload-middleware');
 
 //auth 미들웨어 추가 필요
-router.post('/store/registration', storeController.registerStore);
+router.post('/store/registration', uploadMiddleware, storeController.registerStore);
 //auth 미들웨어 추가 필요
 router.patch('/store/registration', storeController.updateStore);
 //auth 미들웨어 추가 필요
