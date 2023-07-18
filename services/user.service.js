@@ -12,10 +12,10 @@ class UserService {
     email,
     name,
     password,
-    is_seller,
-    profile_img,
+    isSeller,
+    profileImg,
     address,
-    business_registration_number
+    businessRegistrationNumber
   ) => {
     try {
       const existUserData = await this.userRepository.existUser(email);
@@ -24,10 +24,10 @@ class UserService {
           email,
           name,
           password,
-          is_seller,
-          profile_img,
+          isSeller,
+          profileImg,
           address,
-          business_registration_number
+          businessRegistrationNumber
         );
         return { code: 201, message: '회원 가입을 축하합니다.' };
       } else {
@@ -73,7 +73,7 @@ class UserService {
         },
       });
       // send mail with defined transport object
-      const info = await transporter.sendMail({
+      await transporter.sendMail({
         from: env.EMAIL_USER, // sender address
         to: email, // list of receivers
         subject: '회원가입 인증 메일', // Subject line

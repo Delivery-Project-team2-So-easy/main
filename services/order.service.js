@@ -34,7 +34,7 @@ class OrderService {
       if (remainingPoint < 0)
         return { code: 400, errorMessage: '잔여포인트가 부족해 주문 할 수 없습니다.' };
 
-      const storeInfo = await this.storeRepository.getStoreInfo(user.id);
+      const storeInfo = await this.storeRepository.getStoreInfo('', storeId);
       if (!storeInfo) return { code: 404, errorMessage: '주문하려 하는 매장이 없습니다.' };
 
       const menuInfo = await this.storeRepository.getMenuInfo(storeId, menuId);
@@ -51,7 +51,7 @@ class OrderService {
         await t.commit();
         return {
           code: 201,
-          message: `${storeInfo.store_name}가게의 ${storeInfo.menu}가 정상적으로 주문 되었습니다. ${user.name}고객님의 잔여 포인트는 ${remainingPoint}포인트 입니다.`,
+          message: `${storeInfo.store_name}가게의 ${storeInfo.dataValues.menu}가 정상적으로 주문 되었습니다. ${user.name}고객님의 잔여 포인트는 ${remainingPoint}포인트 입니다.`,
         };
       } catch (transactionError) {
         await t.rollback();
