@@ -14,6 +14,13 @@ class StoreController {
 
     res.status(code).json({ data });
   };
+
+  // search = async (req, res) => {
+  //   const { searchKeyword } = req.body;
+  //   const { code, data } = await this.storeService.search(searchKeyword);
+
+  //   res.status(code).json({ data });
+  // };
 }
 
 module.exports = StoreController;

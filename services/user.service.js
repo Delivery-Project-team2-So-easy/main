@@ -1,5 +1,9 @@
+require('dotenv').config(); // process.env 쓰려면 필요한건가 ??
+
 const UserRepository = require('../repositories/user.repository');
 const jwt = require('jsonwebtoken');
+const env = process.env;
+const nodemailer = require('nodemailer');
 
 class UserService {
   userRepository = new UserRepository();
@@ -52,6 +56,33 @@ class UserService {
       );
 
       return { token, code: 200, message: '로그인 성공하였습니다.' };
+    } catch (err) {
+      console.log(err);
+      return { code: 500, message: err };
+    }
+  };
+
+  checkEmail = async (email) => {
+    const authNumber = Math.floor(100000 + Math.random() * 900000);
+
+    try {
+      // 인증메일 발송
+      const transporter = nodemailer.createTransport({
+        service: 'gmail', // 이메일
+        auth: {
+          user: env.EMAIL_USER, // 발송자 이메일
+          pass: env.EMAIL_PWD, // 발송자 비밀번호
+        },
+      });
+      // send mail with defined transport object
+      const info = await transporter.sendMail({
+        from: env.EMAIL_USER, // sender address
+        to: email, // list of receivers
+        subject: '회원가입 인증 메일', // Subject line
+        text: `인증 번호: ${authNumber}`, // plain text body
+        html: `<b>인증 번호: ${authNumber}</b>`, // html body
+      });
+      return { code: 200, message: '인증 메시지를 발송했습니다.' };
     } catch (err) {
       console.log(err);
       return { code: 500, message: err };
