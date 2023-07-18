@@ -6,6 +6,10 @@ class StoreRepository {
     return await Store.findOne({ where: { store_name: storeName } });
   };
 
+  findStoreById = async (storeId) => {
+    return await Store.findOne({ where: { id: storeId } });
+  };
+
   findMyStore = async (userId) => {
     return await Store.findOne({ where: { user_id: userId } });
   };
@@ -104,23 +108,28 @@ class StoreRepository {
     return searchMenu;
   };
 
-  getStoreInfo = async (userId) => {
-    const storeInfo = await Store.findOne({
-      attributes: [
-        'id',
-        'store_name',
-        [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.user_id = Store.user_id)`), 'menu'],
-        'total_sales',
-      ],
-      include: [
-        {
-          model: Menu,
-          attributes: [],
-          where: { user_id: userId },
-        },
-      ],
-    });
-    return storeInfo;
+  getStoreInfo = async (userId, storeId) => {
+    if (!userId) {
+      const storeInfo = await Store.findOne({
+        attributes: [
+          'id',
+          'store_name',
+          [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.store_id = Store.id)`), 'menu'],
+          'total_sales',
+        ],
+        include: [
+          {
+            model: Menu,
+            attributes: [],
+            where: { store_id: storeId },
+          },
+        ],
+      });
+      return storeInfo;
+    } else {
+      const storeInfo = await Store.findOne({ where: { user_id: userId } });
+      return storeInfo;
+    }
   };
 
   getMenuInfo = async (storeId, menuId) => {

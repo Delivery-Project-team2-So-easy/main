@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const reviewRouter = require('./review.route');
 const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
 
@@ -14,7 +13,6 @@ router.post('/store/menu', authMiddleware, uploadMiddleware, storeController.reg
 router.patch('/store/menu/:menuId', authMiddleware, uploadMiddleware, storeController.updateMenu);
 router.delete('/store/menu/:menuId', authMiddleware, storeController.deleteMenu);
 
-router.use('/store/:storeId/reviews', reviewRouter);
 router.get('/store/', storeController.getStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
 // router.post('/search', storeController.search);

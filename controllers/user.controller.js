@@ -59,6 +59,7 @@ class UserController {
     const result = await this.userService.login(email, password);
     res.clearCookie('authorization');
     res.cookie('authorization', `Bearer ${result.token}`);
+    
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });

@@ -80,7 +80,7 @@ class UserService {
         },
       });
       // send mail with defined transport object
-      const info = await transporter.sendMail({
+      await transporter.sendMail({
         from: env.EMAIL_USER, // sender address
         to: email, // list of receivers
         subject: '회원가입 인증 메일', // Subject line

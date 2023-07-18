@@ -16,10 +16,9 @@ class StoreController {
     return res.status(code).json({ data });
   };
 
-
   registerStore = async (req, res) => {
     const userId = res.locals.user.id;
-    const storeImg = req.file.location;
+    const storeImg = req.file ? req.file.location : null;
     const { storeName, storeAddress, openingDate } = req.body;
     if (!storeName || !storeAddress || !openingDate)
       return res.status(400).json({ message: '매장 정보를 모두 입력해주세요.' });
@@ -66,7 +65,7 @@ class StoreController {
 
   registerMenu = async (req, res) => {
     const userId = res.locals.user.id;
-    const menuImg = req.file.location;
+    const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
     if (!menu || !price || !option || !category)
       return res.status(400).json({ message: '메뉴 정보를 모두 입력해주세요' });
