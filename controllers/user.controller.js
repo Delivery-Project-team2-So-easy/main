@@ -53,8 +53,13 @@ class UserController {
 
   login = async (req, res) => {
     const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
+
     const result = await this.userService.login(email, password);
+    res.clearCookie('authorization');
     res.cookie('authorization', `Bearer ${result.token}`);
+    
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
