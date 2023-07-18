@@ -55,10 +55,7 @@ module.exports = (sequelize) => {
       },
       store_name: {
         type: Sequelize.STRING,
-        allowNull: false,
-      },
-      store_address: {
-        type: Sequelize.INTEGER,
+        unique: true,
         allowNull: false,
       },
       store_img: {
@@ -72,7 +69,7 @@ module.exports = (sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      company_resistration_number: {
+      total_sales: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -80,10 +77,12 @@ module.exports = (sequelize) => {
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
       update_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {

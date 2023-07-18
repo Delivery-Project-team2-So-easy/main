@@ -5,9 +5,9 @@ const OrderRepository = require('../repositories/order.repository.js');
 const UserRepository = require('../repositories/user.repository.js');
 const StoreRepository = require('../repositories/store.repository.js');
 
-const t = await sequelize.transaction({
-  isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
-});
+// const t = await sequelize.transaction({
+//   isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
+// });
 
 class OrderService {
   orderRepository = new OrderRepository();
