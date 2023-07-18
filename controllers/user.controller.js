@@ -54,7 +54,7 @@ class UserController {
   login = async (req, res) => {
     const { email, password } = req.body;
 
-    const result = await this.userService.login(email, password, confirmPassword);
+    const result = await this.userService.login(email, password);
 
     res.cookie('authorization', `Bearer ${result.token}`);
     if (result.errorMessage)
