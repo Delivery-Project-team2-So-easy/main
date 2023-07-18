@@ -101,5 +101,4 @@ deleteMenu = async (req, res) => {
 
   res.status(code).json({ message });
 };
-}
 module.exports = StoreController;

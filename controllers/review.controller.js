@@ -4,8 +4,8 @@ class ReviewController {
   reviewService = new ReviewService();
 
   getReviews = async (req, res) => {
-    const store_id = 1;
-    const getReviews = await this.reviewService.getReviews(store_id);
+    const storeId = 1;
+    const getReviews = await this.reviewService.getReviews(storeId);
 
     if (getReviews.errorMessage) {
       return res.status(getReviews.code).json({
@@ -18,18 +18,23 @@ class ReviewController {
   };
 
   postReview = async (req, res) => {
-    const user_id = 1;
-    const store_id = 1;
-    const order_id = 1;
-    const { review, rating, review_img } = req.body;
+    const userId = 1;
+    const storeId = 1;
+    const orderId = 1;
+    const { review, rating } = req.body;
+
+    let filepath = req.file ? req.file.location : null;
+    const reviewImg = filepath
+      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
+      : '';
 
     const postReview = await this.reviewService.postReview(
-      user_id,
-      store_id,
-      order_id,
+      userId,
+      storeId,
+      orderId,
       review,
       rating,
-      review_img
+      reviewImg
     );
 
     if (postReview.errorMessage) {
@@ -43,18 +48,23 @@ class ReviewController {
   };
 
   updateReview = async (req, res) => {
-    const user_id = 1;
-    const store_id = 1;
-    const review_id = 1;
-    const { review, rating, review_img } = req.body;
+    const userId = 1;
+    const storeId = 1;
+    const reviewId = 1;
+    const { review, rating } = req.body;
+
+    let filepath = req.file ? req.file.location : null;
+    const reviewImg = filepath
+      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
+      : '';
 
     const updateReview = await this.updateReview(
       review,
       rating,
-      review_img,
-      user_id,
-      store_id,
-      review_id
+      reviewImg,
+      userId,
+      storeId,
+      reviewId
     );
 
     if (updateReview.errorMessage) {
@@ -69,11 +79,11 @@ class ReviewController {
   };
 
   deleteReview = async (req, res) => {
-    const user_id = 1;
-    const store_id = 1;
-    const review_id = 1;
+    const userId = 1;
+    const storeId = 1;
+    const reviewId = 1;
 
-    const deleteReview = await this.reviewService.deleteReview(user_id, store_id, review_id);
+    const deleteReview = await this.reviewService.deleteReview(userId, storeId, reviewId);
 
     if (deleteReview.errorMessage) {
       return res.status(deleteReview.code).json({
@@ -81,16 +91,14 @@ class ReviewController {
       });
     }
 
-    return res.status(200).json({
-      message: '리뷰를 삭제하였습니다.',
-    });
+    return res.status(204).json();
   };
 
   likeReview = async (req, res) => {
-    const user_id = 1;
-    const review_id = 1;
+    const userId = 1;
+    const reviewId = 1;
 
-    const likeReview = await this.reviewService.likeReview(user_id, review_id);
+    const likeReview = await this.reviewService.likeReview(userId, reviewId);
 
     if (likeReview.errorMessage) {
       return res.status(likeReview.code).json({

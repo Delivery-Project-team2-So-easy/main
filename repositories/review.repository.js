@@ -2,9 +2,9 @@ const { Review, Review_like } = require('../models');
 const { Op } = require('sequelize');
 
 class ReviewRepository {
-  getReviews = async (store_id) => {
+  getReviews = async (storeId) => {
     const reviews = await Review.findAll({
-      where: { store_id },
+      where: { store_id: storeId },
       // include: [
       //   {
       //     model: User,
@@ -29,20 +29,20 @@ class ReviewRepository {
     return getReviews;
   };
 
-  getReviewDetail = async (store_id, review_id) => {
+  getReviewDetail = async (storeId, reviewId) => {
     const getReviewDetail = await Review.findOne({
       where: {
-        [Op.and]: [{ store_id }, { review_id }],
+        [Op.and]: [{ store_id: storeId }, { review_id: reviewId }],
       },
     });
     return getReviewDetail;
   };
 
-  postReview = async (user_id, store_id, order_id, review, rating, review_img) => {
+  postReview = async (userId, storeId, orderId, review, rating, review_img) => {
     const postReview = await Review.create({
-      user_id: user_id,
-      store_id: store_id,
-      order_id: order_id,
+      user_id: userId,
+      store_id: storeId,
+      order_id: orderId,
       review,
       rating,
       review_img,
@@ -51,36 +51,45 @@ class ReviewRepository {
     return postReview;
   };
 
-  updateReview = async (review, rating, review_img, review_id) => {
-    const updateReview = await Review.update(
-      { review, rating, review_img },
-      { where: { review_id } }
-    );
+  updateReview = async (review, rating, reviewId, reviewImg) => {
+    if (reviewImg === null) {
+      const updateReview = await Review.update(
+        { review, rating },
+        { where: { review_id: reviewId } }
+      );
 
-    return updateReview;
+      return updateReview;
+    } else {
+      const updateReview = await Review.update(
+        { review, rating, review_img: reviewImg },
+        { where: { review_id: reviewId } }
+      );
+
+      return updateReview;
+    }
   };
 
-  deleteReview = async (review_id) => {
-    const deleteReview = await Review.destory({ where: { review_id } });
+  deleteReview = async (reviewId) => {
+    const deleteReview = await Review.destory({ where: { review_id: reviewId } });
 
     return deleteReview;
   };
 
-  likeReview = async (user_id, review_id) => {
+  likeReview = async (userId, reviewId) => {
     const duplicateCheck = await Review_like.findOne({
       where: {
-        [Op.and]: [{ user_id }, { review_id }],
+        [Op.and]: [{ user_id: userId }, { review_id: reviewId }],
       },
     });
 
     if (duplicateCheck) {
       await duplicateCheck.destroy();
-      const likeCount = await Review_like.count({ where: { review_id } });
+      const likeCount = await Review_like.count({ where: { review_id: reviewId } });
       return { message: '좋아요 취소', likeCount };
     }
 
-    await Review_like.create({ user_id, review_id });
-    const likeCount = await Review_like.count({ where: { review_id } });
+    await Review_like.create({ user_id: userId, review_id: reviewId });
+    const likeCount = await Review_like.count({ where: { review_id: reviewId } });
     return { message: '좋아요 완료', likeCount };
   };
 }
