@@ -5,21 +5,20 @@ const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
 
 //auth 미들웨어 추가 필요
-router.post('/registration', storeController.registerStore);
+router.post('/store/registration', storeController.registerStore);
 //auth 미들웨어 추가 필요
-router.patch('/registration', storeController.updateStore);
+router.patch('/store/registration', storeController.updateStore);
 //auth 미들웨어 추가 필요
-router.delete('/registration', storeController.deleteStore);
+router.delete('/store/registration', storeController.deleteStore);
 //auth 미들웨어 추가 필요
-router.post('/menu', storeController.registerMenu);
+router.post('/store/menu', storeController.registerMenu);
 //auth 미들웨어 추가 필요
-router.patch('/menu/:menuId', storeController.updateMenu);
+router.patch('/store/menu/:menuId', storeController.updateMenu);
 //auth 미들웨어 추가 필요
-router.delete('/menu/:menuId', storeController.deleteMenu);
+router.delete('/store/menu/:menuId', storeController.deleteMenu);
 
-router.use('/:storeId/reviews', reviewRouter);
-router.get('/', storeController.getStore);
-router.get('/:storeId', storeController.getStoreDetail);
-router.post('/search', storeController.search);
+router.get('/store', storeController.getStore);
+router.get('/store/:storeId', storeController.getStoreDetail);
+// router.post('/store/search', storeController.search);
 
 module.exports = router;

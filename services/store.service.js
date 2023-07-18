@@ -16,7 +16,7 @@ class StoreService {
     const exStore = await this.storeRepository.findStore(storeName);
     // 응답코드
     if (exStore) {
-      return { code: 403, message: '이미 존재하는 매장 이름입니다.' };
+      return { code: 403, errorMessage: '이미 존재하는 매장 이름입니다.' };
     }
 
     await this.storeRepository.registerStore(
@@ -40,7 +40,7 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     // const user = await this.storeRepository.findUser(userId);
     // 유저 검색, 추후 해당 기능 완성 후 수정 필요
-    if (!store) return { code: 404, message: '존재하지 않는 매장입니다.' };
+    if (!store) return { code: 404, errorMessage: '존재하지 않는 매장입니다.' };
     // if (storeId !== user.store_id) return { code: 403, message: '해당 매장 관리자가 아닙니다.' };
 
     await this.storeRepository.updateStore(userId, storeName, storeAddress, storeImg);
@@ -54,7 +54,7 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     // const user = await this.storeRepository.findUser(userId);
     console.log('store:', store);
-    if (!store) return { code: 404, message: '존재하지 않는 매장입니다' };
+    if (!store) return { code: 404, errorMessage: '존재하지 않는 매장입니다' };
     //auth 추가시 수정
     // if (user.store_id !== storeId) return { code: 403, message: '해당 매장 관리자가 아닙니다.' };
 
@@ -67,7 +67,7 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     const storeId = store.store_id;
     const exMenu = await this.storeRepository.findMenu(storeId, menu);
-    if (exMenu) return { code: 403, message: '이미 등록된 메뉴입니다.' };
+    if (exMenu) return { code: 403, errorMessage: '이미 등록된 메뉴입니다.' };
 
     const Menu = await this.storeRepository.registerMenu(
       storeId,
@@ -93,7 +93,7 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     const storeId = store.store_id;
     const exMenu = await this.storeRepository.findMenu(storeId, menu);
-    if (!exMenu) return { code: 404, message: '존재하지 않는 메뉴입니다.' };
+    if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
     await this.storeRepository.updateMenu(storeId, menuId, menu, price, menuImg, option, category);
     return { code: 201, message: `메뉴가 수정되었습니다.` };
   };
@@ -102,10 +102,10 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     const storeId = store.store_id;
     const exMenu = await this.storeRepository.findMenu(storeId, menuId);
-    if (!exMenu) return { code: 404, message: '존재하지 않는 메뉴입니다.' };
+    if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
 
     await this.storeRepository.deleteMenu(storeId, menuId);
-    return { code: 200, message: '메뉴가 삭제되었습니다.' };
+    return { code: 204, message: '메뉴가 삭제되었습니다.' };
   };
 
   getStore = async () => {
@@ -115,7 +115,7 @@ class StoreService {
       return { code: 200, data: allStoreData };
     } catch (err) {
       console.log(err);
-      return { code: 500, data: err };
+      return { code: 500, errorMessage: '매장 전체 조회에 실패했습니다.' };
     }
   };
 
@@ -126,7 +126,7 @@ class StoreService {
       return { code: 200, data: oneStoreData };
     } catch (err) {
       console.log(err);
-      return { code: 500, data: err };
+      return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
 
