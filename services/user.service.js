@@ -68,7 +68,6 @@ class UserService {
       const transporter = nodemailer.createTransport({
         service: 'gmail', // 이메일
         auth: {
-          //
           user: env.EMAIL_USER, // 발송자 이메일
           pass: env.EMAIL_PWD, // 발송자 비밀번호
         },
