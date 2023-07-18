@@ -5,6 +5,7 @@ const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
 
 router.use('/:storeId/reviews', reviewRouter);
-router.route('/');
+router.use('/', storeController.getStore);
+router.use('/:storeId', storeController.getStoreDetail);
 
 module.exports = router;

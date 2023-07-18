@@ -31,6 +31,7 @@ class UserService {
       }
     } catch (err) {
       console.log(err);
+      return { code: 500, message: err };
     }
   };
 
@@ -53,6 +54,7 @@ class UserService {
       return { token, code: 200, message: '로그인 성공하였습니다.' };
     } catch (err) {
       console.log(err);
+      return { code: 500, message: err };
     }
   };
 }
