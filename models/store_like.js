@@ -2,17 +2,28 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
-  class reviews extends Model {
+  class Store_like extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
+    static associate({ User, Store }) {
+      this.belongsTo(User, {
+        targetKey: 'id',
+        foreignKey: 'user_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.belongsTo(Store, {
+        targetKey: 'id',
+        foreignKey: 'store_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
-  reviews.init(
+  Store_like.init(
     {
       id: {
         allowNull: false,
@@ -20,45 +31,31 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      store_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      order_id: {
+      store_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      review: {
-        type: Sequelize.TEXT,
-      },
-      star: {
-        type: Sequelize.SMALLINT,
-        allowNull: false,
-      },
-      review_img: {
-        type: Sequelize.STRING,
-      },
-      created_at: {
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
     },
     {
-      sequelize,
       timestamps: false,
-      underscored: true,
-      modelName: 'reviews',
+      sequelize,
+      tableName: 'store_likes',
+      modelName: 'Store_like',
     }
   );
-  return reviews;
+  return Store_like;
 };

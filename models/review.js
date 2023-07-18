@@ -2,13 +2,13 @@
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
 module.exports = (sequelize) => {
-  class Order extends Model {
+  class Review extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Store, Menu, Review }) {
+    static associate({ User, Store, Order, Review_like }) {
       this.belongsTo(User, {
         targetKey: 'id',
         foreignKey: 'user_id',
@@ -21,21 +21,21 @@ module.exports = (sequelize) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.belongsTo(Menu, {
+      this.belongsTo(Order, {
         targetKey: 'id',
-        foreignKey: 'menu_id',
+        foreignKey: 'order_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.hasOne(Review, {
+      this.hasMany(Review_like, {
         sourceKey: 'id',
-        foreignKey: 'order_id',
+        foreignKey: 'review_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
     }
   }
-  Order.init(
+  Review.init(
     {
       id: {
         allowNull: false,
@@ -51,40 +51,39 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menu_id: {
+      order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
+      review: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: false,
       },
-      quantity: {
+      rating: {
         type: Sequelize.TINYINT,
         allowNull: false,
-        defaultValue: 1,
+        defaultValue: 0,
       },
-      option: {
+      review_img: {
         type: Sequelize.STRING,
       },
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
       update_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {
       timestamps: false,
       sequelize,
-      tableName: 'orders',
-      modelName: 'Order',
+      tableName: 'reviews',
+      modelName: 'Review',
     }
   );
-  return Order;
+  return Review;
 };

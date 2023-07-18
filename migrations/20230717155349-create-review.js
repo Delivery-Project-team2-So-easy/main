@@ -9,40 +9,61 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      store_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      store_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'stores',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'orders',
+          key: 'id',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       review: {
-        type: Sequelize.TEXT,
-      },
-      star: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.STRING,
         allowNull: false,
+      },
+      rating: {
+        type: Sequelize.TINYINT,
+        allowNull: false,
+        defaultValue: 0,
       },
       review_img: {
         type: Sequelize.STRING,
       },
-      created_at: {
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
     });
   },
+  timestamp: false,
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('reviews');
   },

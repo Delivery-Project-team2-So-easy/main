@@ -17,4 +17,9 @@ router.patch('/menu/:menuId', storeController.updateMenu);
 //auth 미들웨어 추가 필요
 router.delete('/menu/:menuId', storeController.deleteMenu);
 
+router.use('/:storeId/reviews', reviewRouter);
+router.get('/', storeController.getStore);
+router.get('/:storeId', storeController.getStoreDetail);
+router.post('/search', storeController.search);
+
 module.exports = router;

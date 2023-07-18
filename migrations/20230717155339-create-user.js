@@ -2,49 +2,60 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Menus', {
+    await queryInterface.createTable('users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      menu: {
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      price: {
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      point: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1000000,
       },
-      menu_img: {
-        type: Sequelize.STRING,
-        allowNull: true,
+      is_seller: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
-      store_id: {
+      business_registration_number: {
         type: Sequelize.INTEGER,
+      },
+      address: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      option: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      category: {
+      profile_img: {
         type: Sequelize.STRING,
       },
-      created_at: {
+      create_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
-      updated_at: {
+      update_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
     });
   },
+  timestamp: false,
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Menus');
+    await queryInterface.dropTable('users');
   },
 };
