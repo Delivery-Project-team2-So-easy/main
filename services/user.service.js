@@ -1,4 +1,4 @@
-require('dotenv').config(); // process.env 쓰려면 필요한건가 ??
+require('dotenv').config(); // process.env 쓰려면 필요한건가 ?? 옙 저는 이거 쓰고 사용합니다
 
 const UserRepository = require('../repositories/user.repository');
 const jwt = require('jsonwebtoken');
@@ -29,36 +29,34 @@ class UserService {
           address,
           business_registration_number
         );
-        return { code: 200, message: `가입을 축하합니다.` };
+        return { code: 201, message: '회원 가입을 축하합니다.' };
       } else {
-        return { code: 409, message: '이미 존재하는 email 입니다.' };
+        return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
       }
     } catch (err) {
       console.log(err);
-      return { code: 500, message: err };
+      return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
     }
   };
 
-  login = async (email, password, confirmPassword) => {
+  login = async (email, password) => {
     try {
-      if (password !== confirmPassword) {
-        return { code: 400, message: '비밀번호와 확인비밀번호가 다릅니다.' };
-      }
       const checkUser = await this.userRepository.existUser(email);
       if (!checkUser || checkUser.password !== password) {
-        return { code: 404, message: 'email 또는 password를 확인해주세요' };
+        return { code: 404, errorMessage: '이메일 또는 패스워드를 입력해주세요.' };
       }
       const token = jwt.sign(
         {
           userId: checkUser.userId,
         },
-        'customized_secret_key'
+        env.JWT_SECRET_KEY,
+        { expiresIn: '1h' }
       );
 
       return { token, code: 200, message: '로그인 성공하였습니다.' };
     } catch (err) {
       console.log(err);
-      return { code: 500, message: err };
+      return { code: 500, errorMessage: '로그인에 실패했습니다.' };
     }
   };
 
@@ -85,7 +83,7 @@ class UserService {
       return { code: 200, message: '인증 메시지를 발송했습니다.' };
     } catch (err) {
       console.log(err);
-      return { code: 500, message: err };
+      return { code: 500, errorMessage: err };
     }
   };
 }
