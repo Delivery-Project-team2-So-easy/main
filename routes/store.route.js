@@ -14,7 +14,4 @@ const storeController = new StoreController();
 // router.get('/store/:storeId', storeController.getDetailStore);
 // router.get('/store/search', storeController.searchStore);
 
-// router.post('/store/:storeId/like', storeController.likeStore);
-// router.get('/store/likeStores', storeController.getLikeStores);
-
 module.exports = router;
