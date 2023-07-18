@@ -9,10 +9,10 @@ class UserController {
       name,
       password,
       confirmPassword,
-      is_seller,
-      profile_img,
+      isSeller,
+      profileImg,
       address,
-      business_registration_number,
+      businessRegistrationNumber,
     } = req.body;
 
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
@@ -40,10 +40,10 @@ class UserController {
       email,
       name,
       password,
-      is_seller,
-      profile_img,
+      isSeller,
+      profileImg,
       address,
-      business_registration_number
+      businessRegistrationNumber
     );
 
     if (result.errorMessage)
@@ -53,9 +53,12 @@ class UserController {
 
   login = async (req, res) => {
     const { email, password } = req.body;
-    const { token, code, message } = await this.userService.login(email, password);
-    res.cookie('authorization', `Bearer ${token}`);
-    res.status(code).json({ message });
+    const result = await this.userService.login(email, password);
+    res.cookie('authorization', `Bearer ${result.token}`);
+    
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.status(result.code).json({ message: result.message });
   };
 
   checkEmail = async (req, res) => {
