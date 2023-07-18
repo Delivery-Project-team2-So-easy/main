@@ -53,10 +53,11 @@ class UserController {
 
   login = async (req, res) => {
     const { email, password } = req.body;
-
-    const { token, code, message } = await this.userService.login(email, password);
-    res.cookie('authorization', `Bearer ${token}`);
-    res.status(code).json({ message });
+    const result = await this.userService.login(email, password);
+    res.cookie('authorization', `Bearer ${result.token}`);
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.status(result.code).json({ message: result.message });
   };
 
   checkEmail = async (req, res) => {
