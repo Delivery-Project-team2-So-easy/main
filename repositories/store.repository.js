@@ -1,3 +1,91 @@
-class StoreRepository {}
+const { Store, Menu } = require('../models');
+const { Op } = require('sequelize');
+
+class StoreRepository {
+  findStore = async (storeName) => {
+    return await Store.findOne({ where: { store_name: storeName } });
+  };
+
+  findMyStore = async (userId) => {
+    return await Store.findOne({ where: { user_id: userId } });
+  };
+
+  registerStore = async (
+    //userId,
+    storeName,
+    storeAddress,
+    openingDate,
+    storeImg,
+    companyRegistrationNumber
+  ) => {
+    return await Store.create({
+      //user_id: userId,
+      store_name: storeName,
+      store_address: storeAddress,
+      store_img: storeImg,
+      opening_date: openingDate,
+      company_registration_number: companyRegistrationNumber,
+    });
+  };
+
+  updateStore = async (userId, storeName, storeAddress, storeImg) => {
+    return await Store.update(
+      {
+        store_name: storeName,
+        store_address: storeAddress,
+        store_img: storeImg,
+      },
+      {
+        where: { user_id: userId },
+      }
+    );
+  };
+
+  deleteStore = async (userId) => {
+    await Store.destroy({ where: { user_id: userId } });
+    return;
+  };
+
+  findMenu = async (storeId, menuId) => {
+    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  };
+
+  registerMenu = async (storeId, menu, price, menuImg, option, category) => {
+    return await Menu.create({
+      store_id: storeId,
+      menu,
+      price,
+      menu_img: menuImg,
+      option,
+      category,
+    });
+  };
+
+  updateMenu = async (
+    //userId,
+    menuId,
+    menu,
+    price,
+    menuImg,
+    option,
+    category
+  ) => {
+    await Menu.update(
+      {
+        menu,
+        price,
+        menu_img: menuImg,
+        option,
+        category,
+      },
+      { where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } }
+    );
+    return;
+  };
+
+  deleteMenu = async (storeId, menuId) => {
+    await Menu.destroy({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  };
+}
 
 module.exports = StoreRepository;

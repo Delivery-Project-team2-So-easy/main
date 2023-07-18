@@ -49,17 +49,15 @@ module.exports = (sequelize) => {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      store_id: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
     },
     {

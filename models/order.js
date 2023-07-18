@@ -41,16 +41,18 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       quantity: {
-        type: Sequelize.SMALLINT,
+        type: Sequelize.TINYINT,
         allowNull: false,
       },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
     },
     {

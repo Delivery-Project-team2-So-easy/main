@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       store_address: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       store_img: {
@@ -25,17 +25,19 @@ module.exports = {
         type: Sequelize.DATEONLY,
         allowNull: false,
       },
-      company_resistration_number: {
+      company_registration_number: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
     });
   },
