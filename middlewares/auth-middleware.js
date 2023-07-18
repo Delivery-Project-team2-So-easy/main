@@ -5,7 +5,7 @@ const env = process.env;
 module.exports = async (req, res, next) => {
   try {
     const { authorization } = req.cookies;
-    const [tokenType, token] = authorization.split(' ');
+    const [tokenType, token] = (authorization ?? '').split(' ');
     if (tokenType !== 'Bearer' || !token) {
       return res.status(401).json({ errorMessage: '로그인 후에 이용할 수 있는 기능입니다.' });
     }
