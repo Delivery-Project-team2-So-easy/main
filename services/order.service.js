@@ -34,7 +34,7 @@ class OrderService {
       if (remainingPoint < 0)
         return { code: 400, errorMessage: '잔여포인트가 부족해 주문 할 수 없습니다.' };
 
-      const storeInfo = await this.storeRepository.getStoreInfo(user.id);
+      const storeInfo = await this.storeRepository.getStoreInfo(_, storeId);
       if (!storeInfo) return { code: 404, errorMessage: '주문하려 하는 매장이 없습니다.' };
 
       const menuInfo = await this.storeRepository.getMenuInfo(storeId, menuId);

@@ -1,5 +1,5 @@
 const { Store, Menu } = require('../models');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 class StoreRepository {
   findStore = async (storeName) => {
@@ -105,7 +105,21 @@ class StoreRepository {
   };
 
   getStoreInfo = async (userId) => {
-    const storeInfo = await Store.findOne({ where: { user_id: userId } });
+    const storeInfo = await Store.findOne({
+      attributes: [
+        'id',
+        'store_name',
+        [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.user_id = Store.user_id)`), 'menu'],
+        'total_sales',
+      ],
+      include: [
+        {
+          model: Menu,
+          attributes: [],
+          where: { user_id: userId },
+        },
+      ],
+    });
     return storeInfo;
   };
 

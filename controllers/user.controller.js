@@ -9,10 +9,10 @@ class UserController {
       name,
       password,
       confirmPassword,
-      is_seller,
-      profile_img,
+      isSeller,
+      profileImg,
       address,
-      business_registration_number,
+      businessRegistrationNumber,
     } = req.body;
 
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
@@ -40,10 +40,10 @@ class UserController {
       email,
       name,
       password,
-      is_seller,
-      profile_img,
+      isSeller,
+      profileImg,
       address,
-      business_registration_number
+      businessRegistrationNumber
     );
 
     if (result.errorMessage)
@@ -53,7 +53,11 @@ class UserController {
 
   login = async (req, res) => {
     const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
+
     const result = await this.userService.login(email, password);
+    res.clearCookie('authorization');
     res.cookie('authorization', `Bearer ${result.token}`);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
