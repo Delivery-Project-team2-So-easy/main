@@ -69,6 +69,11 @@ module.exports = (sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      total_sales: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
