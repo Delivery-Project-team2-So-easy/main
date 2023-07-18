@@ -5,8 +5,9 @@ const development = {
   username: env.MYSQL_USERNAME,
   password: env.MYSQL_PASSWORD,
   database: env.MYSQL_DATABASE,
-  host: env.MYSQL_HOST,
+  host: env.MYSQL_AWS_HOST,
   dialect: 'mysql',
+  logging: false,
 };
 
 const production = {

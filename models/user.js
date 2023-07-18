@@ -72,9 +72,6 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: false,
       },
-      business_registration_number: {
-        type: Sequelize.INTEGER,
-      },
       address: {
         type: Sequelize.STRING,
         allowNull: false,

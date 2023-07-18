@@ -11,8 +11,8 @@ module.exports = async (req, res, next) => {
 
     const decodedToken = jwt.verify(token, 'customized_secret_key');
     const userId = decodedToken.userId;
+    const user = await User.findOne({ where: { id: userId } });
 
-    const user = await User.findOne({ where: { userId } });
     if (!user) {
       res.clearCookie('authorization');
       return res.status(401).json({ message: '토큰 사용자가 존재하지 않습니다.' });

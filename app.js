@@ -3,10 +3,9 @@ const db = require('./models');
 const app = express();
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
-const indexRouter = require('./routes/index');
+const userRouter = require('./routes/user.route');
+const storeRouter = require('./routes/store.route');
 const reviewRouter = require('./routes/review.route.js');
-
-app.set('port', PORT);
 
 app.set('port', process.env.PORT || 3000);
 
@@ -15,7 +14,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', indexRouter);
+app.use('/', [userRouter, storeRouter]);
+// app.use('/', indexRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);

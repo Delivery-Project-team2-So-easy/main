@@ -72,18 +72,15 @@ module.exports = (sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      company_resistration_number: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
       update_at: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {
