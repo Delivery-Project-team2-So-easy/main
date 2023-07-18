@@ -10,21 +10,13 @@ class StoreRepository {
     return await Store.findOne({ where: { user_id: userId } });
   };
 
-  registerStore = async (
-    //userId,
-    storeName,
-    storeAddress,
-    openingDate,
-    storeImg,
-    companyRegistrationNumber
-  ) => {
+  registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
     return await Store.create({
-      //user_id: userId,
+      user_id: userId,
       store_name: storeName,
       store_address: storeAddress,
       store_img: storeImg,
       opening_date: openingDate,
-      company_registration_number: companyRegistrationNumber,
     });
   };
 
@@ -50,6 +42,10 @@ class StoreRepository {
     return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
   };
 
+  findMenuById = async (storeId, menuId) => {
+    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  };
+
   registerMenu = async (storeId, menu, price, menuImg, option, category) => {
     return await Menu.create({
       store_id: storeId,
@@ -61,15 +57,7 @@ class StoreRepository {
     });
   };
 
-  updateMenu = async (
-    //userId,
-    menuId,
-    menu,
-    price,
-    menuImg,
-    option,
-    category
-  ) => {
+  updateMenu = async (menuId, menu, price, menuImg, option, category) => {
     await Menu.update(
       {
         menu,
@@ -78,42 +66,42 @@ class StoreRepository {
         option,
         category,
       },
-      { where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } }
+      { where: { id: menuId } }
     );
     return;
   };
 
   deleteMenu = async (storeId, menuId) => {
     await Menu.destroy({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
-    getStore = async () => {
-      const allStoreData = await Store.findAll({});
+  };
+  getStore = async () => {
+    const allStoreData = await Store.findAll({});
 
-      return allStoreData;
-    };
+    return allStoreData;
+  };
 
-    getStoreDetail = async (storeId) => {
-      const oneStoreData = await Store.findOne({ where: { id: storeId } });
+  getStoreDetail = async (storeId) => {
+    const oneStoreData = await Store.findOne({ where: { id: storeId } });
 
-      return oneStoreData;
-    };
+    return oneStoreData;
+  };
 
-    searchStore = async (searchKeyword) => {
-      const searchStore = await Store.findAll({
-        where: { store_name: { [Op.substring]: searchKeyword } },
-      });
-      return searchStore;
-    };
-    searchMenu = async (searchKeyword) => {
-      const searchMenu = await Menu.findAll({
-        where: {
-          [Op.or]: [
-            { menu: { [Op.substring]: searchKeyword } },
-            { category: { [Op.substring]: searchKeyword } },
-          ],
-        },
-      });
-      return searchMenu;
-    };
+  searchStore = async (searchKeyword) => {
+    const searchStore = await Store.findAll({
+      where: { store_name: { [Op.substring]: searchKeyword } },
+    });
+    return searchStore;
+  };
+  searchMenu = async (searchKeyword) => {
+    const searchMenu = await Menu.findAll({
+      where: {
+        [Op.or]: [
+          { menu: { [Op.substring]: searchKeyword } },
+          { category: { [Op.substring]: searchKeyword } },
+        ],
+      },
+    });
+    return searchMenu;
   };
 }
 

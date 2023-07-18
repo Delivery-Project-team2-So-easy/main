@@ -39,18 +39,15 @@ class UserService {
     }
   };
 
-  login = async (email, password, confirmPassword) => {
+  login = async (email, password) => {
     try {
-      if (password !== confirmPassword) {
-        return { code: 400, message: '비밀번호와 확인비밀번호가 다릅니다.' };
-      }
       const checkUser = await this.userRepository.existUser(email);
       if (!checkUser || checkUser.password !== password) {
         return { code: 404, message: 'email 또는 password를 확인해주세요' };
       }
       const token = jwt.sign(
         {
-          userId: checkUser.userId,
+          userId: checkUser.id,
         },
         'customized_secret_key'
       );

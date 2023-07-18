@@ -3,23 +3,19 @@ const router = express.Router();
 const reviewRouter = require('./review.route');
 const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
+const authMiddleware = require('../middlewares/auth-middleware');
+const uploadMiddleware = require('../middlewares/upload-middleware');
 
-//auth 미들웨어 추가 필요
-router.post('/registration', storeController.registerStore);
-//auth 미들웨어 추가 필요
-router.patch('/registration', storeController.updateStore);
-//auth 미들웨어 추가 필요
-router.delete('/registration', storeController.deleteStore);
-//auth 미들웨어 추가 필요
-router.post('/menu', storeController.registerMenu);
-//auth 미들웨어 추가 필요
-router.patch('/menu/:menuId', storeController.updateMenu);
-//auth 미들웨어 추가 필요
-router.delete('/menu/:menuId', storeController.deleteMenu);
+router.post('/store/registration', authMiddleware, uploadMiddleware, storeController.registerStore);
+router.patch('/store/registration', authMiddleware, uploadMiddleware, storeController.updateStore);
+router.delete('/store/registration', authMiddleware, storeController.deleteStore);
+router.post('/store/menu', authMiddleware, uploadMiddleware, storeController.registerMenu);
+router.patch('/store/menu/:menuId', authMiddleware, uploadMiddleware, storeController.updateMenu);
+router.delete('/store/menu/:menuId', authMiddleware, storeController.deleteMenu);
 
-router.use('/:storeId/reviews', reviewRouter);
-router.get('/', storeController.getStore);
-router.get('/:storeId', storeController.getStoreDetail);
-router.post('/search', storeController.search);
+router.use('/store/:storeId/reviews', reviewRouter);
+router.get('/store/', storeController.getStore);
+router.get('/store/:storeId', storeController.getStoreDetail);
+// router.post('/search', storeController.search);
 
 module.exports = router;

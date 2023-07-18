@@ -8,7 +8,6 @@ module.exports = async (req, res, next) => {
     const AWS = require('aws-sdk');
     const path = require('path');
     const uuid4 = require('uuid4');
-
     const s3 = new AWS.S3({
       accessKeyId: env.S3_ACCESS_KEY,
       secretAccessKey: env.S3_ACCESS_KEY_SECRET,
@@ -16,7 +15,6 @@ module.exports = async (req, res, next) => {
     });
 
     const allowedExtensions = ['.png', '.jpg', '.jpeg', '.jfif', '.exif', '.tiff', '.bmp', '.gif'];
-
     const upload = multer({
       storage: multerS3({
         s3,
@@ -43,7 +41,6 @@ module.exports = async (req, res, next) => {
         limit: { fileSize: 5 * 1024 * 1024 },
       }),
     });
-
     upload.single('newFile')(req, res, next);
   } catch (error) {
     console.log(error);
