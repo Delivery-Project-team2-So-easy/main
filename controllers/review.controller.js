@@ -4,7 +4,7 @@ class ReviewController {
   reviewService = new ReviewService();
 
   getReviews = async (req, res) => {
-    const storeId = 1;
+    const { storeId } = req.params;
     const getReviews = await this.reviewService.getReviews(storeId);
 
     if (getReviews.errorMessage) {
@@ -18,9 +18,8 @@ class ReviewController {
   };
 
   postReview = async (req, res) => {
-    const userId = 1;
-    const storeId = 1;
-    const orderId = 1;
+    const { userId } = res.locals.user;
+    const { storeId } = req.params;
     const { review, rating } = req.body;
 
     let filepath = req.file ? req.file.location : null;
@@ -31,7 +30,6 @@ class ReviewController {
     const postReview = await this.reviewService.postReview(
       userId,
       storeId,
-      orderId,
       review,
       rating,
       reviewImg
@@ -48,9 +46,8 @@ class ReviewController {
   };
 
   updateReview = async (req, res) => {
-    const userId = 1;
-    const storeId = 1;
-    const reviewId = 1;
+    const { userId } = res.locals.user;
+    const { storeId, reviewId } = req.params;
     const { review, rating } = req.body;
 
     let filepath = req.file ? req.file.location : null;
@@ -79,9 +76,8 @@ class ReviewController {
   };
 
   deleteReview = async (req, res) => {
-    const userId = 1;
-    const storeId = 1;
-    const reviewId = 1;
+    const { userId } = res.locals.user;
+    const { storeId, reviewId } = 1;
 
     const deleteReview = await this.reviewService.deleteReview(userId, storeId, reviewId);
 
@@ -95,10 +91,10 @@ class ReviewController {
   };
 
   likeReview = async (req, res) => {
-    const userId = 1;
-    const reviewId = 1;
+    const { userId } = res.locals.user;
+    const { storeId, reviewId } = req.params;
 
-    const likeReview = await this.reviewService.likeReview(userId, reviewId);
+    const likeReview = await this.reviewService.likeReview(userId, storeId, reviewId);
 
     if (likeReview.errorMessage) {
       return res.status(likeReview.code).json({

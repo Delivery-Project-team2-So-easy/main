@@ -6,6 +6,10 @@ class StoreRepository {
     return await Store.findOne({ where: { store_name: storeName } });
   };
 
+  findStoreById = async (storeId) => {
+    return await Store.findOne({ where: { store_id: storeId } });
+  };
+
   findMyStore = async (userId) => {
     return await Store.findOne({ where: { user_id: userId } });
   };
