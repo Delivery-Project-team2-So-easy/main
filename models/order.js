@@ -68,15 +68,20 @@ module.exports = (sequelize) => {
       option: {
         type: Sequelize.STRING,
       },
+      total_price: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
       update_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn('now'),
       },
     },
     {

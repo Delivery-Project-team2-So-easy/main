@@ -103,6 +103,20 @@ class StoreRepository {
     });
     return searchMenu;
   };
+
+  getStoreInfo = async (userId) => {
+    const storeInfo = await Store.findOne({ where: { user_id: userId } });
+    return storeInfo;
+  };
+
+  getMenuInfo = async (storeId, menuId) => {
+    const menuInfo = await Menu.findOne({ where: { id: menuId, store_id: storeId } });
+    return menuInfo;
+  };
+
+  increaseInSales = async (userId, price) => {
+    await Store.update({ total_sales: price }, { where: { user_id: userId } });
+  };
 }
 
 module.exports = StoreRepository;

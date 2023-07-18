@@ -55,10 +55,7 @@ module.exports = (sequelize) => {
       },
       store_name: {
         type: Sequelize.STRING,
-        allowNull: false,
-      },
-      store_address: {
-        type: Sequelize.INTEGER,
+        unique: true,
         allowNull: false,
       },
       store_img: {

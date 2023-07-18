@@ -3,6 +3,7 @@ const router = express.Router();
 const reviewRouter = require('./review.route');
 const StoreController = require('../controllers/store.controller');
 const storeController = new StoreController();
+
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware');
 

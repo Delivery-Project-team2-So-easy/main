@@ -3,16 +3,19 @@ const StoreService = require('../services/store.service');
 class StoreController {
   storeService = new StoreService();
   getStore = async (req, res) => {
-    const { code, data } = await this.storeService.getStore();
+    const { code, data, errorMessage } = await this.storeService.getStore();
 
-    res.status(code).json({ data });
+    if (errorMessage) return res.status(code).json({ errorMessage });
+    return res.status(code).json({ data });
   };
   getStoreDetail = async (req, res) => {
     const { storeId } = req.params;
-    const { code, data } = await this.storeService.getStoreDetail(storeId);
+    const { code, data, errorMessage } = await this.storeService.getStoreDetail(storeId);
 
-    res.status(code).json({ data });
+    if (errorMessage) return res.status(code).json({ errorMessage });
+    return res.status(code).json({ data });
   };
+}
 
   registerStore = async (req, res) => {
     const userId = res.locals.user.id;

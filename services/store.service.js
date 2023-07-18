@@ -83,7 +83,7 @@ class StoreService {
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
 
     await this.storeRepository.deleteMenu(storeId, menuId);
-    return { code: 200, message: '메뉴가 삭제되었습니다.' };
+    return { code: 204, message: '메뉴가 삭제되었습니다.' };
   };
 
   getStore = async () => {
@@ -93,7 +93,7 @@ class StoreService {
       return { code: 200, data: allStoreData };
     } catch (err) {
       console.log(err);
-      return { code: 500, data: err };
+      return { code: 500, errorMessage: '매장 전체 조회에 실패했습니다.' };
     }
   };
 
@@ -104,7 +104,7 @@ class StoreService {
       return { code: 200, data: oneStoreData };
     } catch (err) {
       console.log(err);
-      return { code: 500, data: err };
+      return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
 

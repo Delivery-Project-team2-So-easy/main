@@ -81,7 +81,7 @@ class ReviewController {
       });
     }
 
-    return res.status(200).json({
+    return res.status(204).json({
       message: '리뷰를 삭제하였습니다.',
     });
   };
