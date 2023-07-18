@@ -15,6 +15,8 @@ class StoreService {
       return { code: 403, errorMessage: '매장을 추가로 등록할 수 없습니다.' };
     }
 
+    const user = await this.userRepository.findUser(userId);
+    if (!user.is_seller) return { code: 403, errorMessage: '사업자 등록 후 이용해 주세요.' };
     await this.storeRepository.registerStore(
       userId,
       storeName,

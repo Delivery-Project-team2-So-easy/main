@@ -53,7 +53,6 @@ class UserController {
 
   login = async (req, res) => {
     const { email, password } = req.body;
-
     const { token, code, message } = await this.userService.login(email, password);
     res.cookie('authorization', `Bearer ${token}`);
     res.status(code).json({ message });

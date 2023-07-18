@@ -40,7 +40,6 @@ class UserRepository {
     await User.update({ point }, { where: { id: userId } });
     return;
   };
-
 }
 
 module.exports = UserRepository;
