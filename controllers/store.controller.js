@@ -15,7 +15,7 @@ class StoreController {
     if (errorMessage) return res.status(code).json({ errorMessage });
     return res.status(code).json({ data });
   };
-}
+
 
   registerStore = async (req, res) => {
     const userId = res.locals.user.id;
