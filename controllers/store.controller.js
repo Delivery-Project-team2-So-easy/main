@@ -16,7 +16,6 @@ class StoreController {
     return res.status(code).json({ data });
   };
 
-
   registerStore = async (req, res) => {
     const userId = res.locals.user.id;
     const storeImg = req.file.location;
