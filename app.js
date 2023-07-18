@@ -1,9 +1,13 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+// const userRouter = require('./routes/user.route.js');
+// const storeRouter = require('./routes/store.route.js');
+const reviewRouter = require('./routes/review.route.js');
+// const orderRouter = require('./routes/order.route.js');
+
 const app = express();
 const PORT = 3000;
 const db = require('./models');
-const indexRouter = require('./routes/index');
 
 app.set('port', PORT);
 
@@ -11,8 +15,7 @@ db.sequelize.sync({});
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use('/', indexRouter);
+app.use('/', [reviewRouter]);
 
 app.use((err, req, res, next) => {
   console.error(err);

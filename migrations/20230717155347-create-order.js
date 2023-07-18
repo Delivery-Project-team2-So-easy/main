@@ -49,6 +49,9 @@ module.exports = {
         allowNull: false,
         defaultValue: 1,
       },
+      option: {
+        type: Sequelize.STRING,
+      },
       create_at: {
         allowNull: false,
         type: Sequelize.DATE,
