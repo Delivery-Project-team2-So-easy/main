@@ -8,13 +8,6 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-<<<<<<< HEAD
-    static associate(models) {
-      // define association here
-      this.hasMany(models.Review, {
-        sourceKey: 'id',
-        foreignKey: 'user_id',
-=======
     static associate({ Store, Order, Review, Review_like, Store_like }) {
       this.hasOne(Store, {
         sourceKey: 'id',
@@ -45,7 +38,6 @@ module.exports = (sequelize) => {
         foreignKey: 'user_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
->>>>>>> 23cb54db999c1e04a98e26de2e192bd14d6ef1ac
       });
     }
   }
