@@ -1,21 +1,21 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
-// const userRouter = require('./routes/user.route.js');
-// const storeRouter = require('./routes/store.route.js');
-const reviewRouter = require('./routes/review.route.js');
-// const orderRouter = require('./routes/order.route.js');
-
-const app = express();
-const PORT = 3000;
 const db = require('./models');
+const app = express();
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const indexRouter = require('./routes/index');
+const reviewRouter = require('./routes/review.route.js');
 
 app.set('port', PORT);
+
+app.set('port', process.env.PORT || 3000);
 
 db.sequelize.sync({});
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/', [reviewRouter]);
+
+app.use('/', indexRouter);
 
 app.use((err, req, res, next) => {
   console.error(err);
