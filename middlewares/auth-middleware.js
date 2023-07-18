@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: '토큰 타입이 일치하지 않습니다.' });
     }
 
-    const decodedToken = jwt.verify(token, 'customized_secret_key');
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const userId = decodedToken.userId;
     const user = await User.findOne({ where: { id: userId } });
 

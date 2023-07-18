@@ -15,6 +15,8 @@ class StoreService {
       return { code: 403, errorMessage: '매장을 추가로 등록할 수 없습니다.' };
     }
 
+    const user = await this.userRepository.findUser(userId);
+    if (!user.is_seller) return { code: 403, errorMessage: '사업자 등록 후 이용해 주세요.' };
     await this.storeRepository.registerStore(
       userId,
       storeName,
@@ -49,6 +51,8 @@ class StoreService {
 
   registerMenu = async (userId, menu, price, menuImg, option, category) => {
     const store = await this.storeRepository.findMyStore(userId);
+    if (!store)
+      return { code: 404, errorMessage: '매장을 보유중인 사장님만 메뉴를 등록할 수 있습니다.' };
     const storeId = store.id;
     const exMenu = await this.storeRepository.findMenu(storeId, menu);
     if (exMenu) return { code: 403, errorMessage: '이미 등록된 메뉴입니다.' };
@@ -66,7 +70,8 @@ class StoreService {
 
   updateMenu = async (userId, menuId, menu, price, menuImg, option, category) => {
     const store = await this.storeRepository.findMyStore(userId);
-
+    if (!store)
+      return { code: 404, errorMessage: '매장을 보유중인 사장님만 메뉴를 등록할 수 있습니다.' };
     const storeId = store.id;
     const exMenu = await this.storeRepository.findMenuById(storeId, menuId);
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
