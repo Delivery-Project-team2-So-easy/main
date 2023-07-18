@@ -17,73 +17,79 @@ class StoreController {
   };
 
   registerStore = async (req, res) => {
-    // auth미들웨어 완성시 수정 필요
-    // const {userId} = res.locals.user;
-    const { storeName, storeAddress, openingDate, storeImg, companyRegistrationNumber } = req.body;
-    if (!storeName || !storeAddress || !openingDate || !companyRegistrationNumber)
+    const userId = res.locals.user.id;
+    const storeImg = req.file.location;
+    const { storeName, storeAddress, openingDate } = req.body;
+    if (!storeName || !storeAddress || !openingDate)
       return res.status(400).json({ message: '매장 정보를 모두 입력해주세요.' });
     const { code, message, errorMessage } = await this.storeService.registerStore(
-      // userId,
+      userId,
       storeName,
       storeAddress,
       openingDate,
-      storeImg,
-      companyRegistrationNumber
+      storeImg
     );
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ message });
   };
 
   updateStore = async (req, res) => {
     // api명세 openingDate 삭제 필요
-    // auth미들웨어 완성시 수정 필요
-    // const userId = res.locals.users.id;
-    const { storeName, storeAddress, storeImg } = req.body;
+    const userId = res.locals.user.id;
+    const storeImg = req.file.location;
+    const { storeName, storeAddress } = req.body;
     const { code, message, errorMessage } = await this.storeService.updateStore(
-      //userId,
+      userId,
       storeName,
       storeAddress,
       storeImg
     );
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ message });
   };
 
   deleteStore = async (req, res) => {
-    // auth미들웨어 완성시 수정 필요
-    // const userId = res.locals.users.id;
-    const userId = 1;
+    const userId = res.locals.user.id;
     //auth 추가 시  deleteStore 파라미터에 userId 추가
     const { code, message, errorMessage } = await this.storeService.deleteStore(userId);
-
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    console.log(message); // 터미널에는 message 정상적으로 표시됨
+    res.status(code).json({ message }); // json데이터가 반환되지 않음..
   };
 
   registerMenu = async (req, res) => {
-    const { userId } = res.locals.users;
-    const { menu, price, menuImg, option, category } = req.body;
+    const userId = res.locals.user.id;
+    const menuImg = req.file.location;
+    const { menu, price, option, category } = req.body;
     if (!menu || !price || !option || !category)
       return res.status(400).json({ message: '메뉴 정보를 모두 입력해주세요' });
     const { code, message, errorMessage } = await this.storeService.registerMenu(
-      storeId,
+      userId,
       menu,
       price,
       menuImg,
       option,
       category
     );
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ message });
   };
 
   updateMenu = async (req, res) => {
-    // auth미들웨어 완성시 수정 필요
-    // const { userId } = res.locals.users;
+    const userId = res.locals.user.id;
     const { menuId } = req.params;
-    const { menu, price, menuImg, option, category } = req.body;
+    const menuImg = req.file.location;
+    const { menu, price, option, category } = req.body;
     const { code, message, errorMessage } = await this.storeService.updateMenu(
-      //userId,
+      userId,
       menuId,
       menu,
       price,
@@ -91,20 +97,20 @@ class StoreController {
       option,
       category
     );
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ message });
   };
 
   deleteMenu = async (req, res) => {
-    // auth미들웨어 완성시 수정 필요
-    // const { userId} = res.locals.user;
+    const userId = res.locals.user.id;
     const { menuId } = req.params;
-    const { code, message, errorMessage } = await this.storeService.deleteMenu(
-      //userId,
-      menuId
-    );
-    if (errorMessage) return res.status(code).json({ errorMessage });
-    return res.status(code).json({ message });
+    const { code, message, errorMessage } = await this.storeService.deleteMenu(userId, menuId);
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ message });
   };
 }
 module.exports = StoreController;

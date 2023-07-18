@@ -14,21 +14,13 @@ class StoreRepository {
     return await Store.findOne({ where: { user_id: userId } });
   };
 
-  registerStore = async (
-    //userId,
-    storeName,
-    storeAddress,
-    openingDate,
-    storeImg,
-    companyRegistrationNumber
-  ) => {
+  registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
     return await Store.create({
-      //user_id: userId,
+      user_id: userId,
       store_name: storeName,
       store_address: storeAddress,
       store_img: storeImg,
       opening_date: openingDate,
-      company_registration_number: companyRegistrationNumber,
     });
   };
 
@@ -54,6 +46,10 @@ class StoreRepository {
     return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
   };
 
+  findMenuById = async (storeId, menuId) => {
+    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  };
+
   registerMenu = async (storeId, menu, price, menuImg, option, category) => {
     return await Menu.create({
       store_id: storeId,
@@ -65,15 +61,7 @@ class StoreRepository {
     });
   };
 
-  updateMenu = async (
-    //userId,
-    menuId,
-    menu,
-    price,
-    menuImg,
-    option,
-    category
-  ) => {
+  updateMenu = async (menuId, menu, price, menuImg, option, category) => {
     await Menu.update(
       {
         menu,
@@ -82,7 +70,7 @@ class StoreRepository {
         option,
         category,
       },
-      { where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } }
+      { where: { id: menuId } }
     );
     return;
   };

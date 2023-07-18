@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const userRouter = require('./routes/user.route.js');
-const storeRouter = require('./routes/store.route.js');
+const userRouter = require('./routes/user.route');
+const storeRouter = require('./routes/store.route');
 const reviewRouter = require('./routes/review.route.js');
 const orderRouter = require('./routes/order.route.js');
 

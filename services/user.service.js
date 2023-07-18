@@ -47,7 +47,7 @@ class UserService {
       }
       const token = jwt.sign(
         {
-          userId: checkUser.userId,
+          userId: checkUser.id,
         },
         env.JWT_SECRET_KEY,
         { expiresIn: '1h' }
