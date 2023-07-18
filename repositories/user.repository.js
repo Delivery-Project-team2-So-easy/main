@@ -5,19 +5,19 @@ class UserRepository {
     email,
     name,
     password,
-    is_seller,
-    profile_img,
+    isSeller,
+    profileImg,
     address,
-    business_registration_number
+    businessRegistrationNumber
   ) => {
     await User.create({
       email,
       name,
       password,
-      is_seller,
-      profile_img,
+      is_seller: isSeller,
+      profile_img: profileImg,
       address,
-      business_registration_number,
+      business_registration_number: businessRegistrationNumber,
     });
     return;
   };
@@ -40,7 +40,6 @@ class UserRepository {
     await User.update({ point }, { where: { id: userId } });
     return;
   };
-
 }
 
 module.exports = UserRepository;

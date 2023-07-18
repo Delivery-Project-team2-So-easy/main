@@ -18,17 +18,16 @@ class ReviewController {
   };
 
   postReview = async (req, res) => {
-    const { userId } = res.locals.user;
+    const user = res.locals.user;
     const { storeId } = req.params;
     const { review, rating } = req.body;
-
     let filepath = req.file ? req.file.location : null;
     const reviewImg = filepath
       ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
       : '';
 
     const postReview = await this.reviewService.postReview(
-      userId,
+      user.id,
       storeId,
       review,
       rating,
@@ -46,7 +45,7 @@ class ReviewController {
   };
 
   updateReview = async (req, res) => {
-    const { userId } = res.locals.user;
+    const user = res.locals.user;
     const { storeId, reviewId } = req.params;
     const { review, rating } = req.body;
 
@@ -55,13 +54,13 @@ class ReviewController {
       ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
       : '';
 
-    const updateReview = await this.updateReview(
+    const updateReview = await this.reviewService.updateReview(
       review,
       rating,
-      reviewImg,
-      userId,
+      user.id,
       storeId,
-      reviewId
+      reviewId,
+      reviewImg
     );
 
     if (updateReview.errorMessage) {
@@ -76,10 +75,10 @@ class ReviewController {
   };
 
   deleteReview = async (req, res) => {
-    const { userId } = res.locals.user;
-    const { storeId, reviewId } = 1;
+    const user = res.locals.user;
+    const { storeId, reviewId } = req.params;
 
-    const deleteReview = await this.reviewService.deleteReview(userId, storeId, reviewId);
+    const deleteReview = await this.reviewService.deleteReview(user.id, storeId, reviewId);
 
     if (deleteReview.errorMessage) {
       return res.status(deleteReview.code).json({
@@ -91,10 +90,10 @@ class ReviewController {
   };
 
   likeReview = async (req, res) => {
-    const { userId } = res.locals.user;
+    const user = res.locals.user;
     const { storeId, reviewId } = req.params;
 
-    const likeReview = await this.reviewService.likeReview(userId, storeId, reviewId);
+    const likeReview = await this.reviewService.likeReview(user.id, storeId, reviewId);
 
     if (likeReview.errorMessage) {
       return res.status(likeReview.code).json({

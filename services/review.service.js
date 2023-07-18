@@ -1,5 +1,5 @@
 const ReviewRepository = require('../repositories/review.repository');
-const StoreRepository = require('../repositories/review.repository');
+const StoreRepository = require('../repositories/store.repository');
 const OrderRepository = require('../repositories/order.repository');
 
 class ReviewService {
@@ -16,25 +16,35 @@ class ReviewService {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       }
       return getReviews;
-    } catch {
+    } catch (err) {
+      console.error(err);
       return { code: 500, errorMessage: '리뷰 조회에 실패하였습니다.' };
     }
   };
 
   postReview = async (userId, storeId, review, rating, review_img) => {
     const findStore = await this.storeRepository.findStoreById(storeId);
+    const existOrder = await this.orderRepository.existOrder(userId, storeId);
 
     try {
       if (!review || !rating) {
         return { code: 400, errorMessage: '리뷰와 평점을 모두 입력해주세요.' };
-      } else if (!orderId) {
+      } else if (!existOrder) {
         return { code: 400, errorMessage: '주문 내역이 없어 리뷰를 작성 할 수 없습니다.' };
       } else if (!findStore) {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       }
-      await this.reviewRepository.postReview(userId, storeId, orderId, review, rating, review_img);
+      await this.reviewRepository.postReview(
+        userId,
+        storeId,
+        existOrder.id,
+        review,
+        rating,
+        review_img
+      );
       return true;
-    } catch {
+    } catch (err) {
+      console.error(err);
       return { code: 500, errorMessage: '리뷰 등록에 실패했습니다.' };
     }
   };
@@ -57,7 +67,8 @@ class ReviewService {
       }
       await this.reviewRepository.updateReview(review, rating, reviewId, reviewImg);
       return true;
-    } catch {
+    } catch (err) {
+      console.error(err);
       return { code: 500, errorMessage: '리뷰 수정에 실패하였습니다.' };
     }
   };
@@ -76,7 +87,8 @@ class ReviewService {
       }
       await this.reviewRepository.deleteReview(reviewId);
       return true;
-    } catch {
+    } catch (err) {
+      console.error(err);
       return { code: 500, errorMessage: '리뷰 삭제에 실패하였습니다.' };
     }
   };
@@ -90,7 +102,8 @@ class ReviewService {
       }
       const likeReview = await this.reviewRepository.likeReview(userId, reviewId);
       return { code: 200, message: likeReview.message, likeCount: likeReview.likeCount };
-    } catch {
+    } catch (err) {
+      console.error(err);
       return { code: 500, errorMessage: '리뷰 좋아요에 실패하였습니다.' };
     }
   };

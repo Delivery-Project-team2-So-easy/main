@@ -1,28 +1,28 @@
-const { Review, Review_like } = require('../models');
+const { Review, Review_like, Order } = require('../models');
 const { Op } = require('sequelize');
 
 class ReviewRepository {
   getReviews = async (storeId) => {
     const reviews = await Review.findAll({
       where: { store_id: storeId },
-      // include: [
-      //   {
-      //     model: User,
-      //     attributes: ['name'],
-      //   },
-      // ],
+      include: [
+        {
+          model: User,
+          attributes: ['name'],
+        },
+      ],
     });
 
     const getReviews = reviews.map((review) => {
       return {
-        review_id: review.review_id,
-        // user_id: review.user_id,
+        reviewId: review.review_id,
+        userId: review.user_id,
         name: review.User.name,
         review: review.review,
         rating: review.rating,
-        food_img: review.review_img,
-        created_at: review.created_at,
-        updated_at: review.updated_at,
+        foodImg: review.review_img,
+        createdAt: review.created_at,
+        updatedAt: review.updated_at,
       };
     });
 
@@ -32,7 +32,7 @@ class ReviewRepository {
   getReviewDetail = async (storeId, reviewId) => {
     const getReviewDetail = await Review.findOne({
       where: {
-        [Op.and]: [{ store_id: storeId }, { review_id: reviewId }],
+        [Op.and]: [{ store_id: storeId }, { id: reviewId }],
       },
     });
     return getReviewDetail;
@@ -52,17 +52,14 @@ class ReviewRepository {
   };
 
   updateReview = async (review, rating, reviewId, reviewImg) => {
-    if (reviewImg === null) {
-      const updateReview = await Review.update(
-        { review, rating },
-        { where: { review_id: reviewId } }
-      );
+    if (!reviewImg.length) {
+      const updateReview = await Review.update({ review, rating }, { where: { id: reviewId } });
 
       return updateReview;
     } else {
       const updateReview = await Review.update(
         { review, rating, review_img: reviewImg },
-        { where: { review_id: reviewId } }
+        { where: { id: reviewId } }
       );
 
       return updateReview;
@@ -70,7 +67,7 @@ class ReviewRepository {
   };
 
   deleteReview = async (reviewId) => {
-    const deleteReview = await Review.destory({ where: { review_id: reviewId } });
+    const deleteReview = await Review.destroy({ where: { id: reviewId } });
 
     return deleteReview;
   };

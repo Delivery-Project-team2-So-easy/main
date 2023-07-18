@@ -1,5 +1,5 @@
 const { Store, Menu } = require('../models');
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 class StoreRepository {
   findStore = async (storeName) => {
@@ -7,7 +7,7 @@ class StoreRepository {
   };
 
   findStoreById = async (storeId) => {
-    return await Store.findOne({ where: { store_id: storeId } });
+    return await Store.findOne({ where: { id: storeId } });
   };
 
   findMyStore = async (userId) => {
@@ -108,9 +108,29 @@ class StoreRepository {
     return searchMenu;
   };
 
-  getStoreInfo = async (userId) => {
-    const storeInfo = await Store.findOne({ where: { user_id: userId } });
-    return storeInfo;
+  getStoreInfo = async (userId, storeId) => {
+    console.log(userId);
+    if (!userId) {
+      const storeInfo = await Store.findOne({
+        attributes: [
+          'id',
+          'store_name',
+          [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.store_id = Store.id)`), 'menu'],
+          'total_sales',
+        ],
+        include: [
+          {
+            model: Menu,
+            attributes: [],
+            where: { store_id: storeId },
+          },
+        ],
+      });
+      return storeInfo;
+    } else {
+      const storeInfo = await Store.findOne({ where: { user_id: userId } });
+      return storeInfo;
+    }
   };
 
   getMenuInfo = async (storeId, menuId) => {

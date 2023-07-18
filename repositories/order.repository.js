@@ -1,4 +1,5 @@
 const { Order } = require('../models');
+const { Op } = require('sequelize');
 
 class OrderRepository {
   getOrders = async (storeId) => {
@@ -25,6 +26,16 @@ class OrderRepository {
   findOrder = async (orderId) => {
     const order = await Order.findOne({ where: { id: orderId } });
     return order;
+  };
+
+  // postReview에서 사용
+  existOrder = async (userId, storeId) => {
+    const existOrder = await Order.findOne({
+      where: {
+        [Op.and]: [{ user_id: userId }, { store_id: storeId }],
+      },
+    });
+    return existOrder;
   };
 
   updateDeliveryStatus = async (orderId) => {
