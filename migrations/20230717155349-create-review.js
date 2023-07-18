@@ -44,7 +44,7 @@ module.exports = {
         allowNull: false,
       },
       rating: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.TINYINT,
         allowNull: false,
         defaultValue: 0,
       },

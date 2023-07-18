@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Store, Review_like }) {
+    static associate({ User, Store, Order, Review_like }) {
       this.belongsTo(User, {
         targetKey: 'id',
         foreignKey: 'user_id',
@@ -18,6 +18,12 @@ module.exports = (sequelize) => {
       this.belongsTo(Store, {
         targetKey: 'id',
         foreignKey: 'store_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.belongsTo(Order, {
+        targetKey: 'id',
+        foreignKey: 'order_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
@@ -54,7 +60,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       rating: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.TINYINT,
         allowNull: false,
         defaultValue: 0,
       },
