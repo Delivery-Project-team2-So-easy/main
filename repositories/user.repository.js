@@ -4,7 +4,7 @@ class UserRepository {
   signUp = async (
     email,
     name,
-    password,
+    hashPassword,
     isSeller,
     profileImg,
     address,
@@ -13,7 +13,7 @@ class UserRepository {
     await User.create({
       email,
       name,
-      password,
+      password: hashPassword,
       is_seller: isSeller,
       profile_img: profileImg,
       address,
@@ -39,6 +39,32 @@ class UserRepository {
   pointDeduction = async (userId, point) => {
     await User.update({ point }, { where: { id: userId } });
     return;
+  };
+
+  updateUser = async (
+    userId,
+    email,
+    name,
+    hashPassword,
+    isSeller,
+    profileImg,
+    address,
+    businessRegistrationNumber
+  ) => {
+    return await User.update(
+      {
+        email,
+        name,
+        password: hashPassword,
+        is_seller: isSeller,
+        profile_img: profileImg,
+        address,
+        business_registration_number: businessRegistrationNumber,
+      },
+      {
+        where: { id: userId },
+      }
+    );
   };
 }
 

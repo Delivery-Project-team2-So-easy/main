@@ -93,6 +93,40 @@ class UserService {
       return { code: 500, errorMessage: err };
     }
   };
+
+  updateUser = async (
+    userId,
+    email,
+    name,
+    password,
+    isSeller,
+    profileImg,
+    address,
+    businessRegistrationNumber
+  ) => {
+    try {
+      const hashPassword = await bcrypt.hash(password, salt);
+      const existUserData = await this.userRepository.existUser(email);
+      if (existUserData == null) {
+        await this.userRepository.updateUser(
+          userId,
+          email,
+          name,
+          hashPassword,
+          isSeller,
+          profileImg,
+          address,
+          businessRegistrationNumber
+        );
+        return { code: 201, message: '데이터가 수정되었습니다.' };
+      } else {
+        return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
+      }
+    } catch (err) {
+      console.log(err);
+      return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
+    }
+  };
 }
 
 module.exports = UserService;
