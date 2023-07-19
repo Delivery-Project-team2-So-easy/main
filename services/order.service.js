@@ -94,6 +94,27 @@ class OrderService {
       return { code: 500, errorMessage: '배달 완료 처리에 실패했습니다.' };
     }
   };
+
+  // 여러 음식 주문
+  order2 = async (orderDetail, user, storeId) => {
+    // const user = await this.userRepository.findUser(userId);
+    const address = user.address;
+    const userId = user.id;
+    const order = await this.orderRepository.createOrder(userId, storeId, address);
+    const orderId = order.id;
+
+    let totalPrice = 0;
+    orderDetail.forEach(async (od, i) => {
+      const menuId = od.menuId;
+      const quantity = od.quantity;
+      const price = od.price;
+      const option = od.option;
+      totalPrice += price * quantity;
+      await this.orderRepository.createOrderDetail(orderId, menuId, quantity, price, option);
+    });
+    await this.orderRepository.updateOrder(orderId, totalPrice);
+    return { code: 200, message: '정상적으로 주문되었습니다.' };
+  };
 }
 
 module.exports = OrderService;

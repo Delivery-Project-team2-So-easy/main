@@ -15,7 +15,6 @@ class UserController {
       address,
       businessRegistrationNumber,
     } = req.body;
-    console.log(email, name, password, confirmPassword);
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
     if (!email || !name || !password || !confirmPassword || !address)

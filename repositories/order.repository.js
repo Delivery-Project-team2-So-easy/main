@@ -1,4 +1,4 @@
-const { Order } = require('../models');
+const { Order, Order_detail } = require('../models');
 const { Op } = require('sequelize');
 
 class OrderRepository {
@@ -41,6 +41,28 @@ class OrderRepository {
   updateDeliveryStatus = async (orderId) => {
     await Order.update({ is_delivered: true }, { where: { id: orderId } });
     return;
+  };
+
+  // 여러 음식 주문
+  createOrder = async (userId, storeId, address) => {
+    return await Order.create({
+      user_id: userId,
+      store_id: storeId,
+      address,
+    });
+  };
+  createOrderDetail = async (orderId, menuId, quantity, price, option) => {
+    await Order_detail.create({
+      order_id: orderId,
+      menu_id: menuId,
+      quantity,
+      price,
+      option,
+    });
+  };
+
+  updateOrder = async (orderId, totalPrice) => {
+    return Order.update({ total_price: totalPrice }, { where: { id: orderId } });
   };
 }
 

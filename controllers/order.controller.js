@@ -42,6 +42,25 @@ class OrderController {
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
   };
+
+  // 여러 음식 주문
+  order2 = async (req, res) => {
+    try {
+      const { storeId } = req.params;
+      const { user } = res.locals;
+      const orderDetail = req.body; // 아마 배열로 오겠지?
+      const { code, message, errorMessage } = await this.orderService.order2(
+        orderDetail,
+        user,
+        storeId
+      );
+      if (errorMessage) return res.status(code).json({ errorMessage });
+      return res.status(code).json({ message });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ errorMessage: '주문에 실패했습니다.' });
+    }
+  };
 }
 
 module.exports = OrderController;
