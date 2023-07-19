@@ -113,28 +113,26 @@ class StoreService {
     }
   };
 
-  // search = async (searchKeyword) => {
-  //   try {
-  //     const allStoreData = await this.storeRepository.searchStore(searchKeyword);
-  //     const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
+  search = async (searchKeyword) => {
+    try {
+      const allStoreData = await this.storeRepository.searchStore(searchKeyword);
+      // 검색어를 Store 테이블의 가게명과 매치
+      const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
+      // 검색어를 Menu 테이블의 메뉴명 or 카테고리 와 매치
 
-  //     const allSearchData = [...allStoreData, ...allMenuData];
-  //     //중복제거 코드!!
-  //     const filteredSearchData = arr.reduce((acc, current) => {
-  //       const x = acc.find((item) => item.id === current.id);
-  //       if (!x) {
-  //         return acc.concat([current]);
-  //       } else {
-  //         return acc;
-  //       }
-  //     }, []);
+      // for (var i = 0; i < allMenuData.length; i++) {
+      //   if (allMenuData[i].store_id === allMenuData[i + 1].store_id) {
+      //     allMenuData.splice(i, 1);
+      //   }
+      // }
+      // 메뉴의 가게이름 중복 제거
 
-  //     return { code: 200, data: a };
-  //   } catch (err) {
-  //     console.log(err);
-  //     return { code: 500, data: '오류' };
-  //   }
-  // };
+      return { code: 200, data: { allStoreData, allMenuData } };
+    } catch (err) {
+      console.log(err);
+      return { code: 500, errorMessage: '오류' };
+    }
+  };
 }
 
 module.exports = StoreService;
