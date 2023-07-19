@@ -114,13 +114,13 @@ class StoreRepository {
         attributes: [
           'id',
           'store_name',
-          [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.store_id = Store.id)`), 'menu'],
+          // [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.store_id = Store.id)`), 'menu'],
           'total_sales',
         ],
         include: [
           {
             model: Menu,
-            attributes: [],
+            attributes: ['menu'],
             where: { store_id: storeId },
           },
         ],

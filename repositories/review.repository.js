@@ -1,29 +1,34 @@
-const { Review } = require('../models');
-const { Op } = require('sequelize');
+const { Review, Review_like, User } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 
 class ReviewRepository {
   getReviews = async (storeId) => {
-    const reviews = await Review.findAll({
+    const getReviews = await Review.findAll({
       where: { store_id: storeId },
+      attributes: [
+        'id',
+        'user_id',
+        [Sequelize.literal(`(SELECT name FROM users WHERE users.id = Review.user_id)`), 'name'],
+        'review',
+        'rating',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT(*) From review_likes WHERE review_likes.review_id = Review.id)`
+          ),
+          'likes',
+        ],
+      ],
       include: [
         {
           model: User,
-          attributes: ['name'],
+          attributes: [],
+        },
+        {
+          model: Review_like,
+          attributes: [],
         },
       ],
-    });
-
-    const getReviews = reviews.map((review) => {
-      return {
-        reviewId: review.review_id,
-        userId: review.user_id,
-        name: review.User.name,
-        review: review.review,
-        rating: review.rating,
-        foodImg: review.review_img,
-        createdAt: review.created_at,
-        updatedAt: review.updated_at,
-      };
+      order: [[Sequelize.literal('likes'), 'DESC']],
     });
 
     return getReviews;
