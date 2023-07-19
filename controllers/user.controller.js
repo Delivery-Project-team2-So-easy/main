@@ -4,16 +4,9 @@ class UserController {
   userService = new UserService();
 
   signUp = async (req, res) => {
-    const {
-      email,
-      name,
-      password,
-      confirmPassword,
-      isSeller,
-      profileImg,
-      address,
-      businessRegistrationNumber,
-    } = req.body;
+    const profileImg = req.file ? req.file.location : null;
+
+    const { email, name, password, confirmPassword, isSeller, address } = req.body;
 
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
@@ -42,8 +35,7 @@ class UserController {
       password,
       isSeller,
       profileImg,
-      address,
-      businessRegistrationNumber
+      address
     );
 
     if (result.errorMessage)
@@ -59,7 +51,7 @@ class UserController {
     const result = await this.userService.login(email, password);
     res.clearCookie('authorization');
     res.cookie('authorization', `Bearer ${result.token}`);
-    
+
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });

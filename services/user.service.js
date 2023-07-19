@@ -10,28 +10,12 @@ const nodemailer = require('nodemailer');
 class UserService {
   userRepository = new UserRepository();
 
-  signUp = async (
-    email,
-    name,
-    password,
-    isSeller,
-    profileImg,
-    address,
-    businessRegistrationNumber
-  ) => {
+  signUp = async (email, name, password, isSeller, profileImg, address) => {
     try {
       const hashPassword = await bcrypt.hash(password, salt);
       const existUserData = await this.userRepository.existUser(email);
       if (existUserData == null) {
-        await this.userRepository.signUp(
-          email,
-          name,
-          hashPassword,
-          isSeller,
-          profileImg,
-          address,
-          businessRegistrationNumber
-        );
+        await this.userRepository.signUp(email, name, hashPassword, isSeller, profileImg, address);
         return { code: 201, message: '회원 가입을 축하합니다.' };
       } else {
         return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
