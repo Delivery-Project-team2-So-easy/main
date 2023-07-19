@@ -6,7 +6,9 @@ class OrderController {
   getOrders = async (_, res) => {
     const { is_seller } = res.locals.user;
     if (is_seller === false)
-      return { code: 401, errorMessage: '사장으로 로그인한 계정만 이용할 수 있는 기능입니다.' };
+      return res
+        .status(401)
+        .json({ errorMessage: '사장으로 로그인한 계정만 이용할 수 있는 기능입니다.' });
 
     const result = await this.orderService.getOrders(res);
     if (result.errorMessage)
@@ -29,9 +31,11 @@ class OrderController {
 
   isDelivered = async (req, res) => {
     const { orderId } = req.params;
-    const { is_seller } = res.local.user;
+    const { is_seller } = res.locals.user;
     if (is_seller === false)
-      return { code: 401, errorMessage: '사장으로 로그인한 계정만 이용할 수 있는 기능입니다.' };
+      return res
+        .status(401)
+        .json({ errorMessage: '사장으로 로그인한 계정만 이용할 수 있는 기능입니다.' });
 
     const result = await this.orderService.isDelivered(orderId, res);
     if (result.errorMessage)

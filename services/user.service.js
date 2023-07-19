@@ -98,7 +98,6 @@ class UserService {
     }
   };
 
-
   storeLike = async (storeId, res) => {
     try {
       const user = res.locals.user;
@@ -116,7 +115,21 @@ class UserService {
       console.error(error);
       return { code: 500, errorMessage: '매장 즐겨찾기에 실패 했습니다.' };
     }
-  }
+  };
+
+  getMyLike = async (userId) => {
+    try {
+      const getMyLike = await this.likeRepository.getMyLike(userId);
+
+      if (!getMyLike) {
+        return { code: 404, errorMessage: '즐겨찾기에 추가된 매장이 없습니다.' };
+      }
+      return getMyLike;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '즐겨찾기 조회에 실패했습니다.' };
+    }
+  };
 
   updateUser = async (
     userId,

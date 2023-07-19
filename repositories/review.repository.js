@@ -17,6 +17,8 @@ class ReviewRepository {
           ),
           'likes',
         ],
+        'review_img',
+        'create_at',
       ],
       include: [
         {
@@ -28,10 +30,22 @@ class ReviewRepository {
           attributes: [],
         },
       ],
-      order: [[Sequelize.literal('likes'), 'DESC']],
+      order: [
+        [Sequelize.literal('likes'), 'DESC'],
+        ['create_at', 'DESC'],
+      ],
     });
 
     return getReviews;
+  };
+
+  findReviewById = async (storeId, userId) => {
+    const findReviewById = await Review.findOne({
+      where: {
+        [Op.and]: [{ store_id: storeId }, { user_id: userId }],
+      },
+    });
+    return findReviewById;
   };
 
   getReviewDetail = async (storeId, reviewId) => {

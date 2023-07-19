@@ -18,10 +18,11 @@ class StoreController {
 
   registerStore = async (req, res) => {
     const userId = res.locals.user.id;
-    const storeImg = req.file ? req.file.location : null;
     const { storeName, storeAddress, openingDate } = req.body;
     if (!storeName || !storeAddress || !openingDate)
       return res.status(400).json({ message: '매장 정보를 모두 입력해주세요.' });
+
+    const storeImg = req.file ? req.file.location : null;
     const { code, message, errorMessage } = await this.storeService.registerStore(
       userId,
       storeName,
@@ -64,6 +65,11 @@ class StoreController {
   };
 
   registerMenu = async (req, res) => {
+    const { is_seller } = res.locals.user;
+    if (is_seller === false)
+      return res
+        .status(401)
+        .json({ errorMessage: '사장으로 로그인한 계정만 이용할 수 있는 기능입니다.' });
     const userId = res.locals.user.id;
     const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
@@ -88,6 +94,8 @@ class StoreController {
     const { menuId } = req.params;
     const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
+    if (!menu && !price && !option && !category)
+      return res.status(400).json({ message: '수정하려는 정보가 없습니다.' });
     const { code, message, errorMessage } = await this.storeService.updateMenu(
       userId,
       menuId,
@@ -111,6 +119,16 @@ class StoreController {
       return res.status(code).json({ errorMessage });
     }
     res.status(code).json({ message });
+  };
+
+  getAllMenuInfo = async (req, res) => {
+    const { storeId } = req.params;
+    const getMenuInfo = await this.storeService.getAllMenuInfo(storeId);
+
+    if (getMenuInfo.errorMessage) {
+      return res.status(getMenuInfo.code).json({ errorMessage: getMenuInfo.errorMessage });
+    }
+    return res.status(200).json({ menus: getMenuInfo });
   };
 
   search = async (req, res) => {
