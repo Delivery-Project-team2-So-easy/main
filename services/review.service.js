@@ -1,11 +1,13 @@
 const ReviewRepository = require('../repositories/review.repository');
 const StoreRepository = require('../repositories/store.repository');
 const OrderRepository = require('../repositories/order.repository');
+const LikeRepository = require('../repositories/like.repository');
 
 class ReviewService {
   reviewRepository = new ReviewRepository();
   storeRepository = new StoreRepository();
   orderRepository = new OrderRepository();
+  likeRepository = new LikeRepository();
 
   getReviews = async (storeId) => {
     const findStore = await this.storeRepository.findStoreById(storeId);
@@ -100,7 +102,7 @@ class ReviewService {
       if (!getReviewDetail) {
         return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
       }
-      const likeReview = await this.reviewRepository.likeReview(userId, reviewId);
+      const likeReview = await this.likeRepository.likeReview(userId, reviewId);
       return { code: 200, message: likeReview.message, likeCount: likeReview.likeCount };
     } catch (err) {
       console.error(err);

@@ -46,7 +46,7 @@ class StoreService {
     if (!store) return { code: 404, errorMessage: '보유한 매장이 없습니다.' };
     const storeName = store.store_name;
     await this.storeRepository.deleteStore(userId);
-    return { code: 204, message: `${storeName} 매장이 정상적으로 삭제되었습니다.` };
+    return { code: 200, message: `${storeName} 매장이 정상적으로 삭제되었습니다.` };
   };
 
   registerMenu = async (userId, menu, price, menuImg, option, category) => {
@@ -88,7 +88,7 @@ class StoreService {
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
 
     await this.storeRepository.deleteMenu(storeId, menuId);
-    return { code: 204, message: '메뉴가 삭제되었습니다.' };
+    return { code: 200, message: '메뉴가 삭제되었습니다.' };
   };
 
   getStore = async () => {

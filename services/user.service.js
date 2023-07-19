@@ -1,6 +1,8 @@
 require('dotenv').config();
 
 const UserRepository = require('../repositories/user.repository');
+const StoreRepository = require('../repositories/store.repository');
+const LikeRepository = require('../repositories/like.repository');
 const jwt = require('jsonwebtoken');
 const env = process.env;
 const bcrypt = require('bcrypt');
@@ -9,6 +11,8 @@ const nodemailer = require('nodemailer');
 
 class UserService {
   userRepository = new UserRepository();
+  storeRepository = new StoreRepository();
+  likeRepository = new LikeRepository();
 
   signUp = async (
     email,
@@ -93,6 +97,26 @@ class UserService {
       return { code: 500, errorMessage: err };
     }
   };
+
+
+  storeLike = async (storeId, res) => {
+    try {
+      const user = res.locals.user;
+      const existStore = await this.storeRepository.findStoreById(storeId);
+      if (!existStore) return { code: 404, errorMessage: '해당 매장이 없습니다.' };
+
+      const existLike = await this.likeRepository.existUserLike(user.id, storeId);
+      if (!existLike) {
+        await this.likeRepository.createUserLike(user.id, storeId);
+        return { code: 200, message: '매장을 내 즐겨 찾기에 추가 하였습니다.' };
+      }
+      await this.likeRepository.deleteUserLike(user.id, storeId);
+      return { code: 200, message: '매장을 내 즐겨 찾기에서 취소 하였습니다.' };
+    } catch (error) {
+      console.error(error);
+      return { code: 500, errorMessage: '매장 즐겨찾기에 실패 했습니다.' };
+    }
+  }
 
   updateUser = async (
     userId,
