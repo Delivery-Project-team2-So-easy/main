@@ -15,6 +15,6 @@ router.delete('/store/menu/:menuId', authMiddleware, storeController.deleteMenu)
 
 router.get('/store/', storeController.getStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
-// router.post('/search', storeController.search);
+router.post('/store/search', storeController.search);
 
 module.exports = router;

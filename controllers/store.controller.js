@@ -112,5 +112,17 @@ class StoreController {
     }
     res.status(code).json({ message });
   };
+
+  search = async (req, res) => {
+    const { searchKeyword } = req.body;
+    if (!searchKeyword) {
+      return res.status(400).json({ message: '검색어를 입력해주세요' });
+    }
+    const { code, data, errorMessage } = await this.storeService.search(searchKeyword);
+    if (errorMessage) {
+      return res.status(code).json({ errorMessage });
+    }
+    res.status(code).json({ data });
+  };
 }
 module.exports = StoreController;
