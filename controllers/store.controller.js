@@ -38,7 +38,7 @@ class StoreController {
   updateStore = async (req, res) => {
     // api명세 openingDate 삭제 필요
     const userId = res.locals.user.id;
-    const storeImg = req.file.location;
+    const storeImg = req.file ? req.file.location : null;
     const { storeName, storeAddress } = req.body;
     const { code, message, errorMessage } = await this.storeService.updateStore(
       userId,
@@ -86,7 +86,7 @@ class StoreController {
   updateMenu = async (req, res) => {
     const userId = res.locals.user.id;
     const { menuId } = req.params;
-    const menuImg = req.file.location;
+    const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
     const { code, message, errorMessage } = await this.storeService.updateMenu(
       userId,

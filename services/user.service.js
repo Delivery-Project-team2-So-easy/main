@@ -1,8 +1,10 @@
-require('dotenv').config(); // process.env 쓰려면 필요한건가 ?? 옙 저는 이거 쓰고 사용합니다
+require('dotenv').config();
 
 const UserRepository = require('../repositories/user.repository');
 const jwt = require('jsonwebtoken');
 const env = process.env;
+const bcrypt = require('bcrypt');
+const salt = 12;
 const nodemailer = require('nodemailer');
 
 class UserService {
@@ -18,12 +20,13 @@ class UserService {
     businessRegistrationNumber
   ) => {
     try {
+      const hashPassword = await bcrypt.hash(password, salt);
       const existUserData = await this.userRepository.existUser(email);
       if (existUserData == null) {
         await this.userRepository.signUp(
           email,
           name,
-          password,
+          hashPassword,
           isSeller,
           profileImg,
           address,
@@ -42,9 +45,13 @@ class UserService {
   login = async (email, password) => {
     try {
       const checkUser = await this.userRepository.existUser(email);
-      if (!checkUser || checkUser.password !== password) {
-        return { code: 404, errorMessage: '이메일 또는 패스워드를 입력해주세요.' };
-      }
+      if (!checkUser)
+        return { code: 412, errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' };
+
+      const match = await bcrypt.compare(password, checkUser.password);
+      if (!match)
+        return { code: 412, errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' };
+
       const token = jwt.sign(
         {
           userId: checkUser.id,

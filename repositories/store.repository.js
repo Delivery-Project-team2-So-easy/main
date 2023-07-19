@@ -109,7 +109,6 @@ class StoreRepository {
   };
 
   getStoreInfo = async (userId, storeId) => {
-    console.log(userId);
     if (!userId) {
       const storeInfo = await Store.findOne({
         attributes: [
