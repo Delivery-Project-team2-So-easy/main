@@ -14,12 +14,12 @@ class UserController {
       address,
       businessRegistrationNumber,
     } = req.body;
-
+    console.log(email, name, password, confirmPassword);
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
-    if (!email || !name || !password || !confirmPassword)
+    if (!email || !name || !password || !confirmPassword || !address)
       return res.status(400).json({
-        errorMessage: '이메일, 이름, 비밀번호, 비밀번호 확인을 전부 입력해주세요.',
+        errorMessage: '이메일, 이름, 비밀번호, 비밀번호 확인, 주소를 모두 입력해주세요.',
       });
 
     if (!emailReg.test(email))
@@ -59,15 +59,36 @@ class UserController {
     const result = await this.userService.login(email, password);
     res.clearCookie('authorization');
     res.cookie('authorization', `Bearer ${result.token}`);
-    
+
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
   };
 
+  logout = async (_, res) => {
+    try {
+      const user = res.locals.user;
+
+      res.clearCookie('authorization');
+      return res.status(200).json({ message: `${user.name}님이 로그아웃 했습니다.` });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ errorMessage: '로그아웃에 실패했습니다.' });
+    }
+  };
+
   checkEmail = async (req, res) => {
     const { email } = req.body;
     const result = await this.userService.checkEmail(email);
+
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.status(result.code).json({ message: result.message });
+  };
+
+  storeLike = async (req, res) => {
+    const { storeId } = req.params;
+    const result = await this.userService.storeLike(storeId, res);
 
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
