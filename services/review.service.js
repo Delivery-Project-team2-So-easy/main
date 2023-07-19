@@ -88,7 +88,7 @@ class ReviewService {
         return { code: 401, errorMessage: '리뷰삭제 권한이 없습니다.' };
       }
       await this.reviewRepository.deleteReview(reviewId);
-      return true;
+      return { code: 200, message: '리뷰를 삭제하였습니다.' };
     } catch (err) {
       console.error(err);
       return { code: 500, errorMessage: '리뷰 삭제에 실패하였습니다.' };

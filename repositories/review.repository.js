@@ -17,6 +17,8 @@ class ReviewRepository {
           ),
           'likes',
         ],
+        'review_img',
+        'create_at',
       ],
       include: [
         {
@@ -28,7 +30,10 @@ class ReviewRepository {
           attributes: [],
         },
       ],
-      order: [[Sequelize.literal('likes'), 'DESC']],
+      order: [
+        [Sequelize.literal('likes'), 'DESC'],
+        ['create_at', 'DESC'],
+      ],
     });
 
     return getReviews;

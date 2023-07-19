@@ -25,16 +25,27 @@ class StoreRepository {
   };
 
   updateStore = async (userId, storeName, storeAddress, storeImg) => {
-    return await Store.update(
-      {
-        store_name: storeName,
-        store_address: storeAddress,
-        store_img: storeImg,
-      },
-      {
-        where: { user_id: userId },
-      }
-    );
+    if (storeImg)
+      return await Store.update(
+        {
+          store_name: storeName,
+          store_address: storeAddress,
+          store_img: storeImg,
+        },
+        {
+          where: { user_id: userId },
+        }
+      );
+    else
+      return await Store.update(
+        {
+          store_name: storeName,
+          store_address: storeAddress,
+        },
+        {
+          where: { user_id: userId },
+        }
+      );
   };
 
   deleteStore = async (userId) => {

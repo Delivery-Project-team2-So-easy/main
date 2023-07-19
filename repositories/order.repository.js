@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 class OrderRepository {
   getOrders = async (storeId) => {
     const orders = await Order.findAll({
-      order: [['created_at', 'DESC']],
+      order: [['create_at', 'DESC']],
       where: { store_id: storeId },
     });
     return orders;

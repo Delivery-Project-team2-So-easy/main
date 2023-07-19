@@ -1,4 +1,5 @@
 const { Store_like, Review_like } = require('../models');
+const { Op } = require('sequelize');
 
 class LikeRepository {
   existUserLike = async (userId, storeId) => {

@@ -86,7 +86,7 @@ class ReviewController {
       });
     }
 
-    return res.status(204).json();
+    return res.status(deleteReview.code).json({ message: deleteReview.message });
   };
 
   likeReview = async (req, res) => {

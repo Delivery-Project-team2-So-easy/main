@@ -58,7 +58,7 @@ class UserController {
       return res.status(400).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
 
     const result = await this.userService.login(email, password);
-    res.clearCookie('authorization');
+
     res.cookie('authorization', `Bearer ${result.token}`);
 
     if (result.errorMessage)
@@ -87,15 +87,14 @@ class UserController {
     return res.status(result.code).json({ message: result.message });
   };
 
-
   storeLike = async (req, res) => {
     const { storeId } = req.params;
     const result = await this.userService.storeLike(storeId, res);
-    
+
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
-  }
+  };
 
   updateUser = async (req, res) => {
     console.log(res.locals.user);
