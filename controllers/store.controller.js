@@ -121,6 +121,16 @@ class StoreController {
     res.status(code).json({ message });
   };
 
+  getAllMenuInfo = async (req, res) => {
+    const { storeId } = req.params;
+    const getMenuInfo = await this.storeService.getAllMenuInfo(storeId);
+
+    if (getMenuInfo.errorMessage) {
+      return res.status(getMenuInfo.code).json({ errorMessage: getMenuInfo.errorMessage });
+    }
+    return res.status(200).json({ menus: getMenuInfo });
+  };
+
   search = async (req, res) => {
     const { searchKeyword } = req.body;
     if (!searchKeyword) {

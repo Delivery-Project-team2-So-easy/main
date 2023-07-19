@@ -10,10 +10,10 @@ class ReviewService {
   likeRepository = new LikeRepository();
 
   getReviews = async (storeId) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviews = await this.reviewRepository.getReviews(storeId);
-
     try {
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviews = await this.reviewRepository.getReviews(storeId);
+
       if (!findStore) {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       }
@@ -25,11 +25,14 @@ class ReviewService {
   };
 
   postReview = async (userId, storeId, review, rating, review_img) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const existOrder = await this.orderRepository.existOrder(userId, storeId);
-
     try {
-      if (!review || !rating) {
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const existOrder = await this.orderRepository.existOrder(userId, storeId);
+      const existReview = await this.reviewRepository.findReviewById(storeId, userId);
+
+      if (existReview) {
+        return { code: 400, errorMessage: '해당 주문에 대한 리뷰를 이미 작성하셨습니다.' };
+      } else if (!review || !rating) {
         return { code: 400, errorMessage: '리뷰와 평점을 모두 입력해주세요.' };
       } else if (!existOrder) {
         return { code: 400, errorMessage: '주문 내역이 없어 리뷰를 작성 할 수 없습니다.' };
@@ -52,10 +55,10 @@ class ReviewService {
   };
 
   updateReview = async (review, rating, userId, storeId, reviewId, reviewImg) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
       if (!findStore) {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       } else if (!getReviewDetail) {
@@ -76,10 +79,10 @@ class ReviewService {
   };
 
   deleteReview = async (userId, storeId, reviewId) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
       if (!findStore) {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       } else if (!getReviewDetail) {
@@ -96,9 +99,9 @@ class ReviewService {
   };
 
   likeReview = async (userId, storeId, reviewId) => {
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
       if (!getReviewDetail) {
         return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
       }

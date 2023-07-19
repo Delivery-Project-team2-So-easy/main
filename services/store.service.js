@@ -115,12 +115,29 @@ class StoreService {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
 
-      if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 없습니다.' };
+      if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
     } catch (err) {
       console.log(err);
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
+    }
+  };
+
+  getAllMenuInfo = async (storeId) => {
+    try {
+      const findStoreById = await this.storeRepository.findStoreById(storeId);
+
+      if (!findStoreById) {
+        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
+      }
+
+      const getMenuInfo = await this.storeRepository.getAllMenuInfo(storeId);
+
+      return getMenuInfo;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '메뉴 조회에 실패하였습니다.' };
     }
   };
 
