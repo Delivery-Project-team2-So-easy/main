@@ -44,10 +44,19 @@ class OrderService {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       });
       try {
-        await this.orderRepository.order(user.id, storeId, menuId, quantity, option, totalPrice, {
-          transaction: t,
-        });
-        await this.userRepository.pointDeduction(user.id, remainingPoint, { transaction: t });
+        await this.orderRepository.order(
+          user.id,
+          storeId,
+          menuId,
+          quantity,
+          user.address,
+          option,
+          totalPrice,
+          {
+            transaction: t,
+          }
+        );
+        await this.userRepository.updatePoint(user.id, remainingPoint, t);
         await t.commit();
         return {
           code: 201,
@@ -74,8 +83,8 @@ class OrderService {
 
       if (order.order_status === 'delivered')
         return { code: 400, errorMessage: '이미 배달이 완료된 주문입니다.' };
-      else if (order.order_status === 'refundApply')
-        return { code: 400, errorMessage: '고객님이 취소 신청한 주문입니다.' };
+      else if (order.order_status === 'refundRequest')
+        return { code: 400, errorMessage: '고객님이 환불 요청한 주문입니다.' };
       else if (order.order_status === 'cancelled')
         return { code: 400, errorMessage: '이미 환불된 주문입니다.' };
 
@@ -84,8 +93,8 @@ class OrderService {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       });
       try {
-        await this.orderRepository.updateDeliveryStatus(orderId, { transaction: t });
-        await this.storeRepository.updateStoreInSales(user.id, total_sales, { transaction: t });
+        await this.orderRepository.updateDeliveryStatus(orderId, t);
+        await this.storeRepository.updateStoreInSales(user.id, total_sales, t);
         await t.commit();
         return {
           code: 201,
@@ -101,25 +110,25 @@ class OrderService {
     }
   };
 
-  refundApply = async (orderId, res) => {
+  refundRequest = async (orderId, res) => {
     try {
       const user = res.locals.user;
       const existOrder = await this.orderRepository.findOrder(orderId);
 
       if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
       if (existOrder.user_id !== user.id)
-        return { code: 401, errorMessage: '주문 취소 권한이 없습니다.' };
+        return { code: 401, errorMessage: '해당 주문의 환불 요청 권한이 없습니다.' };
 
       if (existOrder.order_status === 'cancelled')
         //case 1) 주문이 이미 취소 되었을 때, (환불 신청이 완료된 걸 또 신청했을 때)
         return { code: 400, errorMessage: '이미 환불된 주문입니다.' };
-      else if (existOrder.order_status === 'refundApply')
+      else if (existOrder.order_status === 'refundRequest')
         //case 2) 주문 상태가 현재 주문 취소 신청 상태일 때, (사장에게 환불 신청) - 오류만 반환
-        return { code: 400, errorMessage: '이미 취소 신청 중인 주문입니다.' };
+        return { code: 400, errorMessage: '이미 환불 요청 중인 주문입니다.' };
       else if (existOrder.order_status === 'delivered') {
         //case 3) 주문이 완료 되었을 때, (사장한테 돈이 들어갔을 때) - 해당 가게한테 환불 신청
-        await this.orderRepository.refundApply(orderId);
-        return { code: 200, message: '주문 취소가 신청 되었습니다.' };
+        await this.orderRepository.refundRequest(orderId);
+        return { code: 200, message: '주문에 대한 환불 요청이 정상적으로 이루어 졌습니다.' };
       }
       const t = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
@@ -127,10 +136,8 @@ class OrderService {
       try {
         const userPoint = user.point + existOrder.total_price;
         //case 4) 주문 접수 상태일 때, (사장이 배달완료를 안눌렀을 때) - 바로 환불
-        await this.orderRepository.cancelOrder(orderId, { transaction: t });
-        await this.userRepository.refundPoint(user.id, userPoint, {
-          transaction: t,
-        });
+        await this.orderRepository.cancelOrder(orderId, t);
+        await this.userRepository.updatePoint(user.id, userPoint, t);
         await t.commit();
         return {
           code: 200,
@@ -153,7 +160,7 @@ class OrderService {
       const existOrder = await this.orderRepository.findOrder(orderId);
       if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
       if (existOrder.user_id !== user.id)
-        return { code: 401, errorMessage: '주문 취소건에 대한 승인 권한이 없습니다.' };
+        return { code: 401, errorMessage: '해당 주문의 환불 처리 권한이 없습니다.' };
 
       const myStore = await this.storeRepository.findMyStore(user.id);
       const totalSales = myStore.total_sales - existOrder.total_price;
@@ -164,25 +171,24 @@ class OrderService {
       });
 
       try {
-        if (existOrder.order_status === 'refundApply') {
-          await this.storeRepository.updateStoreInSales(user.id, totalSales, { transaction: t });
-          await this.userRepository.refundPoint(existOrder.user_id, userPoint, { transaction: t });
-          await this.orderRepository.cancelOrder(orderId, { transaction: t });
+        if (existOrder.order_status === 'refundRequest') {
+          await this.storeRepository.updateStoreInSales(user.id, totalSales, t);
+          await this.userRepository.updatePoint(existOrder.user_id, userPoint, t);
+          await this.orderRepository.cancelOrder(orderId, t);
           await t.commit();
           return {
             code: 200,
-            message: `주문 취소 승인이 완료 되었습니다. 해당 주문 금액의 ${existOrder.total_price}포인트만큼 차감 되었습니다.`,
+            message: `주문 환불이 완료 되었습니다. 해당 주문 금액의 ${existOrder.total_price}포인트만큼 차감 되었습니다.`,
           };
         }
       } catch (transactionError) {
         await t.rollback();
         throw transactionError;
       }
-
-      return { code: 400, errorMessage: '주문 취소 신청이 들어온 주문이 아닙니다.' };
+      return { code: 400, errorMessage: '주문 환불 요청이 들어온 주문이 아닙니다.' };
     } catch (error) {
       console.error(error);
-      return { code: 500, errorMessage: '주문 취소 승인 중 오류가 발생했습니다.' };
+      return { code: 500, errorMessage: '환불 요청 승인 중 오류가 발생했습니다.' };
     }
   };
 
@@ -193,11 +199,11 @@ class OrderService {
       if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
 
       if (existOrder.user_id !== user.id)
-        return { code: 401, errorMessage: '주문 취소건에 대한 승인 권한이 없습니다.' };
+        return { code: 401, errorMessage: '해당 주문의 환불 처리 권한이 없습니다.' };
 
-      if (existOrder.order_status === 'refundApply') {
+      if (existOrder.order_status === 'refundRequest') {
         await this.orderRepository.updateDeliveryStatus(orderId);
-        return { code: 200, message: '주문 취소 신청을 거절하였습니다.' };
+        return { code: 200, message: '주문 환불 요청을 거부하였습니다.' };
       }
       const result = await this.isDelivered(orderId, res);
       if (result.errorMessage) return { code: result.code, errorMessage: result.errorMessage };
@@ -205,29 +211,49 @@ class OrderService {
       return { code: result.code, message: result.message };
     } catch (error) {
       console.error(error);
-      return { code: 500, errorMessage: '주문 취소 거절 중 오류가 발생했습니다.' };
+      return { code: 500, errorMessage: '환불 요청 거부 중 오류가 발생했습니다.' };
     }
   };
   // 여러 음식 주문
-  order2 = async (orderDetail, user, storeId) => {
-    // const user = await this.userRepository.findUser(userId);
-    const address = user.address;
-    const userId = user.id;
-    const order = await this.orderRepository.createOrder(userId, storeId, address);
-    const orderId = order.id;
-
-    let totalPrice = 0;
-    orderDetail.forEach(async (od, i) => {
-      const menuId = od.menuId;
-      const quantity = od.quantity;
-      const price = od.price;
-      const option = od.option;
-      totalPrice += price * quantity;
-      await this.orderRepository.createOrderDetail(orderId, menuId, quantity, price, option);
+  orderMany = async (orderDetail, user, storeId) => {
+    const t = await sequelize.transaction({
+      isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED, // 트랜잭션 격리 수준을 설정합니다.
     });
-    await this.orderRepository.updateOrder(orderId, totalPrice);
+    try {
+      const address = user.address;
+      const userId = user.id;
+      const userPoint = user.point;
+      const order = await this.orderRepository.createOrder(userId, storeId, address, {
+        transaction: t,
+      });
+      const orderId = order.id;
+      let totalPrice = 0;
+      for (let i = 0; i < orderDetail.length; i++) {
+        totalPrice += orderDetail[i].price * orderDetail[i].quantity;
+        const order_id = orderId;
+        const menu_id = orderDetail[i].menuId;
+        const quantity = orderDetail[i].quantity;
+        const price = orderDetail[i].price;
+        const option = orderDetail[i].option;
+        await this.orderRepository.createOrderDetail(order_id, menu_id, quantity, price, option, {
+          transaction: t,
+        }); //(처음에 forEach를 썼었는데)array내장함수는 await이 안됨
+        // 반복작업에 await이 필요한 경우는 일반for문을 사용할 것
+      }
+      if (userPoint < totalPrice) {
+        throw new Error('주문할 금액이 모자릅니다.');
+      }
+      const remainedPoint = userPoint - totalPrice;
+      await this.orderRepository.updateOrder(orderId, totalPrice, t);
+      await this.userRepository.updatePoint(userId, remainedPoint, t);
 
-    return { code: 200, message: '정상적으로 주문되었습니다.' };
+      await t.commit();
+      return { code: 200, message: '정상적으로 주문되었습니다.' };
+    } catch (transactionError) {
+      console.error(transactionError);
+      await t.rollback();
+      return { code: 500, errorMessage: '주문 중 오류가 발생했습니다.' };
+    }
   };
 }
 

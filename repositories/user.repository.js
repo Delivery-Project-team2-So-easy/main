@@ -36,8 +36,8 @@ class UserRepository {
     return { userPoint: user.point };
   };
 
-  pointDeduction = async (userId, point) => {
-    await User.update({ point }, { where: { id: userId } });
+  updatePoint = async (userId, point, t) => {
+    await User.update({ point }, { where: { id: userId }, transaction: t });
     return;
   };
 
@@ -65,11 +65,6 @@ class UserRepository {
         where: { id: userId },
       }
     );
-  };
-
-  refundPoint = async (userId, point) => {
-    await User.update({ point }, { where: { id: userId } });
-    return;
   };
 }
 

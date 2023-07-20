@@ -1,4 +1,4 @@
-const { Order, Order_detail } = require('../models');
+const { Order, Order_detail, User } = require('../models');
 const { Op } = require('sequelize');
 
 class OrderRepository {
@@ -10,16 +10,20 @@ class OrderRepository {
     return orders;
   };
 
-  order = async (userId, storeId, menuId, quantity, option, totalPrice) => {
+  order = async (userId, storeId, menuId, quantity, address, option, totalPrice, t) => {
     const isOption = option ? option : null;
-    await Order.create({
-      user_id: userId,
-      store_id: storeId,
-      menu_id: menuId,
-      quantity: quantity,
-      option: isOption,
-      total_price: totalPrice,
-    });
+    await Order.create(
+      {
+        user_id: userId,
+        store_id: storeId,
+        menu_id: menuId,
+        quantity: quantity,
+        address,
+        option: isOption,
+        total_price: totalPrice,
+      },
+      t
+    );
     return;
   };
 
@@ -38,41 +42,48 @@ class OrderRepository {
     return existOrder;
   };
 
-  updateDeliveryStatus = async (orderId) => {
-    await Order.update({ order_status: 'delivered' }, { where: { id: orderId } });
+  updateDeliveryStatus = async (orderId, t) => {
+    await Order.update({ order_status: 'delivered' }, { where: { id: orderId }, transaction: t });
     return;
   };
 
-  refundApply = async (orderId) => {
-    await Order.update({ order_status: 'refundApply' }, { where: { id: orderId } });
+  refundRequest = async (orderId) => {
+    await Order.update({ order_status: 'refundRequest' }, { where: { id: orderId } });
     return;
   };
 
-  cancelOrder = async (orderId, refundReason) => {
-    await Order.update({ order_status: 'cancelled' }, { where: { id: orderId } });
+  cancelOrder = async (orderId, t) => {
+    await Order.update({ order_status: 'cancelled' }, { where: { id: orderId }, transaction: t });
     return;
   };
 
   // 여러 음식 주문
-  createOrder = async (userId, storeId, address) => {
-    return await Order.create({
-      user_id: userId,
-      store_id: storeId,
-      address,
-    });
+  createOrder = async (userId, storeId, address, t) => {
+    return await Order.create(
+      {
+        user_id: userId,
+        store_id: storeId,
+        address,
+      },
+      t
+    );
   };
-  createOrderDetail = async (orderId, menuId, quantity, price, option) => {
-    await Order_detail.create({
-      order_id: orderId,
-      menu_id: menuId,
-      quantity,
-      price,
-      option,
-    });
+  createOrderDetail = async (order_id, menu_id, quantity, price, option, t) => {
+    await Order_detail.create(
+      {
+        order_id,
+        menu_id,
+        quantity,
+        price,
+        option,
+      },
+      t
+    );
   };
 
-  updateOrder = async (orderId, totalPrice) => {
-    return Order.update({ total_price: totalPrice }, { where: { id: orderId } });
+  updateOrder = async (orderId, totalPrice, t) => {
+    console.log(orderId, totalPrice);
+    return Order.update({ total_price: totalPrice }, { where: { id: orderId }, transaction: t });
   };
 
   // 주문 건수 계산 메서드
@@ -121,10 +132,10 @@ class OrderRepository {
       }
     }
     const total = orders.length;
-    const averageRate = total > 0 ? (reorderCount / total) * 100 : 0;
+    const averageRate = total > 0 ? (reorderCount / total).toFixed(2) : 0;
 
     return { reorderCount, averageRate };
   };
 }
-
+//
 module.exports = OrderRepository;

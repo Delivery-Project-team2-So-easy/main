@@ -52,6 +52,7 @@ module.exports = {
       },
     });
   },
+  timestamp: false,
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('order_details');
   },

@@ -30,7 +30,7 @@ class StoreService {
   };
 
   updateStore = async (userId, storeName, storeAddress, storeImg) => {
-    if (!storeImg && storeName && storeAddress)
+    if (!storeImg && !storeName && !storeAddress)
       return { code: 400, errorMessage: '수정할 내용이 없습니다.' };
     const store = await this.storeRepository.findMyStore(userId);
     const user = await this.userRepository.findUser(userId);
@@ -99,7 +99,7 @@ class StoreService {
     const store = await this.storeRepository.findMyStore(userId);
     if (!store) return { code: 404, errorMessage: '보유한 매장이 없습니다.' };
     const storeId = store.id;
-    const exMenu = await this.storeRepository.findMenu(storeId, menuId);
+    const exMenu = await this.storeRepository.findMenuById(storeId, menuId);
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
 
     await this.storeRepository.deleteMenu(storeId, menuId);
