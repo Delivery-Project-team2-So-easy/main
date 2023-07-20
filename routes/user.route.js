@@ -12,5 +12,7 @@ router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
 router.post('/users/checkEmail', userController.checkEmail);
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
+//카카오
+router.get('/users/kakao', userController.kakaoStart);
 
 module.exports = router;

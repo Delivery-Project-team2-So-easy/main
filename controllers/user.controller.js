@@ -143,6 +143,21 @@ class UserController {
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
   };
+
+  kakaoStart = async (req, res) => {
+    // 컨트롤러.js
+    const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
+    const config = {
+      client_id: '1ea81a4e14815685bfaee8c135fc920e',
+      redirect_uri: 'http://localhost:3000/users/kakao/callback',
+      response_type: 'code',
+    };
+    const params = new URLSearchParams(config).toString();
+
+    const finalUrl = `${baseUrl}?${params}`;
+    console.log(finalUrl);
+    return res.redirect(finalUrl);
+  };
 }
 
 module.exports = UserController;
