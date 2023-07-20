@@ -28,7 +28,7 @@ class StoreService {
   };
 
   updateStore = async (userId, storeName, storeAddress, storeImg) => {
-    if (!storeImg && storeName && storeAddress)
+    if (!storeImg && !storeName && !storeAddress)
       return { code: 400, errorMessage: '수정할 내용이 없습니다.' };
     const store = await this.storeRepository.findMyStore(userId);
     const user = await this.userRepository.findUser(userId);
@@ -118,7 +118,7 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
-      
+
       if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
@@ -127,7 +127,6 @@ class StoreService {
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
-
 
   // search = async (searchKeyword) => {
   //   try {
