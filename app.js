@@ -10,7 +10,7 @@ const db = require('./models');
 const app = express();
 const http = Server(app);
 
-db.sequelize.sync({});
+db.sequelize.sync({ force: false });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

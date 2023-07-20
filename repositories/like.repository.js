@@ -1,5 +1,5 @@
-const { Store_like, Review_like } = require('../models');
-const { Op } = require('sequelize');
+const { Store_like, Review_like, Store } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 
 class LikeRepository {
   existUserLike = async (userId, storeId) => {
@@ -15,6 +15,36 @@ class LikeRepository {
   deleteUserLike = async (userId, storeId) => {
     await Store_like.destroy({ where: { user_id: userId, store_id: storeId } });
     return;
+  };
+
+  getMyLike = async (userId) => {
+    const getMyLike = await Store_like.findAll({
+      where: { user_id: userId },
+      attributes: [
+        'store_id',
+        [
+          Sequelize.literal(
+            `(SELECT store_name FROM stores WHERE stores.id = Store_like.store_id)`
+          ),
+          'storeName',
+        ],
+        [
+          Sequelize.literal(`(SELECT store_img FROM stores WHERE stores.id = Store_like.store_id)`),
+          'storeImg',
+        ],
+        [
+          Sequelize.literal(`(SELECT COUNT(*) FROM stores WHERE stores.id = Store_like.store_id)`),
+          'likes',
+        ],
+      ],
+      include: [
+        {
+          model: Store,
+          attributes: [],
+        },
+      ],
+    });
+    return getMyLike;
   };
 
   likeReview = async (userId, reviewId) => {

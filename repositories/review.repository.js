@@ -39,6 +39,15 @@ class ReviewRepository {
     return getReviews;
   };
 
+  findReviewById = async (storeId, userId) => {
+    const findReviewById = await Review.findOne({
+      where: {
+        [Op.and]: [{ store_id: storeId }, { user_id: userId }],
+      },
+    });
+    return findReviewById;
+  };
+
   getReviewDetail = async (storeId, reviewId) => {
     const getReviewDetail = await Review.findOne({
       where: {

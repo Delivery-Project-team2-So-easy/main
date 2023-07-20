@@ -8,6 +8,7 @@ class UserController {
 
     const { email, name, password, confirmPassword, isSeller, address } = req.body;
     let { businessRegistrationNumber } = req.body;
+
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
     if (!email || !name || !password || !confirmPassword || !address)
@@ -28,18 +29,20 @@ class UserController {
 
     if (password !== confirmPassword)
       return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
+    if (isSeller === true) {
+      if (!businessRegistrationNumber)
+        return status(403).json({ errorMessage: '사업자 등록 번호를 입력해주세요.' });
+      if (businessRegistrationNumber.includes('-')) {
+        businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+      } else {
+        businessRegistrationNumber = businessRegistrationNumber / 1;
+      }
 
-    if (businessRegistrationNumber.includes('-')) {
-      businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
-    } else {
-      businessRegistrationNumber = businessRegistrationNumber / 1;
+      if (!businessRegistrationNumber)
+        return res
+          .status(400)
+          .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
     }
-
-    if (!businessRegistrationNumber)
-      return res
-        .status(400)
-        .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
-
     const result = await this.userService.signUp(
       email,
       name,
@@ -99,8 +102,17 @@ class UserController {
     return res.status(result.code).json({ message: result.message });
   };
 
+  getMyLike = async (_, res) => {
+    const user = res.locals.user;
+    const getMyLike = await this.userService.getMyLike(user.id);
+
+    if (getMyLike.errorMessage) {
+      return res.status(getMyLike.code).json({ errorMessage: getMyLike.errorMessage });
+    }
+    return res.status(200).json({ stores: getMyLike });
+  };
+
   updateUser = async (req, res) => {
-    console.log(res.locals.user);
     const userId = res.locals.user.id;
     const profileImg = req.file ? req.file.location : null;
 
@@ -133,6 +145,64 @@ class UserController {
     }
     const result = await this.userService.updateUser(
       userId,
+      email,
+      name,
+      password,
+      isSeller,
+      profileImg,
+      address,
+      businessRegistrationNumber
+    );
+
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.status(result.code).json({ message: result.message });
+  };
+
+  kakaoLogin = async (req, res) => {
+    // 카카오 로그인 페이지 동작
+    const result = await this.userService.kakaoLogin();
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.redirect(result.data);
+  };
+
+  kakaoCallBack = async (req, res) => {
+    const code = req.query.code;
+    const result = await this.userService.kakaoCallBack(code);
+    if (result.token) {
+      // 토큰이 있을때
+      res.cookie('authorization', `Bearer ${result.token}`);
+      return res.status(result.code).json({ message: result.message });
+    } else if (result.data) {
+      // 데이터가 있을 때
+      return res.status(result.code).json({ message: result.message, data: result.data });
+    }
+    return res.status(result.code).json({ errorMessage: result.errorMessage });
+  };
+
+  kakaoSignUp = async (req, res) => {
+    const profileImg = req.file ? req.file.location : null;
+    const email = req.params.kakaoEmail; // 프론트측에서 kakaoCallBack 의 data를 가져와야 한다.
+
+    const { name, password, confirmPassword, isSeller, address, businessRegistrationNumber } =
+      req.body;
+
+    if (!name || !password || !confirmPassword || !address)
+      return res.status(400).json({
+        errorMessage: '이메일, 이름, 비밀번호, 비밀번호 확인, 주소를 모두 입력해주세요.',
+      });
+
+    const emailName = email.split('@')[0];
+    if (password.length < 4 || emailName.includes(password))
+      return res.status(400).json({
+        errorMessage: '패스워드는 4자리이상이고 이메일과 같은 값이 포함이 되면 안됩니다.',
+      });
+
+    if (password !== confirmPassword)
+      return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
+
+    const result = await this.userService.signUp(
       email,
       name,
       password,

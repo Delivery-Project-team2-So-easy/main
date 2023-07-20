@@ -1,4 +1,4 @@
-const { Store, Menu } = require('../models');
+const { Store, Menu, Store_like, Order } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 
 class StoreRepository {
@@ -42,8 +42,8 @@ class StoreRepository {
     return;
   };
 
-  findMenu = async (storeId, menuId) => {
-    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  findMenu = async (storeId, menu) => {
+    return await Menu.findOne({ where: { [Op.and]: [{ menu: menu }, { store_id: storeId }] } });
   };
 
   findMenuById = async (storeId, menuId) => {
@@ -78,14 +78,57 @@ class StoreRepository {
   deleteMenu = async (storeId, menuId) => {
     await Menu.destroy({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
   };
+
   getStore = async () => {
-    const allStoreData = await Store.findAll({});
+    const allStoreData = await Store.findAll({
+      attributes: [
+        'id',
+        'store_name',
+        'store_img',
+        'store_address',
+        'opening_date',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT (*) FROM store_likes WHERE store_likes.store_id = Store.id)`
+          ),
+          'likes',
+        ],
+      ],
+      include: [
+        {
+          model: Store_like,
+          attributes: [],
+        },
+      ],
+      order: [[Sequelize.literal('likes'), 'DESC']],
+    });
 
     return allStoreData;
   };
 
   getStoreDetail = async (storeId) => {
-    const oneStoreData = await Store.findOne({ where: { id: storeId } });
+    const oneStoreData = await Store.findOne({
+      where: { id: storeId },
+      attributes: [
+        'id',
+        'store_name',
+        'store_img',
+        'store_address',
+        'opening_date',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT (*) FROM store_likes WHERE store_likes.store_id = Store.id)`
+          ),
+          'likes',
+        ],
+      ],
+      include: [
+        {
+          model: Store_like,
+          attributes: [],
+        },
+      ],
+    });
 
     return oneStoreData;
   };
@@ -93,9 +136,30 @@ class StoreRepository {
   searchStore = async (searchKeyword) => {
     const searchStore = await Store.findAll({
       where: { store_name: { [Op.substring]: searchKeyword } },
+      attributes: [
+        'id',
+        'store_name',
+        'store_img',
+        'store_address',
+        'opening_date',
+        [
+          Sequelize.literal(
+            `(SELECT COUNT (*) FROM store_likes WHERE store_likes.store_id = Store.id)`
+          ),
+          'likes',
+        ],
+      ],
+      include: [
+        {
+          model: Store_like,
+          attributes: [],
+        },
+      ],
+      order: [[Sequelize.literal('likes'), 'DESC']],
     });
     return searchStore;
   };
+
   searchMenu = async (searchKeyword) => {
     const searchMenu = await Menu.findAll({
       where: {
@@ -104,6 +168,7 @@ class StoreRepository {
           { category: { [Op.substring]: searchKeyword } },
         ],
       },
+      attributes: ['store_id', 'id', 'category', 'menu', 'menu_img', 'price', 'option'],
     });
     return searchMenu;
   };
@@ -111,19 +176,8 @@ class StoreRepository {
   getStoreInfo = async (userId, storeId) => {
     if (!userId) {
       const storeInfo = await Store.findOne({
-        attributes: [
-          'id',
-          'store_name',
-          // [Sequelize.literal(`(SELECT menu FROM menus WHERE menus.store_id = Store.id)`), 'menu'],
-          'total_sales',
-        ],
-        include: [
-          {
-            model: Menu,
-            attributes: ['menu'],
-            where: { store_id: storeId },
-          },
-        ],
+        where: { id: storeId },
+        attributes: ['id', 'store_name', 'total_sales'],
       });
       return storeInfo;
     } else {
@@ -132,13 +186,21 @@ class StoreRepository {
     }
   };
 
+  getAllMenuInfo = async (storeId) => {
+    const getMenuInfo = await Menu.findAll({
+      where: { store_id: storeId },
+      attributes: ['id', 'category', 'menu', 'menu_img', 'price', 'option'],
+    });
+    return getMenuInfo;
+  };
+
   getMenuInfo = async (storeId, menuId) => {
     const menuInfo = await Menu.findOne({ where: { id: menuId, store_id: storeId } });
     return menuInfo;
   };
 
-  updateStoreInSales = async (userId, price) => {
-    await Store.update({ total_sales: price }, { where: { user_id: userId } });
+  updateStoreInSales = async (userId, price, t) => {
+    await Store.update({ total_sales: price }, { where: { user_id: userId }, transaction: t });
   };
 }
 
