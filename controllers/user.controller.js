@@ -8,6 +8,7 @@ class UserController {
 
     const { email, name, password, confirmPassword, isSeller, address } = req.body;
     let { businessRegistrationNumber } = req.body;
+
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
     if (!email || !name || !password || !confirmPassword || !address)
@@ -99,8 +100,17 @@ class UserController {
     return res.status(result.code).json({ message: result.message });
   };
 
+  getMyLike = async (_, res) => {
+    const user = res.locals.user;
+    const getMyLike = await this.userService.getMyLike(user.id);
+
+    if (getMyLike.errorMessage) {
+      return res.status(getMyLike.code).json({ errorMessage: getMyLike.errorMessage });
+    }
+    return res.status(200).json({ stores: getMyLike });
+  };
+
   updateUser = async (req, res) => {
-    console.log(res.locals.user);
     const userId = res.locals.user.id;
     const profileImg = req.file ? req.file.location : null;
 

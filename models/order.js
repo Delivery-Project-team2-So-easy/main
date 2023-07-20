@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Store, Menu, Review }) {
+    static associate({ User, Store, Review, Order_detail }) {
       this.belongsTo(User, {
         targetKey: 'id',
         foreignKey: 'user_id',
@@ -21,13 +21,13 @@ module.exports = (sequelize) => {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.belongsTo(Menu, {
-        targetKey: 'id',
-        foreignKey: 'menu_id',
+      this.hasOne(Review, {
+        sourceKey: 'id',
+        foreignKey: 'order_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.hasOne(Review, {
+      this.hasMany(Order_detail, {
         sourceKey: 'id',
         foreignKey: 'order_id',
         onDelete: 'CASCADE',
@@ -60,8 +60,13 @@ module.exports = (sequelize) => {
       // 3. 주문이 취소 중인 상태(refundApply) 4. 주문 취소가 완료된 상태(cancelled)
       order_status: {
         type: Sequelize.STRING,
+
         allowNull: false,
         defaultValue: 'not_delivered',
+      },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       quantity: {
         type: Sequelize.TINYINT,

@@ -51,7 +51,7 @@ class OrderService {
         await t.commit();
         return {
           code: 201,
-          message: `${storeInfo.store_name}가게 주문: ${storeInfo.dataValues.menu}, ${user.name}고객님의 잔여 포인트: ${remainingPoint}포인트`,
+          message: `${storeInfo.store_name}가게 주문: ${menuInfo.menu}, ${user.name}고객님의 잔여 포인트: ${remainingPoint}포인트`,
         };
       } catch (transactionError) {
         await t.rollback();
@@ -162,6 +162,7 @@ class OrderService {
       const t = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       });
+      
       try {
         if (existOrder.order_status === 'refundApply') {
           await this.storeRepository.updateStoreInSales(user.id, totalSales, { transaction: t });
@@ -177,6 +178,7 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
+      
       return { code: 400, errorMessage: '주문 취소 신청이 들어온 주문이 아닙니다.' };
     } catch (error) {
       console.error(error);
@@ -189,6 +191,7 @@ class OrderService {
       const user = res.locals.user;
       const existOrder = await this.orderRepository.findOrder(orderId);
       if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
+      
       if (existOrder.user_id !== user.id)
         return { code: 401, errorMessage: '주문 취소건에 대한 승인 권한이 없습니다.' };
 
@@ -198,11 +201,33 @@ class OrderService {
       }
       const result = await this.isDelivered(orderId, res);
       if (result.errorMessage) return { code: result.code, errorMessage: result.errorMessage };
+      
       return { code: result.code, message: result.message };
     } catch (error) {
       console.error(error);
       return { code: 500, errorMessage: '주문 취소 거절 중 오류가 발생했습니다.' };
     }
+
+  // 여러 음식 주문
+  order2 = async (orderDetail, user, storeId) => {
+    // const user = await this.userRepository.findUser(userId);
+    const address = user.address;
+    const userId = user.id;
+    const order = await this.orderRepository.createOrder(userId, storeId, address);
+    const orderId = order.id;
+
+    let totalPrice = 0;
+    orderDetail.forEach(async (od, i) => {
+      const menuId = od.menuId;
+      const quantity = od.quantity;
+      const price = od.price;
+      const option = od.option;
+      totalPrice += price * quantity;
+      await this.orderRepository.createOrderDetail(orderId, menuId, quantity, price, option);
+    });
+    await this.orderRepository.updateOrder(orderId, totalPrice);
+    
+    return { code: 200, message: '정상적으로 주문되었습니다.' };
   };
 }
 
