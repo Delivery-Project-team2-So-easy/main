@@ -43,10 +43,10 @@ class OrderController {
     return res.status(result.code).json({ message: result.message });
   };
 
-  refundApplyOrder = async (req, res) => {
+  refundRequestOrder = async (req, res) => {
     const { orderId } = req.params;
 
-    const result = await this.orderService.refundApply(orderId, res);
+    const result = await this.orderService.refundRequest(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
@@ -78,7 +78,7 @@ class OrderController {
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
-
+  };
   // 여러 음식 주문
   order2 = async (req, res) => {
     try {
@@ -96,7 +96,6 @@ class OrderController {
       console.error(err);
       res.status(500).json({ errorMessage: '주문에 실패했습니다.' });
     }
-
   };
 }
 

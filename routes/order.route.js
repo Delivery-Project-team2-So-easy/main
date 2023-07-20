@@ -6,7 +6,7 @@ const auth = require('../middlewares/auth-middleware');
 
 router.get('/order', auth, orderController.getOrders);
 router.post('/order/:orderId', auth, orderController.isDelivered);
-router.post('/order/:orderId/refundApply', auth, orderController.refundApplyOrder);
+router.post('/order/:orderId/refundRequest', auth, orderController.refundRequestOrder);
 router.get('/order/:orderId/refundComplete', auth, orderController.refundComplete);
 router.get('/order/:orderId/refundRefuse', auth, orderController.refundRefuse);
 

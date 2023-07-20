@@ -198,8 +198,8 @@ class StoreRepository {
     return menuInfo;
   };
 
-  updateStoreInSales = async (userId, price) => {
-    await Store.update({ total_sales: price }, { where: { user_id: userId } });
+  updateStoreInSales = async (userId, price, t) => {
+    await Store.update({ total_sales: price }, { where: { user_id: userId }, transaction: t });
   };
 
   calculateTotalOrders = async (storeId, daysAgo) => {
