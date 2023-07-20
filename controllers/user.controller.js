@@ -145,18 +145,19 @@ class UserController {
   };
 
   kakaoStart = async (req, res) => {
-    // 컨트롤러.js
-    const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
-    const config = {
-      client_id: '1ea81a4e14815685bfaee8c135fc920e',
-      redirect_uri: 'http://localhost:3000/users/kakao/callback',
-      response_type: 'code',
-    };
-    const params = new URLSearchParams(config).toString();
+    // 카카오 로그인 페이지 동작
+    const result = await this.userService.kakaoStart();
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.redirect(result.data);
+  };
 
-    const finalUrl = `${baseUrl}?${params}`;
-    console.log(finalUrl);
-    return res.redirect(finalUrl);
+  kakaoFinish = async (req, res) => {
+    const code = req.query.code;
+    const result = await this.userService.kakaoFinish(code);
+    if (result.errorMessage)
+      return res.status(result.code).json({ errorMessage: result.errorMessage });
+    return res.status(result.code).json({ data: result.data });
   };
 }
 

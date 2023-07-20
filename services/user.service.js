@@ -98,7 +98,6 @@ class UserService {
     }
   };
 
-
   storeLike = async (storeId, res) => {
     try {
       const user = res.locals.user;
@@ -116,7 +115,7 @@ class UserService {
       console.error(error);
       return { code: 500, errorMessage: '매장 즐겨찾기에 실패 했습니다.' };
     }
-  }
+  };
 
   updateUser = async (
     userId,
@@ -149,6 +148,70 @@ class UserService {
     } catch (err) {
       console.log(err);
       return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
+    }
+  };
+
+  kakaoStart = async () => {
+    try {
+      const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
+      const config = {
+        client_id: env.KAKAO_CLIENT_ID,
+        redirect_uri: env.KAKAO_REDIRECT_URI,
+        response_type: 'code',
+      };
+      const params = new URLSearchParams(config).toString();
+
+      const finalUrl = `${baseUrl}?${params}`;
+      console.log(finalUrl);
+      return { code: 200, data: finalUrl };
+    } catch (error) {
+      console.error(error);
+      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
+    }
+  };
+
+  kakaoFinish = async (code) => {
+    try {
+      const baseUrl = 'https://kauth.kakao.com/oauth/token';
+      const config = {
+        client_id: env.KAKAO_CLIENT_ID,
+        client_secret: env.KAKAO_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: env.KAKAO_REDIRECT_URI,
+        code,
+      };
+      const params = new URLSearchParams(config).toString(); //URL 형식으로 변환
+      const finalUrl = `${baseUrl}?${params}`;
+      const kakaoTokenRequest = await (
+        await fetch(finalUrl, {
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json', // 이 부분을 명시하지않으면 text로 응답을 받게됨
+          },
+        })
+      ).json();
+      // 토큰 받기
+      if ('access_token' in kakaoTokenRequest) {
+        // 엑세스 토큰이 있는 경우 API에 접근
+        const { access_token } = kakaoTokenRequest;
+        const userRequest = await (
+          await fetch('https://kapi.kakao.com/v2/user/me', {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+              'Content-type': 'application/json',
+            },
+          })
+        ).json();
+        console.log(userRequest);
+        return { code: 200, data: userRequest };
+
+        // res.send(JSON.stringify(userRequest)); // 프론트엔드에서 확인하려고
+      } else {
+        return { code: 409, errorMessage: '토큰이 존재하지 않습니다' };
+      }
+    } catch (error) {
+      console.error(error);
+      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
     }
   };
 }

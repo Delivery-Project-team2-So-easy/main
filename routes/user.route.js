@@ -14,5 +14,6 @@ router.post('/users/checkEmail', userController.checkEmail);
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
 //카카오
 router.get('/users/kakao', userController.kakaoStart);
+router.get('/users/kakao/callback', userController.kakaoFinish);
 
 module.exports = router;
