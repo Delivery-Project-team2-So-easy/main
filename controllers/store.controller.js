@@ -94,8 +94,8 @@ class StoreController {
     const { menuId } = req.params;
     const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
-    if (!menu && !price && !option && !category)
-      return res.status(400).json({ message: '수정하려는 정보가 없습니다.' });
+    if (!menu && !price && !option && !category && !menuImg)
+      return res.status(400).json({ errorMessage: '수정하려는 정보가 없습니다.' });
     const { code, message, errorMessage } = await this.storeService.updateMenu(
       userId,
       menuId,

@@ -55,10 +55,13 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
+      // order 상태가 4가지 여서 4가지를 표현하기 위해 string으로 변경
+      // 1. 배달이 되지 않은 상태(not_delivered) 2. 배달이 완료된 상태(delivered)
+      // 3. 주문이 취소 중인 상태(refundApply) 4. 주문 취소가 완료된 상태(cancelled)
+      order_status: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: 'not_delivered',
       },
       quantity: {
         type: Sequelize.TINYINT,

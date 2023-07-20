@@ -39,10 +39,10 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
+      order_status: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: 'not_delivered',
       },
       quantity: {
         type: Sequelize.TINYINT,
