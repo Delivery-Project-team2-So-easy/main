@@ -78,6 +78,7 @@ class OrderController {
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
+  };
 
   // 여러 음식 주문
   order2 = async (req, res) => {
@@ -96,7 +97,6 @@ class OrderController {
       console.error(err);
       res.status(500).json({ errorMessage: '주문에 실패했습니다.' });
     }
-
   };
 }
 

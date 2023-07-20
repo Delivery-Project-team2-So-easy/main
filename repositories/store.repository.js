@@ -78,6 +78,7 @@ class StoreRepository {
   deleteMenu = async (storeId, menuId) => {
     await Menu.destroy({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
   };
+
   getStore = async () => {
     const allStoreData = await Store.findAll({
       attributes: [
@@ -200,49 +201,6 @@ class StoreRepository {
 
   updateStoreInSales = async (userId, price) => {
     await Store.update({ total_sales: price }, { where: { user_id: userId } });
-  };
-
-  calculateTotalOrders = async (storeId, daysAgo) => {
-    /* 랭킹 기준
-    1. 주문수가 많은 순서로 랭킹을 집계
-    2. 기간(일별 주문수, 주간 주문수)을 설정하여 2가지의 랭킹을 계산
-    3. 전체 주문건수를 계산 후에 취소된 주문을 차감하여 랭킹에 반영
-    */
-    const currentDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(currentDate.getDate() - daysAgo);
-
-    const orderCount = await Order.count({
-      where: {
-        store_id: storeId,
-        create_at: {
-          [Op.between]: [startDate, currentDate],
-        },
-      },
-    });
-
-    return orderCount;
-  };
-
-  getStoreRanking = async (daysAgo) => {
-    const stores = await this.getStore();
-
-    const ranking = await Promise.all(
-      stores.map(async (store) => {
-        const storeId = store.id;
-        const orderCount = await this.calculateTotalOrders(storeId, daysAgo);
-
-        return {
-          storeId,
-          storeName: store.store_name,
-          storeImg: store.store_img,
-          storeAddress: store.store_address,
-          orderCount,
-        };
-      })
-    );
-    ranking.sort((a, b) => b.orderCount - a.orderCount);
-    return ranking;
   };
 }
 

@@ -18,5 +18,6 @@ router.get('/store/', storeController.getStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
 router.post('/store/search', storeController.search);
 router.get('/stores/ranking', storeController.getStoreRanking);
+router.get('/stores/reorderRanking', storeController.getReorderRanking);
 
 module.exports = router;

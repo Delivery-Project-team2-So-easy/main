@@ -1,9 +1,11 @@
 const StoreRepository = require('../repositories/store.repository');
 const UserRepository = require('../repositories/user.repository');
+const OrderRepository = require('../repositories/order.repository');
 
 class StoreService {
   storeRepository = new StoreRepository();
   userRepository = new UserRepository();
+  orderRepository = new OrderRepository();
 
   registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
     const exStore = await this.storeRepository.findStore(storeName);
@@ -118,7 +120,7 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
-      
+
       if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
@@ -127,7 +129,6 @@ class StoreService {
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
-
 
   // search = async (searchKeyword) => {
   //   try {
@@ -192,9 +193,58 @@ class StoreService {
 
   getStoreRanking = async (daysAgo) => {
     try {
-      const getStoreRanking = await this.storeRepository.getStoreRanking(daysAgo);
+      const stores = await this.storeRepository.getStore();
 
-      return getStoreRanking;
+      const ranking = await Promise.all(
+        stores.map(async (store) => {
+          const storeId = store.id;
+          const orderCount = await this.orderRepository.countTotalOrders(storeId, daysAgo);
+
+          return {
+            storeId,
+            storeName: store.store_name,
+            storeImg: store.store_img,
+            storeAddress: store.store_address,
+            orderCount,
+          };
+        })
+      );
+
+      // const filteredRanking = ranking.filter((store) => store.orderCount > 0)
+      ranking.sort((a, b) => b.orderCount - a.orderCount);
+
+      return ranking;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '랭킹 출력에 실패하였습니다.' };
+    }
+  };
+
+  getReorderRanking = async () => {
+    try {
+      const stores = await this.storeRepository.getStore();
+
+      const ranking = await Promise.all(
+        stores.map(async (store) => {
+          const storeId = store.id;
+          const { reorderCount, averageRate } = await this.orderRepository.countTotalReorders(
+            storeId
+          );
+
+          return {
+            storeId,
+            storeName: store.store_name,
+            storeImg: store.store_img,
+            storeAddress: store.store_address,
+            reorderCount,
+            averageRate,
+          };
+        })
+      );
+
+      ranking.sort((a, b) => b.reorderCount - a.reorderCount);
+
+      return ranking;
     } catch (err) {
       console.error(err);
       return { code: 500, errorMessage: '랭킹 출력에 실패하였습니다.' };
