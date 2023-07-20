@@ -10,7 +10,7 @@ class OrderRepository {
     return orders;
   };
 
-  order = async (userId, storeId, menuId, quantity, option, totalPrice, t) => {
+  order = async (userId, storeId, menuId, quantity, address, option, totalPrice, t) => {
     const isOption = option ? option : null;
     await Order.create(
       {
@@ -18,6 +18,7 @@ class OrderRepository {
         store_id: storeId,
         menu_id: menuId,
         quantity: quantity,
+        address,
         option: isOption,
         total_price: totalPrice,
       },
@@ -130,8 +131,8 @@ class OrderRepository {
         reorderCount++;
       }
     }
-    const total = userIds.size;
-    const averageRate = total > 0 ? (reorderCount / total) * 100 : 0;
+    const total = orders.length;
+    const averageRate = total > 0 ? (reorderCount / total).toFixed(2) : 0;
 
     return { reorderCount, averageRate };
   };

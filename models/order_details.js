@@ -63,7 +63,6 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      timestamp: false,
       sequelize,
       timestamps: false,
       modelName: 'Order_detail',

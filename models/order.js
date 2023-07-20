@@ -55,7 +55,6 @@ module.exports = (sequelize) => {
       // 3. 주문이 취소 중인 상태(refundRequest) 4. 주문 취소가 완료된 상태(cancelled)
       order_status: {
         type: Sequelize.STRING,
-
         allowNull: false,
         defaultValue: 'not_delivered',
       },

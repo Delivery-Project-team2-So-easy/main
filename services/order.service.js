@@ -44,9 +44,18 @@ class OrderService {
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       });
       try {
-        await this.orderRepository.order(user.id, storeId, menuId, quantity, option, totalPrice, {
-          transaction: t,
-        });
+        await this.orderRepository.order(
+          user.id,
+          storeId,
+          menuId,
+          quantity,
+          user.address,
+          option,
+          totalPrice,
+          {
+            transaction: t,
+          }
+        );
         await this.userRepository.updatePoint(user.id, remainingPoint, t);
         await t.commit();
         return {
