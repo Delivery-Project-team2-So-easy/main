@@ -66,6 +66,11 @@ class UserRepository {
       }
     );
   };
+
+  refundPoint = async (userId, point) => {
+    await User.update({ point }, { where: { id: userId } });
+    return;
+  };
 }
 
 module.exports = UserRepository;

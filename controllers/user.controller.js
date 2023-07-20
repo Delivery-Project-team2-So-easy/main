@@ -6,15 +6,9 @@ class UserController {
   signUp = async (req, res) => {
     const profileImg = req.file ? req.file.location : null;
 
-    const {
-      email,
-      name,
-      password,
-      confirmPassword,
-      isSeller,
-      address,
-      businessRegistrationNumber,
-    } = req.body;
+    const { email, name, password, confirmPassword, isSeller, address } = req.body;
+    let { businessRegistrationNumber } = req.body;
+
     const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
     if (!email || !name || !password || !confirmPassword || !address)
@@ -35,6 +29,17 @@ class UserController {
 
     if (password !== confirmPassword)
       return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
+
+    if (businessRegistrationNumber.includes('-')) {
+      businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+    } else {
+      businessRegistrationNumber = businessRegistrationNumber / 1;
+    }
+
+    if (!businessRegistrationNumber)
+      return res
+        .status(400)
+        .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
 
     const result = await this.userService.signUp(
       email,

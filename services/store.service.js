@@ -35,11 +35,14 @@ class StoreService {
     // 유저 검색, 추후 해당 기능 완성 후 수정 필요
     if (!store) return { code: 404, errorMessage: '보유한 매장이 없습니다.' };
     if (store.user_id !== userId)
-      return { code: 403, errorMessage: '해당 매장 관리자가 아닙니다.' };
+      return { code: 401, errorMessage: '해당 매장 관리자가 아닙니다.' };
 
-    await this.storeRepository.updateStore(userId, storeName, storeAddress, storeImg);
+    const updateName = storeName ? storeName : store.store_name;
+    const updateImg = storeImg ? storeImg : store.store_img;
 
-    return { code: 201, message: `${storeName} 매장의 정보가 정상적으로 수정되었습니다.` };
+    await this.storeRepository.updateStore(userId, updateName, storeAddress, updateImg);
+
+    return { code: 201, message: `${updateName} 매장의 정보가 정상적으로 수정되었습니다.` };
   };
 
   deleteStore = async (userId) => {
@@ -81,8 +84,12 @@ class StoreService {
     const storeId = store.id;
     const exMenu = await this.storeRepository.findMenuById(storeId, menu);
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
-    if (menu === exMenu.menu) return { code: 404, errorMessage: '중복되는 메뉴 이름입니다.' };
-    await this.storeRepository.updateMenu(menuId, menu, price, menuImg, option, category);
+
+    if (menu === exMenu.menu) return { code: 404, errorMessage: '이미 등록된 메뉴입니다.' };
+    const updateImg = menuImg ? menuImg : store.store_img;
+    const updateOption = option ? option : exMenu.option;
+    await this.storeRepository.updateMenu(menuId, menu, price, updateImg, updateOption, category);
+
     return { code: 201, message: `메뉴가 수정되었습니다.` };
   };
 
