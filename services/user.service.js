@@ -8,6 +8,7 @@ const env = process.env;
 const bcrypt = require('bcrypt');
 const salt = 12;
 const nodemailer = require('nodemailer');
+const { User } = require('../models');
 
 class UserService {
   userRepository = new UserRepository();
@@ -151,7 +152,7 @@ class UserService {
     }
   };
 
-  kakaoStart = async () => {
+  kakaoLogin = async () => {
     try {
       const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
       const config = {
@@ -160,9 +161,7 @@ class UserService {
         response_type: 'code',
       };
       const params = new URLSearchParams(config).toString();
-
       const finalUrl = `${baseUrl}?${params}`;
-      console.log(finalUrl);
       return { code: 200, data: finalUrl };
     } catch (error) {
       console.error(error);
@@ -170,7 +169,7 @@ class UserService {
     }
   };
 
-  kakaoFinish = async (code) => {
+  kakaoCallBack = async (code) => {
     try {
       const baseUrl = 'https://kauth.kakao.com/oauth/token';
       const config = {
@@ -202,10 +201,22 @@ class UserService {
             },
           })
         ).json();
-        console.log(userRequest);
-        return { code: 200, data: userRequest };
-
-        // res.send(JSON.stringify(userRequest)); // 프론트엔드에서 확인하려고
+        const kakaoEmail = userRequest.kakao_account.email + '/kakao';
+        const exUser = await User.findOne({
+          where: { email: kakaoEmail },
+        });
+        if (exUser) {
+          const token = jwt.sign(
+            {
+              userId: exUser.id,
+            },
+            env.JWT_SECRET_KEY,
+            { expiresIn: '1h' }
+          );
+          return { token, code: 200, message: '로그인 성공하였습니다.' };
+        } else {
+          return { data: kakaoEmail, code: 200, message: '신규회원가입을 진행합니다.' };
+        }
       } else {
         return { code: 409, errorMessage: '토큰이 존재하지 않습니다' };
       }

@@ -13,7 +13,8 @@ router.patch('/users', authMiddleware, userController.updateUser);
 router.post('/users/checkEmail', userController.checkEmail);
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
 //카카오
-router.get('/users/kakao', userController.kakaoStart);
-router.get('/users/kakao/callback', userController.kakaoFinish);
+router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
+router.get('/users/kakao/callback', userController.kakaoCallBack); // 가져온 데이터로 로그인 or 회원가입
+router.post('/users/kakao/signup/:kakaoEmail', uploadMiddleware, userController.kakaoSignUp); // 카카오 회원가입
 
 module.exports = router;

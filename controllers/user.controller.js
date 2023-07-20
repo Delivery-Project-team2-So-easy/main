@@ -144,20 +144,62 @@ class UserController {
     return res.status(result.code).json({ message: result.message });
   };
 
-  kakaoStart = async (req, res) => {
+  kakaoLogin = async (req, res) => {
     // 카카오 로그인 페이지 동작
-    const result = await this.userService.kakaoStart();
+    const result = await this.userService.kakaoLogin();
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.redirect(result.data);
   };
 
-  kakaoFinish = async (req, res) => {
+  kakaoCallBack = async (req, res) => {
     const code = req.query.code;
-    const result = await this.userService.kakaoFinish(code);
+    const result = await this.userService.kakaoCallBack(code);
+    if (result.token) {
+      // 토큰이 있을때
+      res.cookie('authorization', `Bearer ${result.token}`);
+      return res.status(result.code).json({ message: result.message });
+    } else if (result.data) {
+      // 데이터가 있을 때
+      return res.status(result.code).json({ message: result.message, data: result.data });
+    }
+    return res.status(result.code).json({ errorMessage: result.errorMessage });
+  };
+
+  kakaoSignUp = async (req, res) => {
+    const profileImg = req.file ? req.file.location : null;
+    const email = req.params.kakaoEmail; // 프론트측에서 kakaoCallBack 의 data를 가져와야 한다.
+
+    const { name, password, confirmPassword, isSeller, address, businessRegistrationNumber } =
+      req.body;
+
+    if (!name || !password || !confirmPassword || !address)
+      return res.status(400).json({
+        errorMessage: '이메일, 이름, 비밀번호, 비밀번호 확인, 주소를 모두 입력해주세요.',
+      });
+
+    const emailName = email.split('@')[0];
+    if (password.length < 4 || emailName.includes(password))
+      return res.status(400).json({
+        errorMessage: '패스워드는 4자리이상이고 이메일과 같은 값이 포함이 되면 안됩니다.',
+      });
+
+    if (password !== confirmPassword)
+      return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
+
+    const result = await this.userService.signUp(
+      email,
+      name,
+      password,
+      isSeller,
+      profileImg,
+      address,
+      businessRegistrationNumber
+    );
+
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ data: result.data });
+    return res.status(result.code).json({ message: result.message });
   };
 }
 
