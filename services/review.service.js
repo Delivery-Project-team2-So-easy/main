@@ -63,8 +63,6 @@ class ReviewService {
         return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
       } else if (!getReviewDetail) {
         return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
-      } else if (!review || !rating) {
-        return { code: 400, errorMessage: '리뷰와 평점을 모두 입력해주세요' };
       } else if (getReviewDetail.user_id != userId) {
         return { code: 401, errorMessage: '리뷰수정 권한이 없습니다.' };
       } else if (getReviewDetail.review === review && getReviewDetail.rating === rating) {

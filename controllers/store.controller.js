@@ -142,5 +142,23 @@ class StoreController {
     }
     res.status(code).json({ data });
   };
+
+  getStoreRanking = async (req, res) => {
+    const { period } = req.body;
+    const daysAgo = Math.floor(period);
+
+    if (!daysAgo || daysAgo > 32) {
+      return res
+        .status(400)
+        .json({ errorMessage: '기간은 숫자만 들어올 수 있으며 31일을 초과할 수 없습니다.' });
+    }
+
+    const getStoreRanking = await this.storeService.getStoreRanking(daysAgo);
+
+    if (getStoreRanking.errorMessage) {
+      return res.status(getStoreRanking.code).json({ errorMessage: getStoreRanking.errorMessage });
+    }
+    return res.status(200).json({ ranking: getStoreRanking });
+  };
 }
 module.exports = StoreController;

@@ -17,5 +17,6 @@ router.get('/store/:storeId/menus', authMiddleware, storeController.getAllMenuIn
 router.get('/store/', storeController.getStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
 router.post('/store/search', storeController.search);
+router.get('/stores/ranking', storeController.getStoreRanking);
 
 module.exports = router;
