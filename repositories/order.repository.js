@@ -39,7 +39,17 @@ class OrderRepository {
   };
 
   updateDeliveryStatus = async (orderId) => {
-    await Order.update({ is_delivered: true }, { where: { id: orderId } });
+    await Order.update({ order_status: 'delivered' }, { where: { id: orderId } });
+    return;
+  };
+
+  refundApply = async (orderId) => {
+    await Order.update({ order_status: 'refundApply' }, { where: { id: orderId } });
+    return;
+  };
+
+  cancelOrder = async (orderId, refundReason) => {
+    await Order.update({ order_status: 'cancelled' }, { where: { id: orderId } });
     return;
   };
 

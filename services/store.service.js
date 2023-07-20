@@ -35,11 +35,14 @@ class StoreService {
     // 유저 검색, 추후 해당 기능 완성 후 수정 필요
     if (!store) return { code: 404, errorMessage: '보유한 매장이 없습니다.' };
     if (store.user_id !== userId)
-      return { code: 403, errorMessage: '해당 매장 관리자가 아닙니다.' };
+      return { code: 401, errorMessage: '해당 매장 관리자가 아닙니다.' };
 
-    await this.storeRepository.updateStore(userId, storeName, storeAddress, storeImg);
+    const updateName = storeName ? storeName : store.store_name;
+    const updateImg = storeImg ? storeImg : store.store_img;
 
-    return { code: 201, message: `${storeName} 매장의 정보가 정상적으로 수정되었습니다.` };
+    await this.storeRepository.updateStore(userId, updateName, storeAddress, updateImg);
+
+    return { code: 201, message: `${updateName} 매장의 정보가 정상적으로 수정되었습니다.` };
   };
 
   deleteStore = async (userId) => {
@@ -81,8 +84,12 @@ class StoreService {
     const storeId = store.id;
     const exMenu = await this.storeRepository.findMenuById(storeId, menu);
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
-    if (menu === exMenu.menu) return { code: 404, errorMessage: '중복되는 메뉴 이름입니다.' };
-    await this.storeRepository.updateMenu(menuId, menu, price, menuImg, option, category);
+
+    if (menu === exMenu.menu) return { code: 404, errorMessage: '이미 등록된 메뉴입니다.' };
+    const updateImg = menuImg ? menuImg : store.store_img;
+    const updateOption = option ? option : exMenu.option;
+    await this.storeRepository.updateMenu(menuId, menu, price, updateImg, updateOption, category);
+
     return { code: 201, message: `메뉴가 수정되었습니다.` };
   };
 
@@ -111,6 +118,8 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
+      
+      if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
     } catch (err) {
@@ -118,6 +127,7 @@ class StoreService {
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
+
 
   // search = async (searchKeyword) => {
   //   try {
@@ -141,6 +151,55 @@ class StoreService {
   //     return { code: 500, data: '오류' };
   //   }
   // };
+
+  getAllMenuInfo = async (storeId) => {
+    try {
+      const findStoreById = await this.storeRepository.findStoreById(storeId);
+
+      if (!findStoreById) {
+        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
+      }
+
+      const getMenuInfo = await this.storeRepository.getAllMenuInfo(storeId);
+
+      return getMenuInfo;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '메뉴 조회에 실패하였습니다.' };
+    }
+  };
+
+  search = async (searchKeyword) => {
+    try {
+      const allStoreData = await this.storeRepository.searchStore(searchKeyword);
+      // 검색어를 Store 테이블의 가게명과 매치
+      const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
+      // 검색어를 Menu 테이블의 메뉴명 or 카테고리 와 매치
+
+      // for (var i = 0; i < allMenuData.length; i++) {
+      //   if (allMenuData[i].store_id === allMenuData[i + 1].store_id) {
+      //     allMenuData.splice(i, 1);
+      //   }
+      // }
+      // 메뉴의 가게이름 중복 제거
+
+      return { code: 200, data: { allStoreData, allMenuData } };
+    } catch (err) {
+      console.log(err);
+      return { code: 500, errorMessage: '오류' };
+    }
+  };
+
+  getStoreRanking = async (daysAgo) => {
+    try {
+      const getStoreRanking = await this.storeRepository.getStoreRanking(daysAgo);
+
+      return getStoreRanking;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '랭킹 출력에 실패하였습니다.' };
+    }
+  };
 }
 
 module.exports = StoreService;

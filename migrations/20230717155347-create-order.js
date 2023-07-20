@@ -33,10 +33,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
+      order_status: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: 'not_delivered',
       },
       total_price: {
         type: Sequelize.INTEGER,
