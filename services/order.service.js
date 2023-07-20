@@ -51,7 +51,7 @@ class OrderService {
         await t.commit();
         return {
           code: 201,
-          message: `${storeInfo.store_name}가게의 ${storeInfo.dataValues.menu}가 정상적으로 주문 되었습니다. ${user.name}고객님의 잔여 포인트는 ${remainingPoint}포인트 입니다.`,
+          message: `${storeInfo.store_name}가게의 ${menuInfo.menu}가 정상적으로 주문 되었습니다. ${user.name}고객님의 잔여 포인트는 ${remainingPoint}포인트 입니다.`,
         };
       } catch (transactionError) {
         await t.rollback();

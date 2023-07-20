@@ -111,6 +111,8 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
+      
+      if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
     } catch (err) {
@@ -118,6 +120,7 @@ class StoreService {
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
+
 
   // search = async (searchKeyword) => {
   //   try {
@@ -141,6 +144,55 @@ class StoreService {
   //     return { code: 500, data: '오류' };
   //   }
   // };
+
+  getAllMenuInfo = async (storeId) => {
+    try {
+      const findStoreById = await this.storeRepository.findStoreById(storeId);
+
+      if (!findStoreById) {
+        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
+      }
+
+      const getMenuInfo = await this.storeRepository.getAllMenuInfo(storeId);
+
+      return getMenuInfo;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '메뉴 조회에 실패하였습니다.' };
+    }
+  };
+
+  search = async (searchKeyword) => {
+    try {
+      const allStoreData = await this.storeRepository.searchStore(searchKeyword);
+      // 검색어를 Store 테이블의 가게명과 매치
+      const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
+      // 검색어를 Menu 테이블의 메뉴명 or 카테고리 와 매치
+
+      // for (var i = 0; i < allMenuData.length; i++) {
+      //   if (allMenuData[i].store_id === allMenuData[i + 1].store_id) {
+      //     allMenuData.splice(i, 1);
+      //   }
+      // }
+      // 메뉴의 가게이름 중복 제거
+
+      return { code: 200, data: { allStoreData, allMenuData } };
+    } catch (err) {
+      console.log(err);
+      return { code: 500, errorMessage: '오류' };
+    }
+  };
+
+  getStoreRanking = async (daysAgo) => {
+    try {
+      const getStoreRanking = await this.storeRepository.getStoreRanking(daysAgo);
+
+      return getStoreRanking;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '랭킹 출력에 실패하였습니다.' };
+    }
+  };
 }
 
 module.exports = StoreService;

@@ -12,9 +12,11 @@ router.delete('/store/registration', authMiddleware, storeController.deleteStore
 router.post('/store/menu', authMiddleware, uploadMiddleware, storeController.registerMenu);
 router.patch('/store/menu/:menuId', authMiddleware, uploadMiddleware, storeController.updateMenu);
 router.delete('/store/menu/:menuId', authMiddleware, storeController.deleteMenu);
+router.get('/store/:storeId/menus', authMiddleware, storeController.getAllMenuInfo);
 
 router.get('/store/', storeController.getStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
 router.post('/store/search', storeController.search);
+router.get('/stores/ranking', storeController.getStoreRanking);
 
 module.exports = router;
