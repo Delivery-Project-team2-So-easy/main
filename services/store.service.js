@@ -161,6 +161,17 @@ class StoreService {
       return { code: 500, errorMessage: '오류' };
     }
   };
+
+  getStoreRanking = async (daysAgo) => {
+    try {
+      const getStoreRanking = await this.storeRepository.getStoreRanking(daysAgo);
+
+      return getStoreRanking;
+    } catch (err) {
+      console.error(err);
+      return { code: 500, errorMessage: '랭킹 출력에 실패하였습니다.' };
+    }
+  };
 }
 
 module.exports = StoreService;
