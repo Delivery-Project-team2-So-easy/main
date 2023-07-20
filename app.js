@@ -5,6 +5,7 @@ const userRouter = require('./routes/user.route.js');
 const storeRouter = require('./routes/store.route.js');
 const reviewRouter = require('./routes/review.route.js');
 const orderRouter = require('./routes/order.route.js');
+const errorHandler = require('./error.js');
 const db = require('./models');
 
 const app = express();

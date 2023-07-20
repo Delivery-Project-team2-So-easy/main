@@ -120,7 +120,7 @@ class OrderRepository {
         reorderCount++;
       }
     }
-    const total = userIds.size;
+    const total = orders.length;
     const averageRate = total > 0 ? (reorderCount / total) * 100 : 0;
 
     return { reorderCount, averageRate };
