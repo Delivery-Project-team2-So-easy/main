@@ -49,6 +49,8 @@ class ReviewController {
     const { storeId, reviewId } = req.params;
     const { review, rating } = req.body;
 
+    if (!review && !rating && !req.file)
+      return res.status(400).json({ errorMessage: '수정할 리뷰 정보를 입력해 주세요.' });
     let filepath = req.file ? req.file.location : null;
     const reviewImg = filepath
       ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`

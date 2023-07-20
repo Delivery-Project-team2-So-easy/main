@@ -2,7 +2,7 @@ const StoreService = require('../services/store.service');
 
 class StoreController {
   storeService = new StoreService();
-  getStore = async (req, res) => {
+  getStore = async (_, res) => {
     const { code, data, errorMessage } = await this.storeService.getStore();
 
     if (errorMessage) return res.status(code).json({ errorMessage });
@@ -73,7 +73,7 @@ class StoreController {
     const userId = res.locals.user.id;
     const menuImg = req.file ? req.file.location : null;
     const { menu, price, option, category } = req.body;
-    if (!menu || !price || !option || !category)
+    if (!menu || !price || !category)
       return res.status(400).json({ message: '메뉴 정보를 모두 입력해주세요' });
     const { code, message, errorMessage } = await this.storeService.registerMenu(
       userId,
@@ -159,6 +159,17 @@ class StoreController {
       return res.status(getStoreRanking.code).json({ errorMessage: getStoreRanking.errorMessage });
     }
     return res.status(200).json({ ranking: getStoreRanking });
+  };
+
+  getReorderRanking = async (_, res) => {
+    const getReorderRanking = await this.storeService.getReorderRanking();
+
+    if (getReorderRanking.errorMessage) {
+      return res
+        .status(getReorderRanking.code)
+        .json({ errorMessage: getReorderRanking.errorMessage });
+    }
+    return res.status(200).json({ reorderRanking: getReorderRanking });
   };
 }
 module.exports = StoreController;
