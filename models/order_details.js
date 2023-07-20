@@ -1,41 +1,30 @@
 'use strict';
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
-module.exports = (sequelize) => {
-  class Order extends Model {
+module.exports = (sequelize, DataTypes) => {
+  class Order_details extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User, Store, Review, Order_detail }) {
-      this.belongsTo(User, {
+    static associate(models) {
+      this.belongsTo(models.Order, {
         targetKey: 'id',
-        foreignKey: 'user_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      this.belongsTo(Store, {
-        targetKey: 'id',
-        foreignKey: 'store_id',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      });
-      this.hasOne(Review, {
-        sourceKey: 'id',
         foreignKey: 'order_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.hasMany(Order_detail, {
-        sourceKey: 'id',
-        foreignKey: 'order_id',
+      this.belongsTo(models.Menu, {
+        targetKey: 'id',
+        foreignKey: 'menu_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
+      // define association here
     }
   }
-  Order.init(
+  Order_details.init(
     {
       id: {
         allowNull: false,
@@ -43,53 +32,41 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      user_id: {
+      order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      store_id: {
+      menu_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      is_delivered: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      address: {
-        type: Sequelize.STRING,
         allowNull: false,
       },
       quantity: {
-        type: Sequelize.TINYINT,
+        type: Sequelize.SMALLINT,
         allowNull: false,
-        defaultValue: 1,
+      },
+      price: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
       },
       option: {
         type: Sequelize.STRING,
       },
-      total_price: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      create_at: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
-      update_at: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
     },
     {
-      timestamps: false,
       sequelize,
-      tableName: 'orders',
-      modelName: 'Order',
+      modelName: 'Order_detail',
+      tableName: 'order_details',
     }
   );
-  return Order;
+  return Order_details;
 };

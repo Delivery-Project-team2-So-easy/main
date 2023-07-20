@@ -11,7 +11,7 @@ const db = require('./models');
 
 app.set('port', PORT);
 
-db.sequelize.sync({});
+db.sequelize.sync({ force: false });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

@@ -6,33 +6,30 @@ class StoreService {
   userRepository = new UserRepository();
 
   registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
-    try {
-      const exStore = await this.storeRepository.findStore(storeName);
-      if (exStore) {
-        return { code: 403, errorMessage: '이미 존재하는 매장 이름입니다.' };
-      }
-      const myStore = await this.storeRepository.findMyStore(userId);
-      if (myStore) {
-        return { code: 403, errorMessage: '매장을 추가로 등록할 수 없습니다.' };
-      }
-
-      const user = await this.userRepository.findUser(userId);
-      if (!user.is_seller) return { code: 403, errorMessage: '사업자 등록 후 이용해 주세요.' };
-      await this.storeRepository.registerStore(
-        userId,
-        storeName,
-        storeAddress,
-        openingDate,
-        storeImg
-      );
-      return { code: 201, message: `${storeName} 매장이 정상적으로 등록되었습니다.` };
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '매장 등록에 실패했습니다.' };
+    const exStore = await this.storeRepository.findStore(storeName);
+    if (exStore) {
+      return { code: 403, errorMessage: '이미 존재하는 매장 이름입니다.' };
     }
+    const myStore = await this.storeRepository.findMyStore(userId);
+    if (myStore) {
+      return { code: 403, errorMessage: '매장을 추가로 등록할 수 없습니다.' };
+    }
+
+    const user = await this.userRepository.findUser(userId);
+    if (!user.is_seller) return { code: 403, errorMessage: '사업자 등록 후 이용해 주세요.' };
+    await this.storeRepository.registerStore(
+      userId,
+      storeName,
+      storeAddress,
+      openingDate,
+      storeImg
+    );
+    return { code: 201, message: `${storeName} 매장이 정상적으로 등록되었습니다.` };
   };
 
   updateStore = async (userId, storeName, storeAddress, storeImg) => {
+    if (!storeImg && storeName && storeAddress)
+      return { code: 400, errorMessage: '수정할 내용이 없습니다.' };
     const store = await this.storeRepository.findMyStore(userId);
     const user = await this.userRepository.findUser(userId);
     // 유저 검색, 추후 해당 기능 완성 후 수정 필요
@@ -82,9 +79,9 @@ class StoreService {
     if (!store)
       return { code: 404, errorMessage: '매장을 보유중인 사장님만 메뉴를 등록할 수 있습니다.' };
     const storeId = store.id;
-    const exMenu = await this.storeRepository.findMenuById(storeId, menuId);
+    const exMenu = await this.storeRepository.findMenuById(storeId, menu);
     if (!exMenu) return { code: 404, errorMessage: '존재하지 않는 메뉴입니다.' };
-    if (menu === exMenu.menu) return { code: 404, errorMessage: '이미 등록된 메뉴입니다.' };
+    if (menu === exMenu.menu) return { code: 404, errorMessage: '중복되는 메뉴 이름입니다.' };
     await this.storeRepository.updateMenu(menuId, menu, price, menuImg, option, category);
     return { code: 201, message: `메뉴가 수정되었습니다.` };
   };
@@ -114,7 +111,7 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
-
+      
       if (!oneStoreData) return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
 
       return { code: 200, data: oneStoreData };
@@ -123,6 +120,30 @@ class StoreService {
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
+
+
+  // search = async (searchKeyword) => {
+  //   try {
+  //     const allStoreData = await this.storeRepository.searchStore(searchKeyword);
+  //     const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
+
+  //     const allSearchData = [...allStoreData, ...allMenuData];
+  //     //중복제거 코드!!
+  //     const filteredSearchData = arr.reduce((acc, current) => {
+  //       const x = acc.find((item) => item.id === current.id);
+  //       if (!x) {
+  //         return acc.concat([current]);
+  //       } else {
+  //         return acc;
+  //       }
+  //     }, []);
+
+  //     return { code: 200, data: a };
+  //   } catch (err) {
+  //     console.log(err);
+  //     return { code: 500, data: '오류' };
+  //   }
+  // };
 
   getAllMenuInfo = async (storeId) => {
     try {
