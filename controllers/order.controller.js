@@ -78,16 +78,16 @@ class OrderController {
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
-
+  };
   // 여러 음식 주문
-  order2 = async (req, res) => {
+  orderMany = async (req, res) => {
     try {
       const { storeId } = req.params;
       const { user } = res.locals;
       const orderDetail = req.body; // 아마 배열로 오겠지?
       if (orderDetail.length === 0)
         return res.status(400).json({ errorMessage: '주문할 음식이 없습니다' });
-      const { code, message, errorMessage } = await this.orderService.order2(
+      const { code, message, errorMessage } = await this.orderService.orderMany(
         orderDetail,
         user,
         storeId
@@ -98,7 +98,11 @@ class OrderController {
       console.error(err);
       res.status(500).json({ errorMessage: '주문에 실패했습니다.' });
     }
+  };
 
+  test = async (req, res) => {
+    const { code, message } = await this.orderService.test();
+    res.status(code).json(message);
   };
 }
 

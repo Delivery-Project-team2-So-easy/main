@@ -29,18 +29,20 @@ class UserController {
 
     if (password !== confirmPassword)
       return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
+    if (isSeller === true) {
+      if (!businessRegistrationNumber)
+        return status(403).json({ errorMessage: '사업자 등록 번호를 입력해주세요.' });
+      if (businessRegistrationNumber.includes('-')) {
+        businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+      } else {
+        businessRegistrationNumber = businessRegistrationNumber / 1;
+      }
 
-    if (businessRegistrationNumber.includes('-')) {
-      businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
-    } else {
-      businessRegistrationNumber = businessRegistrationNumber / 1;
+      if (!businessRegistrationNumber)
+        return res
+          .status(400)
+          .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
     }
-
-    if (!businessRegistrationNumber)
-      return res
-        .status(400)
-        .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
-
     const result = await this.userService.signUp(
       email,
       name,

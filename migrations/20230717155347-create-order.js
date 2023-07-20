@@ -41,10 +41,6 @@ module.exports = {
       total_price: {
         type: Sequelize.INTEGER,
         allowNull: false,
-      },
-      total_price: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
         defaultValue: 0,
       },
       create_at: {
