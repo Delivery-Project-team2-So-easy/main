@@ -177,7 +177,6 @@ class OrderService {
         throw transactionError;
       }
       return { code: 400, errorMessage: '주문 환불 요청이 들어온 주문이 아닙니다.' };
-
     } catch (error) {
       console.error(error);
       return { code: 500, errorMessage: '환불 요청 승인 중 오류가 발생했습니다.' };
@@ -207,25 +206,45 @@ class OrderService {
     }
   };
   // 여러 음식 주문
-  order2 = async (orderDetail, user, storeId) => {
-    // const user = await this.userRepository.findUser(userId);
-    const address = user.address;
-    const userId = user.id;
-    const order = await this.orderRepository.createOrder(userId, storeId, address);
-    const orderId = order.id;
-
-    let totalPrice = 0;
-    orderDetail.forEach(async (od, i) => {
-      const menuId = od.menuId;
-      const quantity = od.quantity;
-      const price = od.price;
-      const option = od.option;
-      totalPrice += price * quantity;
-      await this.orderRepository.createOrderDetail(orderId, menuId, quantity, price, option);
+  orderMany = async (orderDetail, user, storeId) => {
+    const t = await sequelize.transaction({
+      isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED, // 트랜잭션 격리 수준을 설정합니다.
     });
-    await this.orderRepository.updateOrder(orderId, totalPrice);
+    try {
+      const address = user.address;
+      const userId = user.id;
+      const userPoint = user.point;
+      const order = await this.orderRepository.createOrder(userId, storeId, address, {
+        transaction: t,
+      });
+      const orderId = order.id;
+      let totalPrice = 0;
+      for (let i = 0; i < orderDetail.length; i++) {
+        totalPrice += orderDetail[i].price * orderDetail[i].quantity;
+        const order_id = orderId;
+        const menu_id = orderDetail[i].menuId;
+        const quantity = orderDetail[i].quantity;
+        const price = orderDetail[i].price;
+        const option = orderDetail[i].option;
+        await this.orderRepository.createOrderDetail(order_id, menu_id, quantity, price, option, {
+          transaction: t,
+        }); //(처음에 forEach를 썼었는데)array내장함수는 await이 안됨
+        // 반복작업에 await이 필요한 경우는 일반for문을 사용할 것
+      }
+      if (userPoint < totalPrice) {
+        throw new Error('주문할 금액이 모자릅니다.');
+      }
+      const remainedPoint = userPoint - totalPrice;
+      await this.orderRepository.updateOrder(orderId, totalPrice, t);
+      await this.userRepository.updatePoint(userId, remainedPoint, t);
 
-    return { code: 200, message: '정상적으로 주문되었습니다.' };
+      await t.commit();
+      return { code: 200, message: '정상적으로 주문되었습니다.' };
+    } catch (transactionError) {
+      console.error(transactionError);
+      await t.rollback();
+      return { code: 500, errorMessage: '주문 중 오류가 발생했습니다.' };
+    }
   };
 }
 

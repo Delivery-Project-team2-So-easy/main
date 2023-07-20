@@ -1,4 +1,4 @@
-const { Order, Order_detail } = require('../models');
+const { Order, Order_detail, User } = require('../models');
 const { Op } = require('sequelize');
 
 class OrderRepository {
@@ -57,25 +57,32 @@ class OrderRepository {
   };
 
   // 여러 음식 주문
-  createOrder = async (userId, storeId, address) => {
-    return await Order.create({
-      user_id: userId,
-      store_id: storeId,
-      address,
-    });
+  createOrder = async (userId, storeId, address, t) => {
+    return await Order.create(
+      {
+        user_id: userId,
+        store_id: storeId,
+        address,
+      },
+      t
+    );
   };
-  createOrderDetail = async (orderId, menuId, quantity, price, option) => {
-    await Order_detail.create({
-      order_id: orderId,
-      menu_id: menuId,
-      quantity,
-      price,
-      option,
-    });
+  createOrderDetail = async (order_id, menu_id, quantity, price, option, t) => {
+    await Order_detail.create(
+      {
+        order_id,
+        menu_id,
+        quantity,
+        price,
+        option,
+      },
+      t
+    );
   };
 
-  updateOrder = async (orderId, totalPrice) => {
-    return Order.update({ total_price: totalPrice }, { where: { id: orderId } });
+  updateOrder = async (orderId, totalPrice, t) => {
+    console.log(orderId, totalPrice);
+    return Order.update({ total_price: totalPrice }, { where: { id: orderId }, transaction: t });
   };
 
   // 주문 건수 계산 메서드

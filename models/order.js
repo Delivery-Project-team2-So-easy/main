@@ -51,11 +51,6 @@ module.exports = (sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menu_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      // order 의 4가지 상태
       // 1. 배달이 되지 않은 상태(not_delivered) 2. 배달이 완료된 상태(delivered)
       // 3. 주문이 취소 중인 상태(refundRequest) 4. 주문 취소가 완료된 상태(cancelled)
       order_status: {
@@ -67,14 +62,6 @@ module.exports = (sequelize) => {
       address: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      quantity: {
-        type: Sequelize.TINYINT,
-        allowNull: false,
-        defaultValue: 1,
-      },
-      option: {
-        type: Sequelize.STRING,
       },
       total_price: {
         type: Sequelize.INTEGER,
