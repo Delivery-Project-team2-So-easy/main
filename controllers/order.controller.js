@@ -49,6 +49,8 @@ class OrderController {
       const { storeId } = req.params;
       const { user } = res.locals;
       const orderDetail = req.body; // 아마 배열로 오겠지?
+      if (orderDetail.length === 0)
+        return res.status(400).json({ errorMessage: '주문할 음식이 없습니다' });
       const { code, message, errorMessage } = await this.orderService.order2(
         orderDetail,
         user,
