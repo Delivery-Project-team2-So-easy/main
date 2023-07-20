@@ -10,16 +10,19 @@ class OrderRepository {
     return orders;
   };
 
-  order = async (userId, storeId, menuId, quantity, option, totalPrice) => {
+  order = async (userId, storeId, menuId, quantity, option, totalPrice, t) => {
     const isOption = option ? option : null;
-    await Order.create({
-      user_id: userId,
-      store_id: storeId,
-      menu_id: menuId,
-      quantity: quantity,
-      option: isOption,
-      total_price: totalPrice,
-    });
+    await Order.create(
+      {
+        user_id: userId,
+        store_id: storeId,
+        menu_id: menuId,
+        quantity: quantity,
+        option: isOption,
+        total_price: totalPrice,
+      },
+      t
+    );
     return;
   };
 
@@ -38,18 +41,18 @@ class OrderRepository {
     return existOrder;
   };
 
-  updateDeliveryStatus = async (orderId) => {
-    await Order.update({ order_status: 'delivered' }, { where: { id: orderId } });
+  updateDeliveryStatus = async (orderId, t) => {
+    await Order.update({ order_status: 'delivered' }, { where: { id: orderId }, transaction: t });
     return;
   };
 
-  refundApply = async (orderId) => {
-    await Order.update({ order_status: 'refundApply' }, { where: { id: orderId } });
+  refundRequest = async (orderId) => {
+    await Order.update({ order_status: 'refundRequest' }, { where: { id: orderId } });
     return;
   };
 
-  cancelOrder = async (orderId, refundReason) => {
-    await Order.update({ order_status: 'cancelled' }, { where: { id: orderId } });
+  cancelOrder = async (orderId, t) => {
+    await Order.update({ order_status: 'cancelled' }, { where: { id: orderId }, transaction: t });
     return;
   };
 

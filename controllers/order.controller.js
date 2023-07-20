@@ -43,10 +43,10 @@ class OrderController {
     return res.status(result.code).json({ message: result.message });
   };
 
-  refundApplyOrder = async (req, res) => {
+  refundRequestOrder = async (req, res) => {
     const { orderId } = req.params;
 
-    const result = await this.orderService.refundApply(orderId, res);
+    const result = await this.orderService.refundRequest(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
