@@ -176,8 +176,8 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
-
       return { code: 400, errorMessage: '주문 환불 요청이 들어온 주문이 아닙니다.' };
+
     } catch (error) {
       console.error(error);
       return { code: 500, errorMessage: '환불 요청 승인 중 오류가 발생했습니다.' };

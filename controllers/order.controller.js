@@ -79,6 +79,7 @@ class OrderController {
       return res.status(result.code).json({ errorMessage: result.errorMessage });
     return res.status(result.code).json({ message: result.message });
   };
+
   // 여러 음식 주문
   order2 = async (req, res) => {
     try {
