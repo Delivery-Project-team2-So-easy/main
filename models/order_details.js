@@ -1,29 +1,30 @@
 'use strict';
 const { Model } = require('sequelize');
 const Sequelize = require('sequelize');
-module.exports = (sequelize) => {
-  class Menu extends Model {
+module.exports = (sequelize, DataTypes) => {
+  class Order_details extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Store, Order_detail }) {
-      this.belongsTo(Store, {
+    static associate(models) {
+      this.belongsTo(models.Order, {
         targetKey: 'id',
-        foreignKey: 'store_id',
+        foreignKey: 'order_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
-      this.hasOne(Order_detail, {
-        sourceKey: 'id',
+      this.belongsTo(models.Menu, {
+        targetKey: 'id',
         foreignKey: 'menu_id',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       });
+      // define association here
     }
   }
-  Menu.init(
+  Order_details.init(
     {
       id: {
         allowNull: false,
@@ -31,46 +32,42 @@ module.exports = (sequelize) => {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      store_id: {
+      order_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menu: {
-        type: Sequelize.STRING,
+      menu_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      menu_img: {
-        type: Sequelize.STRING,
+      quantity: {
+        type: Sequelize.SMALLINT,
+        allowNull: false,
       },
       price: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0,
       },
       option: {
         type: Sequelize.STRING,
       },
-      category: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      create_at: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
-      update_at: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
     },
     {
-      timestamps: false,
+      timestamp: false,
       sequelize,
-      tableName: 'menus',
-      modelName: 'Menu',
+      modelName: 'Order_detail',
+      tableName: 'order_details',
     }
   );
-  return Menu;
+  return Order_details;
 };
