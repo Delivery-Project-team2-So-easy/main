@@ -8,6 +8,7 @@ const env = process.env;
 const bcrypt = require('bcrypt');
 const salt = 12;
 const nodemailer = require('nodemailer');
+const { User } = require('../models');
 
 class UserService {
   userRepository = new UserRepository();
@@ -117,6 +118,7 @@ class UserService {
     }
   };
 
+
   getMyLike = async (userId) => {
     try {
       const getMyLike = await this.likeRepository.getMyLike(userId);
@@ -162,6 +164,81 @@ class UserService {
     } catch (err) {
       console.log(err);
       return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
+    }
+  };
+
+  kakaoLogin = async () => {
+    try {
+      const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
+      const config = {
+        client_id: env.KAKAO_CLIENT_ID,
+        redirect_uri: env.KAKAO_REDIRECT_URI,
+        response_type: 'code',
+      };
+      const params = new URLSearchParams(config).toString();
+      const finalUrl = `${baseUrl}?${params}`;
+      return { code: 200, data: finalUrl };
+    } catch (error) {
+      console.error(error);
+      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
+    }
+  };
+
+  kakaoCallBack = async (code) => {
+    try {
+      const baseUrl = 'https://kauth.kakao.com/oauth/token';
+      const config = {
+        client_id: env.KAKAO_CLIENT_ID,
+        client_secret: env.KAKAO_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: env.KAKAO_REDIRECT_URI,
+        code,
+      };
+      const params = new URLSearchParams(config).toString(); //URL 형식으로 변환
+      const finalUrl = `${baseUrl}?${params}`;
+      const kakaoTokenRequest = await (
+        await fetch(finalUrl, {
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json', // 이 부분을 명시하지않으면 text로 응답을 받게됨
+          },
+        })
+      ).json();
+      // 토큰 받기
+      if ('access_token' in kakaoTokenRequest) {
+        // 엑세스 토큰이 있는 경우 API에 접근
+        const { access_token } = kakaoTokenRequest;
+        const userRequest = await (
+          await fetch('https://kapi.kakao.com/v2/user/me', {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+              'Content-type': 'application/json',
+            },
+          })
+        ).json();
+        console.log(userRequest);
+        const kakaoEmail = userRequest.kakao_account.email + '/kakao';
+        const exUser = await User.findOne({
+          where: { email: kakaoEmail },
+        });
+        if (exUser) {
+          const token = jwt.sign(
+            {
+              userId: exUser.id,
+            },
+            env.JWT_SECRET_KEY,
+            { expiresIn: '1h' }
+          );
+          return { token, code: 200, message: '로그인 성공하였습니다.' };
+        } else {
+          return { data: kakaoEmail, code: 200, message: '신규회원가입을 진행합니다.' };
+        }
+      } else {
+        return { code: 409, errorMessage: '토큰이 존재하지 않습니다' };
+      }
+    } catch (error) {
+      console.error(error);
+      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
     }
   };
 }
