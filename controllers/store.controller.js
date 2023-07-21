@@ -1,5 +1,6 @@
 const errorHandler = require('../errorHandler');
 const StoreService = require('../services/store.service');
+const jwt = require('jsonwebtoken');
 
 class StoreController {
   storeService = new StoreService();

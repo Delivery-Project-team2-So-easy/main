@@ -1,22 +1,5 @@
-//매장정보 불러오기
-window.addEventListener('DOMContentLoaded', async () => {
-  storeId = 1; // 추후 삭제 필요. URLSearchParams로 storeId 받을것
-  fetch(`/store/${storeId}`, {})
-    .then((response) => response.json())
-    .then((data) => {
-      const store_name = data.data.store_name;
-      const store_img = data.data.store_img;
-      const store_likes = data.data.likes;
-      const temp_html = `<img class="store-img" src="${store_img}"
-      />
-      <div class="store-name">${store_name}</div>
-      <div class="info">좋아요: ${store_likes}</div>
-      <div class="like">좋아요</div>`;
-      const store_overview = document.querySelector('.store-overview');
-      store_overview.insertAdjacentHTML('beforeend', temp_html);
-    });
-});
-
+// const params = new URLSearchParams(window.location.search);
+// const storeId = params.get('storeId');
 //메뉴 불러오기
 window.addEventListener('DOMContentLoaded', async () => {
   storeId = 1; // 추후 삭제 필요
@@ -31,13 +14,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         let menu_img = menu.menu_img;
         let menu_price = menu.price;
         let temp_html = `
-        <div class="menu-box">
+        <div class="menu-box" id="${menu_id}">
           <img
             src="${menu_img}"
           />
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
             <div class="menu-price">${menu_price}</div>
+            <input type=number class="${menu_id}">
+            <button class="add-menu">추가</button>
           </div>
         </div>
         `;
@@ -45,3 +30,24 @@ window.addEventListener('DOMContentLoaded', async () => {
       });
     });
 });
+
+function order_menu(event) {
+  storeId = 1;
+  const orders = [];
+
+  const menuBoxs = document.querySelectorAll('.menu-list .menu-box');
+  menuBoxs.forEach((menu) => {
+    const menuId = menu.id;
+    const quantity = menu.getElementsByTagName('input')[0].value;
+    if (quantity > 0) {
+      orders.push({ menuId, quantity });
+    }
+  });
+  fetch(`/order/store/${storeId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(orders),
+  });
+}

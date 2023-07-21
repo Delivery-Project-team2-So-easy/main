@@ -211,7 +211,7 @@ class UserService {
             },
           })
         ).json();
-        console.log(userRequest);
+        console.error(userRequest);
         const kakaoEmail = userRequest.kakao_account.email + '/kakao';
         const exUser = await User.findOne({
           where: { email: kakaoEmail },

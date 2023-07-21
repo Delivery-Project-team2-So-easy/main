@@ -50,8 +50,11 @@ class StoreRepository {
     return await Menu.findOne({ where: { [Op.and]: [{ menu: menu }, { store_id: storeId }] } });
   };
 
-  findMenuById = async (storeId, menuId) => {
-    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  findMenuById = async (storeId, menuId, t) => {
+    return await Menu.findOne({
+      where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] },
+      transaction: t,
+    });
   };
 
   registerMenu = async (storeId, menu, price, menuImg, option, category) => {
