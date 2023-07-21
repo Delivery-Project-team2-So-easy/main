@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
@@ -17,16 +21,45 @@
         width: 400px;
         background-color: gray;
       }
+      .store-overview {
+        background-color: white;
+        width: 400px;
+        height: 100px;
+        position: relative;
+      }
+      .store-img {
+        opacity: 0.2;
+        height: 100px;
+        display: block;
+        margin: 0 auto;
+      }
+      .store-name {
+        font-size: 30px;
+        text-align: center;
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      i {
+        font-size: 20px;
+        color: red;
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+      }
+      .info {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
       .menu-list {
         width: 400px;
-      }
-      .order-title {
         text-align: center;
-        font-size: 40px;
       }
       .menu-list > .menu-box {
         height: 130px;
-        display: flex;
         margin: 0 auto;
       }
       .menu-box > img {
@@ -46,15 +79,6 @@
         text-align: right;
         margin: 0 10px;
       }
-      .order-bar {
-        width: 400px;
-        text-align: center;
-        padding: 10px;
-      }
-      .order-btn {
-        font-size: 20px;
-        display: inline-block;
-      }
       footer {
         display: flex;
         justify-content: space-between;
@@ -71,12 +95,19 @@
       <div>배달참쉽조</div>
     </header>
     <section>
-      <div class="menu-list">
-        <div class="order-title">주문하기</div>
-        <!-- 메뉴목록 -->
+      <div class="store-overview">
+        <!-- 매장정보 -->
       </div>
-      <div class="order-bar">
-        <button class="order-btn" onclick="order_menu()">주문하기</button>
+      <div class="menu-list">
+        <fieldset style="width: 150">
+          <legend>매장 정보 수정</legend>
+          <lable>매장이름</lable>
+          <input id="store-name" type="text" name="storeName" placeholder="매장이름" /><br />
+          <lable>매장주소</lable>
+          <input id="store-address" type="text" name="storeAddress" placeholder="매장주소" /><br />
+          <input id="image" type="file" name="newFile" /><br />
+          <input class="update-btn" type="button" value="수정하기" /><br />
+        </fieldset>
       </div>
     </section>
     <footer>
@@ -87,5 +118,5 @@
       <div class="footer-btn">mypage</div>
     </footer>
   </body>
-  <script src="./menu.js"></script>
+  <script src="./store-management.js"></script>
 </html>

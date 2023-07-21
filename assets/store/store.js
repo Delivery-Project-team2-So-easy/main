@@ -6,15 +6,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   fetch(`/store/${storeId}`)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
       const store_name = data.data.store_name;
       const store_img = data.data.store_img;
       const store_likes = data.data.likes;
       const temp_html = `<img class="store-img" src="${store_img}"
       />
       <div class="store-name">${store_name}</div>
-      <div class="info">좋아요: ${store_likes}</div>
-      <i id="heart" class="fa fa-heart-o" aria-hidden="true"></i> `;
+      <div class="info"><i class="fa fa-heart" aria-hidden="true"></i> ${store_likes}</div>
+      <i id="heart" class="mylike fa fa-heart-o fa-2x" aria-hidden="true"></i> `;
       const store_overview = document.querySelector('.store-overview');
       store_overview.insertAdjacentHTML('beforeend', temp_html);
     });

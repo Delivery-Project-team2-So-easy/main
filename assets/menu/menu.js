@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
             <div class="menu-price">${menu_price}</div>
-            <input type=number class="${menu_id}">
+            <input type=number min="0" value="0" class="${menu_id}">
           </div>
         </div>
         `;
@@ -30,7 +30,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-function order_menu(event) {
+function order_menu() {
   storeId = 1;
   const orders = [];
 
@@ -42,6 +42,9 @@ function order_menu(event) {
       orders.push({ menuId, quantity });
     }
   });
+  if (orders.length === 0) {
+    return alert('주문할 메뉴가 없습니다!');
+  }
   fetch(`/order/store/${storeId}`, {
     method: 'POST',
     headers: {
@@ -49,4 +52,6 @@ function order_menu(event) {
     },
     body: JSON.stringify(orders),
   });
+  alert('주문이 완료되었습니다.');
+  window.location.reload(); // 추후 주문상세페이지로 이동으로 변경
 }
