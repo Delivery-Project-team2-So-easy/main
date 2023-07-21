@@ -82,7 +82,6 @@ class OrderRepository {
   };
 
   updateOrder = async (orderId, totalPrice, t) => {
-    console.log(orderId, totalPrice);
     return Order.update({ total_price: totalPrice }, { where: { id: orderId }, transaction: t });
   };
 
@@ -136,6 +135,13 @@ class OrderRepository {
 
     return { reorderCount, averageRate };
   };
+
+  getMyOrders = async (userId) => {
+    const myOrders = await Order.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'store_id', 'order_status', 'total_price', 'create_at'],
+    });
+    return myOrders;
+  };
 }
-//
 module.exports = OrderRepository;

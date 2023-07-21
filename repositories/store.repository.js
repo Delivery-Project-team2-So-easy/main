@@ -14,6 +14,10 @@ class StoreRepository {
     return await Store.findOne({ where: { user_id: userId } });
   };
 
+  findByStoreId = async (storeId) => {
+    return await Store.findOne({ where: { id: storeId } });
+  };
+
   registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
     return await Store.create({
       user_id: userId,
@@ -46,8 +50,11 @@ class StoreRepository {
     return await Menu.findOne({ where: { [Op.and]: [{ menu: menu }, { store_id: storeId }] } });
   };
 
-  findMenuById = async (storeId, menuId) => {
-    return await Menu.findOne({ where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] } });
+  findMenuById = async (storeId, menuId, t) => {
+    return await Menu.findOne({
+      where: { [Op.and]: [{ id: menuId }, { store_id: storeId }] },
+      transaction: t,
+    });
   };
 
   registerMenu = async (storeId, menu, price, menuImg, option, category) => {
@@ -111,6 +118,7 @@ class StoreRepository {
       where: { id: storeId },
       attributes: [
         'id',
+        'user_id',
         'store_name',
         'store_img',
         'store_address',
