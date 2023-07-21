@@ -5,7 +5,7 @@ const userRouter = require('./routes/user.route.js');
 const storeRouter = require('./routes/store.route.js');
 const reviewRouter = require('./routes/review.route.js');
 const orderRouter = require('./routes/order.route.js');
-const errorHandler = require('./error.js');
+const errorHandler = require('./errorHandler.js');
 const db = require('./models');
 
 const app = express();
@@ -18,9 +18,11 @@ app.use(cookieParser());
 app.use(express.static('assets'));
 app.use('/', [userRouter, storeRouter, reviewRouter, orderRouter]);
 
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).send('알 수 없는 에러가 발생했습니다.');
+app.use(async (err, req, res, next) => {
+  const { status, errorMessage } = await err;
+  console.error(errorMessage);
+
+  res.status(status || 500).json({ errorMessage: errorMessage || '서버 오류가 발생했습니다.' });
 });
 
 app.get('/', (req, res) => {
