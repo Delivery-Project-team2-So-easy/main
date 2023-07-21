@@ -3,6 +3,9 @@ require('dotenv').config();
 const UserRepository = require('../repositories/user.repository');
 const StoreRepository = require('../repositories/store.repository');
 const LikeRepository = require('../repositories/like.repository');
+const ReviewRepository = require('../repositories/review.repository');
+const OrderRepository = require('../repositories/order.repository');
+const errorHandler = require('../errorHandler');
 const jwt = require('jsonwebtoken');
 const env = process.env;
 const bcrypt = require('bcrypt');
@@ -14,6 +17,8 @@ class UserService {
   userRepository = new UserRepository();
   storeRepository = new StoreRepository();
   likeRepository = new LikeRepository();
+  reviewRepository = new ReviewRepository();
+  orderRepository = new OrderRepository();
 
   signUp = async (
     email,
@@ -39,23 +44,20 @@ class UserService {
         );
         return { code: 201, message: '회원 가입을 축하합니다.' };
       } else {
-        return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
+        throw errorHandler.existEmail;
       }
     } catch (err) {
-      console.log(err);
-      return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
+      throw err;
     }
   };
 
   login = async (email, password) => {
     try {
       const checkUser = await this.userRepository.existUser(email);
-      if (!checkUser)
-        return { code: 412, errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' };
+      if (!checkUser) throw errorHandler.checkUser;
 
       const match = await bcrypt.compare(password, checkUser.password);
-      if (!match)
-        return { code: 412, errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' };
+      if (!match) throw errorHandler.checkUser;
 
       const token = jwt.sign(
         {
@@ -67,8 +69,7 @@ class UserService {
 
       return { token, code: 200, message: '로그인 성공하였습니다.' };
     } catch (err) {
-      console.log(err);
-      return { code: 500, errorMessage: '로그인에 실패했습니다.' };
+      throw err;
     }
   };
 
@@ -94,8 +95,7 @@ class UserService {
       });
       return { code: 200, message: '인증 메시지를 발송했습니다.' };
     } catch (err) {
-      console.log(err);
-      return { code: 500, errorMessage: err };
+      throw err;
     }
   };
 
@@ -103,7 +103,7 @@ class UserService {
     try {
       const user = res.locals.user;
       const existStore = await this.storeRepository.findStoreById(storeId);
-      if (!existStore) return { code: 404, errorMessage: '해당 매장이 없습니다.' };
+      if (!existStore) throw errorHandler.nonExistStore;
 
       const existLike = await this.likeRepository.existUserLike(user.id, storeId);
       if (!existLike) {
@@ -113,11 +113,9 @@ class UserService {
       await this.likeRepository.deleteUserLike(user.id, storeId);
       return { code: 200, message: '매장을 내 즐겨 찾기에서 취소 하였습니다.' };
     } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '매장 즐겨찾기에 실패 했습니다.' };
+      throw err;
     }
   };
-
 
   getMyLike = async (userId) => {
     try {
@@ -128,8 +126,7 @@ class UserService {
       }
       return getMyLike;
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '즐겨찾기 조회에 실패했습니다.' };
+      throw err;
     }
   };
 
@@ -159,11 +156,10 @@ class UserService {
         );
         return { code: 201, message: '데이터가 수정되었습니다.' };
       } else {
-        return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
+        throw errorHandler.existEmail;
       }
     } catch (err) {
-      console.log(err);
-      return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
+      throw err;
     }
   };
 
@@ -178,9 +174,8 @@ class UserService {
       const params = new URLSearchParams(config).toString();
       const finalUrl = `${baseUrl}?${params}`;
       return { code: 200, data: finalUrl };
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -234,11 +229,34 @@ class UserService {
           return { data: kakaoEmail, code: 200, message: '신규회원가입을 진행합니다.' };
         }
       } else {
-        return { code: 409, errorMessage: '토큰이 존재하지 않습니다' };
+        throw errorHandler.nonToken;
       }
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: 'kakao 로그인에 접근할 수 없습니다' };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getMyReviews = async (userId) => {
+    try {
+      const myReviews = await this.reviewRepository.getMyReviews(userId);
+
+      if (!myReviews) throw errorHandler.nonExistReview;
+
+      return myReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getMyOrders = async (userId) => {
+    try {
+      const myOrders = await this.orderRepository.getMyOrders(userId);
+
+      if (!myOrders) throw errorHandler.noOrder;
+
+      return myOrders;
+    } catch (err) {
+      throw err;
     }
   };
 }

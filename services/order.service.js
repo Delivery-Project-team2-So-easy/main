@@ -4,6 +4,7 @@ const { Transaction } = require('sequelize');
 const OrderRepository = require('../repositories/order.repository.js');
 const UserRepository = require('../repositories/user.repository.js');
 const StoreRepository = require('../repositories/store.repository.js');
+const errorHandler = require('../errorHandler');
 
 class OrderService {
   orderRepository = new OrderRepository();
@@ -14,14 +15,13 @@ class OrderService {
     try {
       const user = res.locals.user;
       const existStore = await this.storeRepository.getStoreInfo(user.id);
-      if (!existStore) return { code: 404, errorMessage: '등록한 사업장이 없습니다.' };
+      if (!existStore) throw errorHandler.notRegistered;
 
       const orders = await this.orderRepository.getOrders(existStore.id);
 
       return { code: 200, orders };
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '주문 확인에 실패했습니다.' };
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -31,14 +31,13 @@ class OrderService {
       const { userPoint } = await this.userRepository.getPoint(user.id);
       const totalPrice = price * quantity;
       const remainingPoint = userPoint - totalPrice;
-      if (remainingPoint < 0)
-        return { code: 400, errorMessage: '잔여포인트가 부족해 주문 할 수 없습니다.' };
+      if (remainingPoint < 0) throw errorHandler.pointLess;
 
       const storeInfo = await this.storeRepository.getStoreInfo('', storeId);
-      if (!storeInfo) return { code: 404, errorMessage: '주문하려 하는 매장이 없습니다.' };
+      if (!storeInfo) throw errorHandler.nonExistStore;
 
       const menuInfo = await this.storeRepository.getMenuInfo(storeId, menuId);
-      if (!menuInfo) return { code: 404, errorMessage: '주문하려 하는 메뉴가 없습니다.' };
+      if (!menuInfo) throw errorHandler.nonExistMenu;
 
       const t = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
@@ -67,9 +66,8 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '메뉴 주문에 실패했습니다.' };
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -77,17 +75,14 @@ class OrderService {
     try {
       const user = res.locals.user;
       const existStore = await this.storeRepository.getStoreInfo(user.id);
-      if (!existStore) return { code: 404, errorMessage: '등록한 사업장이 없습니다.' };
+      if (!existStore) throw errorHandler.notRegistered;
 
       const order = await this.orderRepository.findOrder(orderId);
-      if (!order) return { code: 404, errorMessage: '해당 주문이 없습니다.' };
+      if (!order) throw errorHandler.noOrder;
 
-      if (order.order_status === 'delivered')
-        return { code: 400, errorMessage: '이미 배달이 완료된 주문입니다.' };
-      else if (order.order_status === 'refundRequest')
-        return { code: 400, errorMessage: '고객님이 환불 요청한 주문입니다.' };
-      else if (order.order_status === 'cancelled')
-        return { code: 400, errorMessage: '이미 환불된 주문입니다.' };
+      if (order.order_status === 'delivered') throw errorHandler.completedOrder;
+      else if (order.order_status === 'refundRequest') throw errorHandler.refundOrder;
+      else if (order.order_status === 'cancelled') throw errorHandler.cancelledOrder;
 
       const total_sales = existStore.total_sales + order.total_price;
       const t = await sequelize.transaction({
@@ -106,9 +101,8 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '배달 완료 처리에 실패했습니다.' };
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -117,18 +111,15 @@ class OrderService {
       const user = res.locals.user;
       const existOrder = await this.orderRepository.findOrder(orderId);
 
-      if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
-      if (existOrder.user_id !== user.id)
-        return { code: 401, errorMessage: '해당 주문의 환불 요청 권한이 없습니다.' };
+      if (!existOrder) throw errorHandler.orderNotFound;
+      if (existOrder.user_id !== user.id) throw errorHandler.noPermissions;
 
-      if (existOrder.order_status === 'cancelled')
-        //case 1) 주문이 이미 취소 되었을 때, (환불 신청이 완료된 걸 또 신청했을 때)
-        return { code: 400, errorMessage: '이미 환불된 주문입니다.' };
-      else if (existOrder.order_status === 'refundRequest')
-        //case 2) 주문 상태가 현재 주문 취소 신청 상태일 때, (사장에게 환불 신청) - 오류만 반환
-        return { code: 400, errorMessage: '이미 환불 요청 중인 주문입니다.' };
+      //case 1) 주문이 이미 취소 되었을 때, (환불 신청이 완료된 걸 또 신청했을 때)
+      if (existOrder.order_status === 'cancelled') throw errorHandler.completedRefund;
+      //case 2) 주문 상태가 현재 주문 취소 신청 상태일 때, (사장에게 환불 신청) - 오류만 반환
+      else if (existOrder.order_status === 'refundRequest') throw errorHandler.requestingRefund;
+      //case 3) 주문이 완료 되었을 때, (사장한테 돈이 들어갔을 때) - 해당 가게한테 환불 신청
       else if (existOrder.order_status === 'delivered') {
-        //case 3) 주문이 완료 되었을 때, (사장한테 돈이 들어갔을 때) - 해당 가게한테 환불 신청
         await this.orderRepository.refundRequest(orderId);
         return {
           code: 200,
@@ -139,9 +130,11 @@ class OrderService {
           },
         };
       }
+
       const t = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
       });
+
       try {
         const userPoint = user.point + existOrder.total_price;
         //case 4) 주문 접수 상태일 때, (사장이 배달완료를 안눌렀을 때) - 바로 환불
@@ -160,9 +153,8 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '주문 환불 중 오류가 발생했습니다.' };
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -171,11 +163,11 @@ class OrderService {
       const user = res.locals.user;
 
       const existOrder = await this.orderRepository.findOrder(orderId);
-      if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
+      if (!existOrder) throw errorHandler.orderNotFound;
 
       const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
-      if (myStore.user_id !== user.id)
-        return { code: 401, errorMessage: '해당 주문의 환불 처리 권한이 없습니다.' };
+      if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
+      
       const totalSales = myStore.total_sales - existOrder.total_price;
       const userPoint = user.point + existOrder.total_price;
 
@@ -199,10 +191,9 @@ class OrderService {
         await t.rollback();
         throw transactionError;
       }
-      return { code: 400, errorMessage: '주문 환불 요청이 들어온 주문이 아닙니다.' };
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '환불 요청 승인 중 오류가 발생했습니다.' };
+      throw errorHandler.notRequestRefund;
+    } catch (err) {
+      throw err;
     }
   };
 
@@ -210,11 +201,11 @@ class OrderService {
     try {
       const user = res.locals.user;
       const existOrder = await this.orderRepository.findOrder(orderId);
-      if (!existOrder) return { code: 404, errorMessage: '해당 주문을 찾을 수 없습니다.' };
+      if (!existOrder) throw errorHandler.orderNotFound;
 
       const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
-      if (myStore.user_id !== user.id)
-        return { code: 401, errorMessage: '해당 주문의 환불 처리 권한이 없습니다.' };
+      if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
+
 
       if (existOrder.order_status === 'refundRequest') {
         await this.orderRepository.updateDeliveryStatus(orderId);
@@ -224,10 +215,9 @@ class OrderService {
           data: { userId: existOrder.user_id },
         };
       }
-      return { code: 400, errorMessage: '주문 환불 요청이 들어온 주문이 아닙니다.' };
-    } catch (error) {
-      console.error(error);
-      return { code: 500, errorMessage: '환불 요청 거부 중 오류가 발생했습니다.' };
+      throw errorHandler.notRequestRefund;
+    } catch (err) {
+      throw err;
     }
   };
   // 여러 음식 주문
@@ -256,19 +246,17 @@ class OrderService {
         }); //(처음에 forEach를 썼었는데)array내장함수는 await이 안됨
         // 반복작업에 await이 필요한 경우는 일반for문을 사용할 것
       }
-      if (userPoint < totalPrice) {
-        throw new Error('주문할 금액이 모자릅니다.');
-      }
+      if (userPoint < totalPrice) throw errorHandler.pointLess;
+
       const remainedPoint = userPoint - totalPrice;
       await this.orderRepository.updateOrder(orderId, totalPrice, t);
       await this.userRepository.updatePoint(userId, remainedPoint, t);
 
       await t.commit();
       return { code: 200, message: '정상적으로 주문되었습니다.' };
-    } catch (transactionError) {
-      console.error(transactionError);
+    } catch (err) {
       await t.rollback();
-      return { code: 500, errorMessage: '주문 중 오류가 발생했습니다.' };
+      throw err;
     }
   };
 }
