@@ -213,6 +213,30 @@ class UserController {
       next(err);
     }
   };
+
+  getMyReviews = async (_, res, next) => {
+    try {
+      const user = res.locals.user;
+
+      const getMyReviews = await this.userService.getMyReviews(user.id);
+
+      return res.status(200).json({ myReviews: getMyReviews });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getMyOrders = async (_, res, next) => {
+    try {
+      const user = res.locals.user;
+
+      const getMyOrders = await this.userService.getMyOrders(user.id);
+
+      return res.status(200).json({ myOrders: getMyOrders });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 module.exports = UserController;

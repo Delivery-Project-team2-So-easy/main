@@ -136,6 +136,13 @@ class OrderRepository {
 
     return { reorderCount, averageRate };
   };
+
+  getMyOrders = async (userId) => {
+    const myOrders = await Order.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'store_id', 'order_status', 'total_price', 'create_at'],
+    });
+    return myOrders;
+  };
 }
-//
 module.exports = OrderRepository;

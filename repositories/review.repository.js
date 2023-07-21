@@ -90,6 +90,13 @@ class ReviewRepository {
 
     return deleteReview;
   };
+
+  getMyReviews = async (userId) => {
+    return await Review.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'store_id', 'order_id', 'review', 'rating', 'review_img', 'create_at'],
+    });
+  };
 }
 
 module.exports = ReviewRepository;

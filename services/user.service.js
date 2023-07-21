@@ -3,6 +3,8 @@ require('dotenv').config();
 const UserRepository = require('../repositories/user.repository');
 const StoreRepository = require('../repositories/store.repository');
 const LikeRepository = require('../repositories/like.repository');
+const ReviewRepository = require('../repositories/review.repository');
+const OrderRepository = require('../repositories/order.repository');
 const errorHandler = require('../errorHandler');
 const jwt = require('jsonwebtoken');
 const env = process.env;
@@ -15,6 +17,8 @@ class UserService {
   userRepository = new UserRepository();
   storeRepository = new StoreRepository();
   likeRepository = new LikeRepository();
+  reviewRepository = new ReviewRepository();
+  orderRepository = new OrderRepository();
 
   signUp = async (
     email,
@@ -227,6 +231,30 @@ class UserService {
       } else {
         throw errorHandler.nonToken;
       }
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getMyReviews = async (userId) => {
+    try {
+      const myReviews = await this.reviewRepository.getMyReviews(userId);
+
+      if (!myReviews) throw errorHandler.nonExistReview;
+
+      return myReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getMyOrders = async (userId) => {
+    try {
+      const myOrders = await this.orderRepository.getMyOrders(userId);
+
+      if (!myOrders) throw errorHandler.noOrder;
+
+      return myOrders;
     } catch (err) {
       throw err;
     }
