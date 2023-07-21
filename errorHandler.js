@@ -37,7 +37,7 @@ const errorHandler = {
   pointLess: new CustomError(400, '잔여포인트가 부족해 주문 할 수 없습니다.'),
   nonList: new CustomError(400, '주문할 음식이 없습니다.'),
   // isDelivered
-  noOrder: new CustomError(404, '해당 주문이 없습니다.'),
+  noOrder: new CustomError(404, '주문 내역이 없습니다.'),
   completedOrder: new CustomError(400, '이미 배달이 완료된 주문입니다.'),
   refundOrder: new CustomError(400, '고객님이 환불 요청한 주문입니다.'),
   cancelledOrder: new CustomError(400, '이미 환불된 주문입니다.'),
@@ -54,7 +54,7 @@ const errorHandler = {
   duplicateReview: new CustomError(409, '해당 주문에 대한 리뷰를 이미 작성하셨습니다.'),
   noOrderHistory: new CustomError(400, '주문 내역이 없어 리뷰를 작성 할 수 없습니다.'),
   // updateReview
-  nonExistReview: new CustomError(404, '해당 리뷰가 존재하지 않습니다.'),
+  nonExistReview: new CustomError(404, '작성된 리뷰가 존재하지 않습니다.'),
 
   // common error
   nonExistStore: new CustomError(404, '해당 매장이 존재하지 않습니다.'),
