@@ -26,7 +26,7 @@ class OrderController {
     const result = await this.orderService.orderMenu(storeId, menuId, price, quantity, option, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ message: result.message });
+    return res.status(result.code).json({ message: result.message, data: result.data });
   };
 
   isDelivered = async (req, res) => {
@@ -40,7 +40,7 @@ class OrderController {
     const result = await this.orderService.isDelivered(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ message: result.message });
+    return res.status(result.code).json({ message: result.message, data: result.data });
   };
 
   refundRequestOrder = async (req, res) => {
@@ -49,7 +49,7 @@ class OrderController {
     const result = await this.orderService.refundRequest(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ message: result.message });
+    return res.status(result.code).json({ message: result.message, data: result.data });
   };
 
   refundComplete = async (req, res) => {
@@ -63,7 +63,7 @@ class OrderController {
     const result = await this.orderService.refundComplete(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ message: result.message });
+    return res.status(result.code).json({ message: result.message, data: result.data });
   };
 
   refundRefuse = async (req, res) => {
@@ -77,7 +77,7 @@ class OrderController {
     const result = await this.orderService.refundRefuse(orderId, res);
     if (result.errorMessage)
       return res.status(result.code).json({ errorMessage: result.errorMessage });
-    return res.status(result.code).json({ message: result.message });
+    return res.status(result.code).json({ message: result.message, data: result.data });
   };
 
   // 여러 음식 주문

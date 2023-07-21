@@ -3,7 +3,7 @@ const StoreService = require('../services/store.service');
 class StoreController {
   storeService = new StoreService();
   getStore = async (_, res) => {
-    const { code, data, errorMessage } = await this.storeService.getStore();
+    const { code, data, errorMessage } = await this.storeService.getStore(res);
 
     if (errorMessage) return res.status(code).json({ errorMessage });
     return res.status(code).json({ data });

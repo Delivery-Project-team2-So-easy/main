@@ -1,7 +1,9 @@
 const StoreRepository = require('../repositories/store.repository');
 const UserRepository = require('../repositories/user.repository');
 const OrderRepository = require('../repositories/order.repository');
-
+require('dotenv').config();
+const env = process.env;
+const jwt = require('jsonwebtoken');
 class StoreService {
   storeRepository = new StoreRepository();
   userRepository = new UserRepository();
