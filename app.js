@@ -26,7 +26,7 @@ app.use(async (err, req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.sendFile(__dirname + '/assets/main/main.html');
 });
 
 module.exports = http;

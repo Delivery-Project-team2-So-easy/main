@@ -1,9 +1,12 @@
+// const params = new URLSearchParams(window.location.search);
+// const storeId = params.get('storeId');
 //매장정보 불러오기
 window.addEventListener('DOMContentLoaded', async () => {
   storeId = 1; // 추후 삭제 필요. URLSearchParams로 storeId 받을것
   fetch(`/store/${storeId}`, {})
     .then((response) => response.json())
     .then((data) => {
+      console.log(data);
       const store_name = data.data.store_name;
       const store_img = data.data.store_img;
       const store_likes = data.data.likes;
@@ -11,7 +14,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       />
       <div class="store-name">${store_name}</div>
       <div class="info">좋아요: ${store_likes}</div>
-      <div class="like">좋아요</div>`;
+      <button class="like">좋아요</button>`;
       const store_overview = document.querySelector('.store-overview');
       store_overview.insertAdjacentHTML('beforeend', temp_html);
     });
