@@ -51,7 +51,15 @@ function order_menu() {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(orders),
-  });
-  alert('주문이 완료되었습니다.');
-  window.location.reload(); // 추후 주문상세페이지로 이동으로 변경
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.errorMessage) {
+        alert(data.errorMessage);
+      } else if (data.message) {
+        alert(data.message);
+        window.location.reload();
+      }
+    });
+  // window.location.reload(); // 추후 주문상세페이지로 이동으로 변경
 }

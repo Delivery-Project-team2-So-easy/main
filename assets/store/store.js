@@ -45,6 +45,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           heart.classList.add('fa-heart-o');
           heart.classList.remove('fa-heart');
         }
+        window.location.reload();
       });
     });
 });
