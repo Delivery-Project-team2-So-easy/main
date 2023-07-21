@@ -140,29 +140,6 @@ class StoreService {
     }
   };
 
-  // search = async (searchKeyword) => {
-  //   try {
-  //     const allStoreData = await this.storeRepository.searchStore(searchKeyword);
-  //     const allMenuData = await this.storeRepository.searchMenu(searchKeyword);
-
-  //     const allSearchData = [...allStoreData, ...allMenuData];
-  //     //중복제거 코드!!
-  //     const filteredSearchData = arr.reduce((acc, current) => {
-  //       const x = acc.find((item) => item.id === current.id);
-  //       if (!x) {
-  //         return acc.concat([current]);
-  //       } else {
-  //         return acc;
-  //       }
-  //     }, []);
-
-  //     return { code: 200, data: a };
-  //   } catch (err) {
-  //     console.log(err);
-  //     return { code: 500, data: '오류' };
-  //   }
-  // };
-
   getAllMenuInfo = async (storeId) => {
     try {
       const findStoreById = await this.storeRepository.findStoreById(storeId);

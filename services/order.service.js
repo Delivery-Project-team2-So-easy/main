@@ -60,6 +60,7 @@ class OrderService {
         return {
           code: 201,
           message: `${storeInfo.store_name}가게 주문: ${menuInfo.menu}, ${user.name}고객님의 잔여 포인트: ${remainingPoint}포인트`,
+          data: { address: user.address, totalPrice },
         };
       } catch (transactionError) {
         await t.rollback();
@@ -94,6 +95,7 @@ class OrderService {
         return {
           code: 201,
           message: `배달이 완료되었습니다. ${order.total_price}포인트가 입금 되었습니다.`,
+          data: { userId: order.user_id },
         };
       } catch (transactionError) {
         await t.rollback();
@@ -119,7 +121,14 @@ class OrderService {
       //case 3) 주문이 완료 되었을 때, (사장한테 돈이 들어갔을 때) - 해당 가게한테 환불 신청
       else if (existOrder.order_status === 'delivered') {
         await this.orderRepository.refundRequest(orderId);
-        return { code: 200, message: '주문에 대한 환불 요청이 정상적으로 이루어 졌습니다.' };
+        return {
+          code: 200,
+          message: '이미 배달이 완료된 주문이므로 환불 요청이 이루어 졌습니다.',
+          data: {
+            status: existOrder.order_status,
+            orderId: existOrder.id,
+          },
+        };
       }
 
       const t = await sequelize.transaction({
@@ -135,6 +144,10 @@ class OrderService {
         return {
           code: 200,
           message: `주문 취소가 완료 되었습니다. ${existOrder.total_price}포인트가 입금 되어 고객님의 잔여포인트는 ${userPoint}포인트 입니다.`,
+          data: {
+            status: existOrder.order_status,
+            orderId: existOrder.id,
+          },
         };
       } catch (transactionError) {
         await t.rollback();
@@ -151,9 +164,10 @@ class OrderService {
 
       const existOrder = await this.orderRepository.findOrder(orderId);
       if (!existOrder) throw errorHandler.orderNotFound;
-      if (existOrder.user_id !== user.id) throw errorHandler.noPermissions;
 
-      const myStore = await this.storeRepository.findMyStore(user.id);
+      const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
+      if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
+      
       const totalSales = myStore.total_sales - existOrder.total_price;
       const userPoint = user.point + existOrder.total_price;
 
@@ -170,6 +184,7 @@ class OrderService {
           return {
             code: 200,
             message: `주문 환불이 완료 되었습니다. 해당 주문 금액의 ${existOrder.total_price}포인트만큼 차감 되었습니다.`,
+            data: { userId: existOrder.user_id, point: existOrder.total_price },
           };
         }
       } catch (transactionError) {
@@ -188,16 +203,19 @@ class OrderService {
       const existOrder = await this.orderRepository.findOrder(orderId);
       if (!existOrder) throw errorHandler.orderNotFound;
 
-      if (existOrder.user_id !== user.id) throw errorHandler.noPermissions;
+      const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
+      if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
+
 
       if (existOrder.order_status === 'refundRequest') {
         await this.orderRepository.updateDeliveryStatus(orderId);
-        return { code: 200, message: '주문 환불 요청을 거부하였습니다.' };
+        return {
+          code: 200,
+          message: '주문 환불 요청을 거부하였습니다.',
+          data: { userId: existOrder.user_id },
+        };
       }
-      const result = await this.isDelivered(orderId, res);
-      if (result.errorMessage) return { code: result.code, errorMessage: result.errorMessage };
-
-      return { code: result.code, message: result.message };
+      throw errorHandler.notRequestRefund;
     } catch (err) {
       throw err;
     }
