@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입 페이지</title>
+    <style>
+      /* 스타일링을 위한 CSS 코드 */
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+      .container h1 {
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .form-group input[type='submit'] {
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+      }
+      .form-group input[type='submit']:hover {
+        background-color: #45a049;
+      }
+      .checkBtn {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .checkBtn:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>회원가입</h1>
+      <div>
+        <div class="form-group">
+          <label for="profileImage">프로필 사진:</label>
+          <input type="file" class="form-control" id="inputGroupFile02" />
+        </div>
+        <div class="form-group">
+          <label for="email">이메일:</label>
+          <input type="email" id="email" name="email" />
+          <button id="emailAuth">인증번호 발송</button>
+        </div>
+        <div class="form-group" id="emailCheckForm" style="display: none">
+          <label>이메일 인증번호:</label>
+          <input type="text" id="emailNumber" />
+          <button id="authEmail">이메일 인증하기</button>
+        </div>
+        <div class="form-group">
+          <label for="username">사용자명:</label>
+          <input type="text" id="username" name="username" />
+        </div>
+        <div class="form-group">
+          <label for="password">비밀번호:</label>
+          <input type="password" id="password" name="password" />
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password">비밀번호 확인:</label>
+          <input type="password" id="confirm_password" name="confirm_password" />
+        </div>
+        <div class="form-group">
+          <label for="address">주소:</label>
+          <input type="text" id="address" name="address" />
+        </div>
+        <div class="form-group">
+          <label>사용자 분류</label>
+          <button onclick="checkAnswer('소비자')">소비자</button>
+          <button onclick="checkAnswer('사업자')">사업자</button>
+          <p id="resultMessage"></p>
+        </div>
+        <div class="form-group" id="business_number_form" style="display: none">
+          <label for="business_registration_number">사업자번호:</label>
+          <input
+            type="text"
+            id="business_registration_number"
+            name="business_registration_number"
+          />
+        </div>
+        <button type="button" class="checkBtn">가입하기</button>
+      </div>
+    </div>
+
+    <script>
+      function checkAnswer(answer) {
+        const resultMessageElement = document.getElementById('resultMessage');
+        const business_number_form = document.getElementById('business_number_form');
+
+        if (answer === '사업자') {
+          resultMessageElement.textContent = '사업자';
+          business_number_form.style.display = '';
+        } else if (answer === '소비자') {
+          resultMessageElement.textContent = '소비자';
+          business_number_form.style.display = 'none';
+        } else {
+          resultMessageElement.textContent = '선택된 값이 없습니다.';
+        }
+      }
+
+      const emailAuth = document.getElementById('emailAuth');
+      const inputEmail = document.getElementById('email');
+      const emailCheckForm = document.getElementById('emailCheckForm');
+
+      emailAuth.addEventListener('click', async () => {
+        {
+          fetch('/users/checkEmail', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: inputEmail.value,
+            }),
+          })
+            .then((response) => {
+              return response.json();
+            })
+            .then((data) => {
+              alert(data);
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              alert('오류');
+            });
+        }
+      });
+    </script>
+  </body>
+</html>
