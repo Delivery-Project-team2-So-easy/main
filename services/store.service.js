@@ -131,7 +131,6 @@ class StoreService {
   getStoreDetail = async (storeId) => {
     try {
       const oneStoreData = await this.storeRepository.getStoreDetail(storeId);
-
       if (!oneStoreData) throw errorHandler.nonExistStore;
 
       return { code: 200, data: oneStoreData };

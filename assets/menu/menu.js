@@ -22,7 +22,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             <div class="menu-name">${menu_name}</div>
             <div class="menu-price">${menu_price}</div>
             <input type=number class="${menu_id}">
-            <button class="add-menu">추가</button>
           </div>
         </div>
         `;

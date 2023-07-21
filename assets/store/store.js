@@ -3,7 +3,7 @@
 //매장정보 불러오기
 window.addEventListener('DOMContentLoaded', async () => {
   storeId = 1; // 추후 삭제 필요. URLSearchParams로 storeId 받을것
-  fetch(`/store/${storeId}`, {})
+  fetch(`/store/${storeId}`)
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -14,9 +14,39 @@ window.addEventListener('DOMContentLoaded', async () => {
       />
       <div class="store-name">${store_name}</div>
       <div class="info">좋아요: ${store_likes}</div>
-      <button class="like">좋아요</button>`;
+      <i id="heart" class="fa fa-heart-o" aria-hidden="true"></i> `;
       const store_overview = document.querySelector('.store-overview');
       store_overview.insertAdjacentHTML('beforeend', temp_html);
+    });
+});
+
+window.addEventListener('DOMContentLoaded', async () => {
+  storeId = 1;
+  fetch(`/user/store/${storeId}/isliked`)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data.result);
+      const heart = document.querySelector('#heart');
+      if (data.result) {
+        heart.classList.remove('fa-heart-o');
+        heart.classList.add('fa-heart');
+      }
+      heart.addEventListener('click', function () {
+        fetch(`/user/store/${storeId}/like`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            body: JSON.stringify({}),
+          },
+        }).then((res) => res.json());
+        if (this.classList.contains('fa-heart-o')) {
+          heart.classList.remove('fa-heart-o');
+          heart.classList.add('fa-heart');
+        } else {
+          heart.classList.add('fa-heart-o');
+          heart.classList.remove('fa-heart');
+        }
+      });
     });
 });
 
@@ -48,3 +78,25 @@ window.addEventListener('DOMContentLoaded', async () => {
       });
     });
 });
+
+async function like(storeId) {
+  storeId = 1;
+  fetch(`/user/store/${storeId}/like`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      body: JSON.stringify({}),
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => console.log(data));
+  const liked = document.querySelector('.liked');
+  const unliked = document.querySelector('.unliked');
+  if (!liked.style.display === 'none') {
+    liked.style.display = 'block';
+    unliked.style.display = 'none';
+  } else if (liked.style.display === 'block') {
+    liked.style.display = 'none';
+    unliked.style.display = 'block';
+  }
+}
