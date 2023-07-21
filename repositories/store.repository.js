@@ -14,6 +14,10 @@ class StoreRepository {
     return await Store.findOne({ where: { user_id: userId } });
   };
 
+  findByStoreId = async (storeId) => {
+    return await Store.findOne({ where: { id: storeId } });
+  };
+
   registerStore = async (userId, storeName, storeAddress, openingDate, storeImg) => {
     return await Store.create({
       user_id: userId,
@@ -114,6 +118,7 @@ class StoreRepository {
       where: { id: storeId },
       attributes: [
         'id',
+        'user_id',
         'store_name',
         'store_img',
         'store_address',
