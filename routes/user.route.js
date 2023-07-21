@@ -10,6 +10,7 @@ router.post('/users/signup', uploadMiddleware, userController.signUp);
 router.post('/users/login', userController.login);
 router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
+router.get('/userDetails', authMiddleware, userController.userDetails);
 router.post('/users/checkEmail', userController.checkEmail);
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
 router.get('/user/store/likeStores', authMiddleware, userController.getMyLike);

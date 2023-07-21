@@ -28,7 +28,7 @@ class UserRepository {
   };
 
   findUser = async (userId) => {
-    return await User.findOne({ where: { id: userId } });
+    return await User.findOne({ where: { id: userId }, attributes: { exclude: ['password'] } });
   };
 
   getPoint = async (userId) => {
