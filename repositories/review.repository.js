@@ -39,6 +39,15 @@ class ReviewRepository {
     return getReviews;
   };
 
+  findReviewById = async (storeId, userId) => {
+    const findReviewById = await Review.findOne({
+      where: {
+        [Op.and]: [{ store_id: storeId }, { user_id: userId }],
+      },
+    });
+    return findReviewById;
+  };
+
   getReviewDetail = async (storeId, reviewId) => {
     const getReviewDetail = await Review.findOne({
       where: {
@@ -80,6 +89,13 @@ class ReviewRepository {
     const deleteReview = await Review.destroy({ where: { id: reviewId } });
 
     return deleteReview;
+  };
+
+  getMyReviews = async (userId) => {
+    return await Review.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'store_id', 'order_id', 'review', 'rating', 'review_img', 'create_at'],
+    });
   };
 }
 

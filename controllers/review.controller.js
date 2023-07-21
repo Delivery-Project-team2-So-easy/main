@@ -1,110 +1,86 @@
+const errorHandler = require('../errorHandler');
 const ReviewService = require('../services/review.service');
 
 class ReviewController {
   reviewService = new ReviewService();
 
-  getReviews = async (req, res) => {
-    const { storeId } = req.params;
-    const getReviews = await this.reviewService.getReviews(storeId);
+  getReviews = async (req, res, next) => {
+    try {
+      const { storeId } = req.params;
+      const getReviews = await this.reviewService.getReviews(storeId);
 
-    if (getReviews.errorMessage) {
-      return res.status(getReviews.code).json({
-        errorMessage: getReviews.errorMessage,
-      });
+      return res.status(200).json({ reviews: getReviews });
+    } catch (err) {
+      next(err);
     }
-    return res.status(200).json({
-      reviews: getReviews,
-    });
   };
 
-  postReview = async (req, res) => {
-    const user = res.locals.user;
-    const { storeId } = req.params;
-    const { review, rating } = req.body;
-    let filepath = req.file ? req.file.location : null;
-    const reviewImg = filepath
-      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
-      : '';
+  postReview = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { storeId } = req.params;
+      const { review, rating } = req.body;
+      let filepath = req.file ? req.file.location : null;
+      const reviewImg = filepath
+        ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
+        : '';
 
-    const postReview = await this.reviewService.postReview(
-      user.id,
-      storeId,
-      review,
-      rating,
-      reviewImg
-    );
+      await this.reviewService.postReview(user.id, storeId, review, rating, reviewImg);
 
-    if (postReview.errorMessage) {
-      return res.status(postReview.code).json({
-        errorMessage: postReview.errorMessage,
-      });
+      return res.status(201).json({ message: '리뷰를 등록하였습니다.' });
+    } catch (err) {
+      next(err);
     }
-    return res.status(201).json({
-      message: '리뷰를 등록하였습니다.',
-    });
   };
 
-  updateReview = async (req, res) => {
-    const user = res.locals.user;
-    const { storeId, reviewId } = req.params;
-    const { review, rating } = req.body;
+  updateReview = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { storeId, reviewId } = req.params;
+      const { review, rating } = req.body;
 
-    let filepath = req.file ? req.file.location : null;
-    const reviewImg = filepath
-      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
-      : '';
+      if (!review && !rating && !req.file) throw errorHandler.emptyContent;
 
-    const updateReview = await this.reviewService.updateReview(
-      review,
-      rating,
-      user.id,
-      storeId,
-      reviewId,
-      reviewImg
-    );
+      let filepath = req.file ? req.file.location : null;
+      const reviewImg = filepath
+        ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
+        : '';
 
-    if (updateReview.errorMessage) {
-      return res.status(updateReview.code).json({
-        errorMessage: updateReview.errorMessage,
-      });
+      await this.reviewService.updateReview(review, rating, user.id, storeId, reviewId, reviewImg);
+
+      return res.status(201).json({ message: '리뷰를 수정하였습니다.' });
+    } catch (err) {
+      next(err);
     }
-
-    return res.status(201).json({
-      message: '리뷰를 수정하였습니다.',
-    });
   };
 
-  deleteReview = async (req, res) => {
-    const user = res.locals.user;
-    const { storeId, reviewId } = req.params;
+  deleteReview = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { storeId, reviewId } = req.params;
 
-    const deleteReview = await this.reviewService.deleteReview(user.id, storeId, reviewId);
+      const deleteReview = await this.reviewService.deleteReview(user.id, storeId, reviewId);
 
-    if (deleteReview.errorMessage) {
-      return res.status(deleteReview.code).json({
-        errorMessage: deleteReview.errorMessage,
-      });
+      return res.status(deleteReview.code).json({ message: deleteReview.message });
+    } catch (err) {
+      next(err);
     }
-
-    return res.status(deleteReview.code).json({ message: deleteReview.message });
   };
 
-  likeReview = async (req, res) => {
-    const user = res.locals.user;
-    const { storeId, reviewId } = req.params;
+  likeReview = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { storeId, reviewId } = req.params;
 
-    const likeReview = await this.reviewService.likeReview(user.id, storeId, reviewId);
+      const likeReview = await this.reviewService.likeReview(user.id, storeId, reviewId);
 
-    if (likeReview.errorMessage) {
       return res.status(likeReview.code).json({
-        errorMessage: likeReview.errorMessage,
+        message: likeReview.message,
+        likeCount: likeReview.likeCount,
       });
+    } catch (err) {
+      next(err);
     }
-
-    return res.status(likeReview.code).json({
-      message: likeReview.message,
-      likeCount: likeReview.likeCount,
-    });
   };
 }
 

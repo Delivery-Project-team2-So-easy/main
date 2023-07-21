@@ -2,6 +2,7 @@ const ReviewRepository = require('../repositories/review.repository');
 const StoreRepository = require('../repositories/store.repository');
 const OrderRepository = require('../repositories/order.repository');
 const LikeRepository = require('../repositories/like.repository');
+const errorHandler = require('../errorHandler');
 
 class ReviewService {
   reviewRepository = new ReviewRepository();
@@ -10,32 +11,28 @@ class ReviewService {
   likeRepository = new LikeRepository();
 
   getReviews = async (storeId) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviews = await this.reviewRepository.getReviews(storeId);
-
     try {
-      if (!findStore) {
-        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
-      }
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviews = await this.reviewRepository.getReviews(storeId);
+
+      if (!findStore) throw errorHandler.nonExistStore;
       return getReviews;
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '리뷰 조회에 실패하였습니다.' };
+      throw err;
     }
   };
 
   postReview = async (userId, storeId, review, rating, review_img) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const existOrder = await this.orderRepository.existOrder(userId, storeId);
-
     try {
-      if (!review || !rating) {
-        return { code: 400, errorMessage: '리뷰와 평점을 모두 입력해주세요.' };
-      } else if (!existOrder) {
-        return { code: 400, errorMessage: '주문 내역이 없어 리뷰를 작성 할 수 없습니다.' };
-      } else if (!findStore) {
-        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
-      }
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const existOrder = await this.orderRepository.existOrder(userId, storeId);
+      const existReview = await this.reviewRepository.findReviewById(storeId, userId);
+
+      if (!findStore) throw errorHandler.nonExistStore;
+      else if (!existOrder) throw errorHandler.noOrderHistory;
+      else if (existReview) throw errorHandler.duplicateReview;
+      else if (!review || !rating) throw errorHandler.emptyContent;
+
       await this.reviewRepository.postReview(
         userId,
         storeId,
@@ -46,67 +43,54 @@ class ReviewService {
       );
       return true;
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '리뷰 등록에 실패했습니다.' };
+      throw err;
     }
   };
 
   updateReview = async (review, rating, userId, storeId, reviewId, reviewImg) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
-      if (!findStore) {
-        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
-      } else if (!getReviewDetail) {
-        return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
-      } else if (!review || !rating) {
-        return { code: 400, errorMessage: '리뷰와 평점을 모두 입력해주세요' };
-      } else if (getReviewDetail.user_id != userId) {
-        return { code: 401, errorMessage: '리뷰수정 권한이 없습니다.' };
-      } else if (getReviewDetail.review === review && getReviewDetail.rating === rating) {
-        return { code: 400, errorMessage: '수정하려는 정보가 없습니다' };
-      }
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
+      if (!findStore) throw errorHandler.nonExistStore;
+      else if (!getReviewDetail) throw errorHandler.nonExistReview;
+      else if (getReviewDetail.user_id != userId) throw errorHandler.noPermissions;
+      else if (getReviewDetail.review === review && getReviewDetail.rating === rating)
+        throw errorHandler.emptyContent;
+
       await this.reviewRepository.updateReview(review, rating, reviewId, reviewImg);
       return true;
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '리뷰 수정에 실패하였습니다.' };
+      throw err;
     }
   };
 
   deleteReview = async (userId, storeId, reviewId) => {
-    const findStore = await this.storeRepository.findStoreById(storeId);
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
-      if (!findStore) {
-        return { code: 404, errorMessage: '해당 매장이 존재하지 않습니다.' };
-      } else if (!getReviewDetail) {
-        return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
-      } else if (getReviewDetail.user_id != userId) {
-        return { code: 401, errorMessage: '리뷰삭제 권한이 없습니다.' };
-      }
+      const findStore = await this.storeRepository.findStoreById(storeId);
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
+      if (!findStore) throw errorHandler.nonExistStore;
+      else if (!getReviewDetail) throw errorHandler.nonExistReview;
+      else if (getReviewDetail.user_id != userId) throw errorHandler.noPermissions;
+
       await this.reviewRepository.deleteReview(reviewId);
       return { code: 200, message: '리뷰를 삭제하였습니다.' };
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '리뷰 삭제에 실패하였습니다.' };
+      throw err;
     }
   };
 
   likeReview = async (userId, storeId, reviewId) => {
-    const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
-
     try {
-      if (!getReviewDetail) {
-        return { code: 404, errorMessage: '해당 리뷰가 존재하지 않습니다.' };
-      }
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+
+      if (!getReviewDetail) throw errorHandler.nonExistReview;
+
       const likeReview = await this.likeRepository.likeReview(userId, reviewId);
       return { code: 200, message: likeReview.message, likeCount: likeReview.likeCount };
     } catch (err) {
-      console.error(err);
-      return { code: 500, errorMessage: '리뷰 좋아요에 실패하였습니다.' };
+      throw err;
     }
   };
 }
