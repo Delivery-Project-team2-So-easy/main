@@ -1,10 +1,17 @@
 const StoreService = require('../services/store.service');
+const jwt = require('jsonwebtoken');
 
 class StoreController {
   storeService = new StoreService();
   getStore = async (_, res) => {
     const { code, data, errorMessage } = await this.storeService.getStore();
-
+    const token = jwt.sign(
+      {
+        userId: 1,
+      },
+      process.env.JWT_SECRET_KEY
+    );
+    res.cookie('authorization', `Bearer ${token}`);
     if (errorMessage) return res.status(code).json({ errorMessage });
     return res.status(code).json({ data });
   };
@@ -60,8 +67,7 @@ class StoreController {
     if (errorMessage) {
       return res.status(code).json({ errorMessage });
     }
-    console.log(message); // 터미널에는 message 정상적으로 표시됨
-    res.status(code).json({ message }); // json데이터가 반환되지 않음..
+    res.status(code).json({ message });
   };
 
   registerMenu = async (req, res) => {

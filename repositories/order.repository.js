@@ -82,7 +82,6 @@ class OrderRepository {
   };
 
   updateOrder = async (orderId, totalPrice, t) => {
-    console.log(orderId, totalPrice);
     return Order.update({ total_price: totalPrice }, { where: { id: orderId }, transaction: t });
   };
 

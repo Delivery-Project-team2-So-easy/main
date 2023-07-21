@@ -112,7 +112,7 @@ class StoreService {
 
       return { code: 200, data: allStoreData };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '매장 전체 조회에 실패했습니다.' };
     }
   };
@@ -125,7 +125,7 @@ class StoreService {
 
       return { code: 200, data: oneStoreData };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '매장 상세 조회에 실패했습니다.' };
     }
   };
@@ -186,7 +186,7 @@ class StoreService {
 
       return { code: 200, data: { allStoreData, allMenuData } };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '오류' };
     }
   };

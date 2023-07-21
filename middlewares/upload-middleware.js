@@ -43,7 +43,7 @@ module.exports = async (req, res, next) => {
     });
     upload.single('newFile')(req, res, next);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ errorMessage: '파일 업로드 에러' });
   }
 };

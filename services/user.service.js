@@ -42,7 +42,7 @@ class UserService {
         return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
     }
   };
@@ -67,7 +67,7 @@ class UserService {
 
       return { token, code: 200, message: '로그인 성공하였습니다.' };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '로그인에 실패했습니다.' };
     }
   };
@@ -94,7 +94,7 @@ class UserService {
       });
       return { code: 200, message: '인증 메시지를 발송했습니다.' };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: err };
     }
   };
@@ -117,7 +117,6 @@ class UserService {
       return { code: 500, errorMessage: '매장 즐겨찾기에 실패 했습니다.' };
     }
   };
-
 
   getMyLike = async (userId) => {
     try {
@@ -162,7 +161,7 @@ class UserService {
         return { code: 409, errorMessage: '이미 존재하는 이메일입니다.' };
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return { code: 500, errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' };
     }
   };
@@ -216,7 +215,7 @@ class UserService {
             },
           })
         ).json();
-        console.log(userRequest);
+        console.error(userRequest);
         const kakaoEmail = userRequest.kakao_account.email + '/kakao';
         const exUser = await User.findOne({
           where: { email: kakaoEmail },

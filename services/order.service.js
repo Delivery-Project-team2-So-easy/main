@@ -229,16 +229,16 @@ class OrderService {
       const orderId = order.id;
       let totalPrice = 0;
       for (let i = 0; i < orderDetail.length; i++) {
-        totalPrice += orderDetail[i].price * orderDetail[i].quantity;
         const order_id = orderId;
         const menu_id = orderDetail[i].menuId;
         const quantity = orderDetail[i].quantity;
-        const price = orderDetail[i].price;
         const option = orderDetail[i].option;
+        const menu = await this.storeRepository.findMenuById(storeId, menu_id, t);
+        const price = menu.price;
+        totalPrice += price * orderDetail[i].quantity;
         await this.orderRepository.createOrderDetail(order_id, menu_id, quantity, price, option, {
           transaction: t,
-        }); //(처음에 forEach를 썼었는데)array내장함수는 await이 안됨
-        // 반복작업에 await이 필요한 경우는 일반for문을 사용할 것
+        });
       }
       if (userPoint < totalPrice) {
         throw new Error('주문할 금액이 모자릅니다.');
