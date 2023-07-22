@@ -21,6 +21,15 @@ class ReviewService {
       throw err;
     }
   };
+  getMyReviews = async (userId) => {
+    try {
+      const getReviews = await this.reviewRepository.getMyReviews(userId);
+
+      return getReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
 
   postReview = async (userId, storeId, review, rating, review_img) => {
     try {
