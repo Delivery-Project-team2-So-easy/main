@@ -40,6 +40,12 @@
       .review h3 {
         margin-bottom: 10px;
       }
+      .review img {
+        width: 80px;
+        height: 80px; /* 높이를 추가 */
+        object-fit: cover; /* 이미지 비율 유지하면서 지정한 크기에 맞추기 */
+        border-radius: 50%;
+      }
       .button-container {
         display: flex;
         justify-content: space-between;
@@ -52,6 +58,28 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+      }
+      /* 모달창 */
+      .modal-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        display: flex;
+        flex-direction: column; /* 요소들을 수직 방향으로 배치 */
+        align-items: center; /* 가운데 정렬 */
       }
     </style>
   </head>
@@ -82,37 +110,23 @@
             <button class="delete-button">삭제</button>
           </div>
         </div>
-
-        <div class="review">
-          <h3>리뷰 2</h3>
-          <p>제품 B는 별로였어요. 기대한 만큼의 성능이 나오지 않았습니다.</p>
-          <div class="button-container">
-            <button class="edit-button">수정</button>
-            <button class="delete-button">삭제</button>
-          </div>
-        </div>
-
-        <div class="review">
-          <h3>리뷰 3</h3>
-          <p>제품 C는 괜찮았어요. 디자인이 마음에 듭니다.</p>
-          <div class="button-container">
-            <button class="edit-button">수정</button>
-            <button class="delete-button">삭제</button>
-          </div>
-        </div>
-        <div class="review">
-          <h3>리뷰 4</h3>
-          <p>제품 뭐야는 괜찮았어요. 디자인이 마음에 듭니다.</p>
-          <div class="button-container">
-            <button class="edit-button">수정</button>
-            <button class="delete-button">삭제</button>
-          </div>
+      </div>
+      <!-- 모달창 -->
+      <div class="modal-container" id="modalContainer">
+        <div class="modal-content">
+          <h3>리뷰 수정</h3>
+          <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
+          <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
+          <button id="saveBtn">저장</button>
+          <button id="cancelBtn">취소</button>
         </div>
       </div>
       <!-- 기타 마이페이지 내용을 넣을 수 있습니다 -->
     </main>
     <script>
+      // 데이터 렌더링
       window.addEventListener('DOMContentLoaded', () => {
+        // 내 프로필 렌더링
         fetch('/userDetails', {
           method: 'GET',
           headers: {
@@ -123,23 +137,24 @@
           .then((data) => {
             const profile = document.querySelector('.profile');
             const myProfile = data.data;
-            if (data.data.profileImg == null) {
-              data.data.profileImg = `https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp`;
+            if (myProfile.profileImg == null) {
+              myProfile.profileImg = `https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp`;
             }
-            if (data.data.is_seller) {
-              data.data.is_seller = '판매자';
+            if (myProfile.is_seller) {
+              myProfile.is_seller = '판매자';
             } else {
-              data.data.is_seller = '소비자';
+              myProfile.is_seller = '소비자';
             }
             let temp_html = `
           <img
-            src="${data.data.profileImg}"
+            src="${myProfile.profileImg}"
           />
           <div>
-          <h2>${data.data.name}</h2>
-          <p>${data.data.email}</p>
-          <p>${data.data.is_seller}</p>
-          <p>${data.data.address}</p>
+          <h2>이름 : ${myProfile.name}</h2>
+          <p>이메일 : ${myProfile.email}</p>
+          <p>가입 유형 : ${myProfile.is_seller}</p>
+          <p>주소 : ${myProfile.address}</p>
+          <p>내 포인트 : ${myProfile.point}</p>
         </div>
         `;
             profile.innerHTML = temp_html;
@@ -148,34 +163,79 @@
             console.log(error);
             alert(error);
           });
-        fetch('/');
-      });
-      const editButton = document.querySelector('#edit-button');
-      editButton.addEventListener('click', () => {
-        fetch('/users/checkEmail', {
-          method: 'POST',
+        // 내 리뷰 렌더링
+        fetch('/myReviews', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            email: inputEmail.value,
-          }),
         })
-          .then((response) => {
-            return response.json();
-          })
+          .then((response) => response.json())
           .then((data) => {
-            if (data.errorMessage) alert(data.errorMessage);
-            else {
-              alert(data.message);
-              authenticationNumberToEmail = data.data;
-              emailCheckForm.style.display = '';
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert('오류');
+            const reviewContainer = document.querySelector('.review-container');
+            console.log(data);
+            const myReviews = data.reviews;
+            let temp = '';
+            myReviews.map((review) => {
+              let temp_html = `
+              <div class="review" id="${review.id}">
+                <img src="${review.Store.store_img}"/>
+                <h3 id=${review.store_id}>${review.Store.store_name}</h3>
+                <p>내 리뷰 : ${review.review}</p>
+                <p>${review.rating} 점 </p>
+                
+                <div class="button-container">
+                  <button class="edit-button">수정</button>
+                  <button class="delete-button">삭제</button>
+                </div>
+              </div>
+            `;
+              temp = temp + temp_html;
+            });
+            reviewContainer.innerHTML = temp;
           });
+      });
+      // 리뷰 수정 관련
+      const reviewContainer = document.querySelector('.review-container');
+      reviewContainer.addEventListener('click', (e) => {
+        // console.log(e.target);
+        // console.log(e.currentTarget);
+        // console.log(e.target.parentElement.parentElement);
+        // console.log(e.target.parentElement.parentElement.querySelector('h3').textContent);
+        if (e.target.className == 'edit-button') {
+          const modalContainer = document.getElementById('modalContainer');
+          const saveBtn = document.getElementById('saveBtn');
+          const cancelBtn = document.getElementById('cancelBtn');
+          const reviewInput = document.getElementById('reviewInput');
+          const ratingInput = document.getElementById('ratingInput');
+
+          const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
+          const reviewId = e.target.parentElement.parentElement.id;
+
+          modalContainer.style.display = 'flex';
+
+          saveBtn.addEventListener('click', () => {
+            // 수정 api
+            fetch(`/store/${storeId}/review/${reviewId}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                review: reviewInput.value,
+                rating: ratingInput.value,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                alert(data.message);
+                window.location.reload();
+              });
+          });
+          cancelBtn.addEventListener('click', () => {
+            modalContainer.style.display = 'none';
+          });
+        }
       });
     </script>
   </body>
