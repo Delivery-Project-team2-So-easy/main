@@ -21,8 +21,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           />
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
-            <input class="menu-price" value=${menu_price}>
-            <input class="menu-option" type=text value="${menu_option}">
+            <label>가격 : </label><input class="menu-price" value=${menu_price}></br>
+            <label>옵션 : </label><input class="menu-option" type=text value="${menu_option}"></br>
             <input type="file">
             <button id="${menu_id}">수정</button>
             <button>삭제</button>
@@ -64,5 +64,30 @@ window.addEventListener('DOMContentLoaded', async () => {
               });
           });
       });
+    });
+});
+
+document.querySelector('.register-btn').addEventListener('click', function (event) {
+  const menu = document.querySelector('#menu-name').value;
+  const price = document.querySelector('#menu-price').value;
+  const option = document.querySelector('#menu-option').value;
+  const category = document.querySelector('#menu-category').value;
+  const menuImg = document.querySelector('#menu-image').files[0];
+  let formData = new FormData();
+  formData.append('menu', menu);
+  formData.append('price', price);
+  formData.append('option', option);
+  formData.append('category', category);
+  formData.append('newFile', menuImg);
+
+  fetch('/store/menu', {
+    method: 'POST',
+    cache: 'no-cache',
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert(data.message);
+      window.location.reload();
     });
 });

@@ -22,14 +22,36 @@
         <!-- 매장정보 -->
       </div>
       <div class="menu-list">
-        <fieldset style="width: 150">
+        <fieldset id="update-field" style="width: 150; display: none">
           <legend>매장 정보 수정</legend>
           <lable>매장이름</lable>
           <input id="store-name" type="text" name="storeName" placeholder="매장이름" /><br />
           <lable>매장주소</lable>
           <input id="store-address" type="text" name="storeAddress" placeholder="매장주소" /><br />
           <input id="image" type="file" name="newFile" /><br />
-          <input class="update-btn" type="button" value="수정하기" /><br />
+          <button class="update-btn">수정하기</button>
+          <button class="delete-btn">매장삭제</button>
+        </fieldset>
+        <fieldset id="register-field" style="width: 150; display: none">
+          <legend>매장 등록</legend>
+          <lable>매장이름</lable>
+          <input id="rg-store-name" type="text" name="storeName" placeholder="매장이름" /><br />
+          <lable>매장주소</lable>
+          <input
+            id="rg-store-address"
+            type="text"
+            name="storeAddress"
+            placeholder="매장주소"
+          /><br />
+          <lable>개업일</lable>
+          <input
+            id="rg-store-opening-date"
+            type="text"
+            name="openingDate"
+            placeholder="개업일"
+          /><br />
+          <input id="rg-image" type="file" name="newFile" /><br />
+          <button class="register-btn">수정하기</button>
         </fieldset>
       </div>
     </section>

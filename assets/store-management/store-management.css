@@ -5,7 +5,21 @@ header {
   text-align: center;
   height: 100px;
   width: 400px;
-  background-color: gray;
+  background-color: mediumturquoise;
+  font-size: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+section {
+  width: 400px;
+  height: 500px;
+  overflow: auto;
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none;
+}
+section::-webkit-scrollbar {
+  display: none;
 }
 .store-overview {
   background-color: white;
