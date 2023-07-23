@@ -10,9 +10,15 @@ class UserController {
     try {
       const profileImg = req.file ? req.file.location : null;
 
-      const { email, name, password, confirmPassword, isSeller, address } = req.body;
-
-      let { businessRegistrationNumber } = req.body;
+      const {
+        email,
+        name,
+        password,
+        confirmPassword,
+        isSeller,
+        address,
+        businessRegistrationNumber,
+      } = req.body;
 
       const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
 
@@ -101,6 +107,16 @@ class UserController {
     }
   };
 
+  userDetails = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { code, data } = await this.userService.getUserDetails(user.id);
+
+      return res.status(code).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
   storeLike = async (req, res, next) => {
     try {
       const { storeId } = req.params;

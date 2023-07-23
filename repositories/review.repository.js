@@ -1,4 +1,4 @@
-const { Review, Review_like, User } = require('../models');
+const { Review, Review_like, User, Store } = require('../models');
 const { Op, Sequelize } = require('sequelize');
 
 class ReviewRepository {
@@ -92,6 +92,12 @@ class ReviewRepository {
     return await Review.findAll({
       where: { user_id: userId },
       attributes: ['id', 'store_id', 'order_id', 'review', 'rating', 'review_img', 'create_at'],
+      include: [
+        {
+          model: Store,
+          attributes: ['store_img', 'store_name', 'store_address'],
+        },
+      ],
     });
   };
 }

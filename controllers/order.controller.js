@@ -3,10 +3,9 @@ const OrderService = require('../services/order.service.js');
 
 class OrderController {
   orderService = new OrderService();
-
   getOrders = async (_, res, next) => {
     try {
-      const { is_seller } = res.locals.user;
+      const { is_seller, id } = res.locals.user;
 
       if (is_seller === false) throw errorHandler.noSeller;
 
@@ -52,6 +51,7 @@ class OrderController {
     try {
       const { orderId } = req.params;
       const { is_seller } = res.locals.user;
+      if (is_seller === false) throw errorHandler.noSeller;
       if (is_seller === false) throw errorHandler.noSeller;
 
       const result = await this.orderService.isDelivered(orderId, res);

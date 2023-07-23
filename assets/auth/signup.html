@@ -67,18 +67,19 @@
       <h1>회원가입</h1>
       <div>
         <div class="form-group">
-          <label for="profileImage">프로필 사진:</label>
-          <input type="file" class="form-control" id="inputGroupFile02" />
-        </div>
-        <div class="form-group">
           <label for="email">이메일:</label>
           <input type="email" id="email" name="email" />
           <button id="emailAuth">인증번호 발송</button>
         </div>
         <div class="form-group" id="emailCheckForm" style="display: none">
           <label>이메일 인증번호:</label>
-          <input type="text" id="emailNumber" />
-          <button id="authEmail">이메일 인증하기</button>
+          <input type="text" id="inputAuthenticationNumber" />
+          <button id="confirmEmail">이메일 인증하기</button>
+        </div>
+
+        <div class="form-group">
+          <label for="profileImage">프로필 사진:</label>
+          <input type="file" id="profileImage" />
         </div>
         <div class="form-group">
           <label for="username">사용자명:</label>
@@ -99,9 +100,9 @@
         </div>
         <div class="form-group">
           <label>사용자 분류</label>
-          <button onclick="checkAnswer('소비자')">소비자</button>
-          <button onclick="checkAnswer('사업자')">사업자</button>
-          <p id="resultMessage"></p>
+          <button onclick="checkUser('소비자')">소비자</button>
+          <button onclick="checkUser('사업자')">사업자</button>
+          <p id="userType"></p>
         </div>
         <div class="form-group" id="business_number_form" style="display: none">
           <label for="business_registration_number">사업자번호:</label>
@@ -111,7 +112,7 @@
             name="business_registration_number"
           />
         </div>
-        <button type="button" class="checkBtn">가입하기</button>
+        <button type="button" class="checkBtn" id="login">가입하기</button>
       </div>
     </div>
 
@@ -141,31 +142,107 @@
 
       const emailAuth = document.getElementById('emailAuth');
       const inputEmail = document.getElementById('email');
-      const emailCheckForm = document.getElementById('emailCheckForm');
+      const inputUsername = document.getElementById('username');
+      const inputPassword = document.getElementById('password');
+      const inputConfirmPassword = document.getElementById('confirm_password');
+      const userType = document.getElementById('userType');
+      const inputAddress = document.getElementById('address');
+      const inputBusinessRegistrationNumber = document.getElementById(
+        'business_registration_number'
+      );
+      if (file) {
+        form.append('file', file);
+      }
+      if (inputBusinessRegistrationNumber) {
+        form.append('businessRegistrationNumber', inputBusinessRegistrationNumber.value);
+      }
+      form.append('email', inputEmail.value);
+      form.append('name', inputUsername.value);
+      form.append('password', inputPassword.value);
+      form.append('confirmPassword', inputConfirmPassword.value);
+      form.append('isSeller', userType.value == '사업자' ? true : false);
+      form.append('adress', inputAddress.value);
+      const login = document.getElementById('login');
 
-      emailAuth.addEventListener('click', async () => {
-        {
-          fetch('/users/checkEmail', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: inputEmail.value,
-            }),
+      // 사업자 번호 창
+      const business_number_form = document.getElementById('business_number_form');
+
+      // 이메일 인증 관련
+      const emailCheckForm = document.getElementById('emailCheckForm');
+      const emailAuth = document.getElementById('emailAuth');
+      const confirmEmail = document.getElementById('confirmEmail');
+      var authenticationNumberToEmail = '';
+      const inputAuthenticationNumber = document.getElementById('inputAuthenticationNumber');
+
+      emailAuth.addEventListener('click', () => {
+        fetch('/users/checkEmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: inputEmail.value,
+          }),
+        })
+          .then((response) => {
+            return response.json();
           })
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              alert(data);
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-              alert('오류');
-            });
+          .then((data) => {
+            if (data.errorMessage) alert(data.errorMessage);
+            else {
+              alert(data.message);
+              authenticationNumberToEmail = data.data;
+              emailCheckForm.style.display = '';
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('오류');
+          });
+      });
+      confirmEmail.addEventListener('click', () => {
+        if (inputAuthenticationNumber.value == authenticationNumberToEmail) {
+          login.style.display = '';
+          alert('인증되었습니다 가입을 진행해주세요');
+          emailCheckForm.style.display = 'none';
+        } else {
+          alert('인증번호가 다릅니다.');
         }
       });
+      login.addEventListener('click', () => {
+        fetch('/users/signup', {
+          method: 'POST',
+          headers: {
+            // 'Content-Type': 'application/json',
+          },
+          body: form,
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (data.errorMessage) alert(data.errorMessage);
+            else {
+              alert(data.message);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('오류');
+          });
+      });
+      function checkUser(answer) {
+        if (answer === '사업자') {
+          userType.textContent = '사업자';
+          business_number_form.style.display = '';
+        } else if (answer === '소비자') {
+          userType.textContent = '소비자';
+          business_registration_number.value = '';
+          business_number_form.style.display = 'none';
+        } else {
+          userType.textContent = '선택된 값이 없습니다.';
+        }
+      }
     </script>
   </body>
 </html>

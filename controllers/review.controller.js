@@ -14,6 +14,16 @@ class ReviewController {
       next(err);
     }
   };
+  getMyReviews = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const getReviews = await this.reviewService.getMyReviews(user.id);
+
+      return res.status(200).json({ reviews: getReviews });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   getReviewDetail = async (req, res, next) => {
     try {
