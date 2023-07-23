@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 class StoreController {
   storeService = new StoreService();
-  
+
   getStore = async (_, res, next) => {
     try {
       const { code, data } = await this.storeService.getStore();
@@ -155,12 +155,10 @@ class StoreController {
   search = async (req, res, next) => {
     try {
       const { searchKeyword } = req.body;
-      if (!searchKeyword) {
-        return res.status(400).json({ message: '검색어를 입력해주세요' });
-      }
+      if (!searchKeyword) throw errorHandler.emptyKeyword;
       const { code, data } = await this.storeService.search(searchKeyword);
 
-      res.status(code).json({ data });
+      res.status(code).json({ data: data.allStoreData });
     } catch (err) {
       next(err);
     }

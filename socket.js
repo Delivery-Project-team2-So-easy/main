@@ -2,6 +2,7 @@ const socketIo = require('socket.io');
 const http = require('./app.js');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const errorHandler = require('./errorHandler.js');
 require('dotenv').config();
 const env = process.env;
 let loginList = {};
@@ -18,11 +19,11 @@ io.use((socket, next) => {
 }).on('connection', async (sock) => {
   try {
     console.log('소켓 연결');
-    const { authorization } = sock.request.cookies;
+    const { authorization } = await sock.request.cookies;
     const token = authorization.split(' ')[1];
     if (!token) return;
 
-    const decode = jwt.verify(token, env.JWT_SECRET_KEY);
+    const decode = await jwt.verify(token, env.JWT_SECRET_KEY);
     loginList[sock.id] = decode.userId;
 
     const {
@@ -41,9 +42,9 @@ io.use((socket, next) => {
     watchRefundComplete();
     watchRefundRefuse();
   } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      return;
-    }
+    if (error.name === 'TokenExpiredError') return errorHandler.expireToken;
+    console.log('토큰 만료');
+    return errorHandler.socketError;
   }
 
   sock.on('disconnect', () => {

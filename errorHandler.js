@@ -8,14 +8,30 @@ class CustomError {
 // status 코드 구글링 후 수정필요
 const errorHandler = {
   // signup
-  emailFormat: new CustomError(400, '이메일 형식이 올바르지 않습니다. 다시 입력해 주세요'),
+  emailFormat: new CustomError(400, '이메일 형식이 올바르지 않습니다. 다시 입력해 주세요.'),
   passwordFormat: new CustomError(
     400,
     '패스워드는 4자리 이상이고 이메일과 같은 값이 포함될 수 없습니다.'
   ),
+  businessRegistrationNumber: new CustomError(
+    400,
+    '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.'
+  ),
+  notEnteredPassword: new CustomError(400, '유저 정보를 수정하려면 기존 비밀번호를 입력해 주세요.'),
   checkPassword: new CustomError(412, '비밀번호가 일치하지 않습니다.'),
+  checkBusinessRegistrationNumber: new CustomError(
+    400,
+    '사업자로 전환하시려면 사업자 등록 번호를 입력해 주세요.'
+  ),
   // login
+  notLogin: new CustomError(404, '유저정보가 없습니다'),
   checkUser: new CustomError(412, '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.'),
+  notEnteredAddress: new CustomError(400, '변경하려는 주소를 입력해 주세요.'),
+  //auth
+  notCookie: new CustomError(401, '로그인 후에 이용할 수 있는 기능입니다.'),
+  notExistUser: new CustomError(401, '토큰 사용자가 존재하지 않습니다.'),
+  expireToken: new CustomError(401, '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.'),
+  errorCookie: new CustomError(500, '전달된 쿠키에서 오류가 발생하였습니다.'),
   // user common error
   existEmail: new CustomError(409, '이미 존재하는 이메일입니다.'),
   // kakaoCallBack
@@ -27,6 +43,9 @@ const errorHandler = {
 
   // getStoreRanking
   periodError: new CustomError(400, '기간은 숫자만 들어올 수 있으며 31일을 초과할 수 없습니다.'),
+
+  // searchStore
+  emptyKeyword: new CustomError(400, '검색어를 입력해주세요'),
 
   // store common error
   noStore: new CustomError(404, '보유한 매장이 없습니다.'),
@@ -62,5 +81,8 @@ const errorHandler = {
   noPermissions: new CustomError(401, '해당 권한이 없습니다.'),
   emptyContent: new CustomError(400, '내용을 모두 입력해주세요.'),
   noUpdateContent: new CustomError(400, '변경내역이 없습니다.'),
+
+  //socket
+  socketError: new CustomError(500, '소켓 연결에 실패했습니다.'),
 };
 module.exports = errorHandler;

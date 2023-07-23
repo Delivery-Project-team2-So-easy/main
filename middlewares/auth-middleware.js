@@ -1,13 +1,16 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
+const errorHandler = require('../errorHandler');
 require('dotenv').config();
 const env = process.env;
+
 module.exports = async (req, res, next) => {
   try {
-    const { authorization } = req.cookies;
+    const { authorization } = await req.cookies;
     const [tokenType, token] = (authorization ?? '').split(' ');
+
     if (tokenType !== 'Bearer' || !token) {
-      return res.status(401).json({ errorMessage: '로그인 후에 이용할 수 있는 기능입니다.' });
+      next(errorHandler.notCookie);
     }
 
     const decodedToken = jwt.verify(token, env.JWT_SECRET_KEY);
@@ -16,7 +19,7 @@ module.exports = async (req, res, next) => {
 
     if (!user) {
       res.clearCookie('authorization');
-      return res.status(401).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+      next(errorHandler.notExistUser);
     }
 
     res.locals.user = user;
@@ -24,14 +27,9 @@ module.exports = async (req, res, next) => {
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       res.clearCookie('authorization');
-      return res.status(401).json({
-        errorMessage: '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.',
-      });
+      next(errorHandler.expireToken);
     }
-    console.error(error);
     res.clearCookie('authorization');
-    return res.status(401).json({
-      errorMessage: '전달된 쿠키에서 오류가 발생하였습니다.',
-    });
+    next(errorHandler.errorCookie);
   }
 };
