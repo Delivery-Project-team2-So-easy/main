@@ -1,25 +1,99 @@
 * {
-  font-family: 'Jua', sans-serif;
+  font-family: 'IBM Plex Sans KR', sans-serif;
 }
+
+html {
+  height: 110%;
+}
+body {
+  height: 110%;
+}
+
 header {
-  text-align: center;
-  height: 100px;
-  width: 400px;
-  background-color: mediumturquoise;
-  font-size: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding-left: 10%;
+  width: 100%;
+  background-color: #eff1f0;
 }
-section {
+
+#icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  margin-left: 5%;
+}
+
+.navTitle {
+  width: 100%;
+  margin-top: 20px;
+  margin-left: 100px;
+  display: inline-flex;
+}
+
+.navTitle h1 {
+  margin-left: 10%;
+  padding-top: 25px;
+  font-weight: bold;
+  color: #374999;
+}
+
+#navbarNav {
+  width: 100%;
+  display: inline-flex;
+  margin: 0 8% 0 8%;
+}
+
+#navbarNav > button {
+  font-weight: bold;
+  font-size: 17px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin-left: 8px;
+}
+
+.registerAddress {
+  margin: 0 6% 0 20%;
+}
+
+.registerAddress label {
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.registerAddress button {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 17px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+#userAddress {
   width: 400px;
-  height: 500px;
+  height: 35px;
+}
+
+section {
+  margin-left: 40%;
+  margin-top: 5%;
+  width: 500px;
+  height: 50%;
   overflow: auto;
   -ms-overflow-style: none; /* 인터넷 익스플로러 */
   scrollbar-width: none;
 }
 section::-webkit-scrollbar {
   display: none;
+}
+
+.noMenu {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  color: hotpink;
 }
 .store-overview {
   background-color: white;
@@ -61,7 +135,7 @@ i {
   width: 400px;
   text-align: center;
 }
-.goToOrder {
+.goOrder {
   color: black;
   display: inline-block;
   text-align: center;
@@ -91,11 +165,36 @@ i {
   margin: 0 10px;
 }
 footer {
-  display: flex;
-  justify-content: space-between;
-  width: 400px;
+  background-color: #f0f0f0;
+  text-align: center;
+  font-size: 12px;
+  transform: translateY(0%);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4%;
 }
-.footer-btn {
-  border-style: solid;
-  padding: 11px;
+.alert {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+@media screen and (min-width: 576px) {
+  .alert {
+    width: fit-content;
+    max-width: 480px;
+  }
+}
+.alert-sparta {
+  color: #e8344e;
+  background-color: #ffe7ff;
+  border-color: #ffcde7;
+}
+
+.alert-sparta .alert-link {
+  color: #360000;
 }

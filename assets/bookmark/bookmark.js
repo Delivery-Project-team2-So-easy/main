@@ -1,25 +1,35 @@
-// const params = new URLSearchParams(window.location.search);
-// const storeId = params.get('storeId');
-
+const registerAddressBtn = document.querySelector('#registerAddressBtn');
+const addressInput = document.querySelector('#userAddress');
 let currentUserId = 0;
 
 $(document).ready(async () => {
+  await getUserInfo();
   getBookmarks();
+});
 
+async function getUserInfo() {
   await $.ajax({
-    method: 'GET',
+    type: 'GET',
     url: '/userInfo',
     success: (data) => {
       currentUserId = data.userId;
     },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
   });
-});
+}
 
 const printStores = document.querySelector('.store-section');
 
 // 좋아요한 매장 불러오기
-async function getBookmarks(userId) {
-  currentUserId = userId;
+async function getBookmarks() {
   await $.ajax({
     method: 'GET',
     url: `/user/store/likeStores`,
@@ -107,3 +117,73 @@ async function confirmDelete(span) {
     // 아무 작업 없음
   }
 }
+
+function openKakaoAddress() {
+  new daum.Postcode({
+    oncomplete: function (data) {
+      document.querySelector('#userAddress').value = data.address;
+    },
+  }).open();
+}
+
+function registerAddress(event) {
+  event.preventDefault();
+  const address = document.querySelector('#userAddress').value;
+  $.ajax({
+    type: 'POST',
+    url: '/users/updateAddress',
+    data: { address },
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
+function home() {
+  window.location.href = '/';
+}
+
+function openMypage() {
+  window.open(`../mypage/mypage-customer.html?userId=${currentUserId}`, '_self');
+}
+
+function openMyorder() {
+  window.open(`../order/order.html`, '_self');
+}
+
+function logout() {
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
+addressInput.addEventListener('click', openKakaoAddress);
+registerAddressBtn.addEventListener('click', registerAddress);

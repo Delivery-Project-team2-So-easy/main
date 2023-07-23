@@ -301,6 +301,7 @@ class UserService {
     try {
       const user = await res.locals.user;
       if (!user) throw errorHandler.notExistUser;
+
       const userInfo = await this.userRepository.findUser(user.id);
       return { userId: userInfo.id, isSeller: userInfo.is_seller };
     } catch (err) {

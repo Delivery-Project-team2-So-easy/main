@@ -1,19 +1,18 @@
+const registerAddressBtn = document.querySelector('#registerAddressBtn');
+const addressInput = document.querySelector('#userAddress');
+const params = new URLSearchParams(window.location.search);
+let storeId = params.get('storeId');
+
 let currentUserId = 0;
 
 $(document).ready(async () => {
   getReviews();
 
-  await $.ajax({
-    method: 'GET',
-    url: '/userInfo',
-    success: (data) => {
-      currentUserId = data.userId;
-    },
-  });
+  await getUserInfo();
+  viewBtn();
 });
 
 const printReviews = document.querySelector('.review-section');
-const storeId = 1;
 
 //리뷰데이터 불러오기
 async function getReviews() {
@@ -349,7 +348,57 @@ function readURL(input) {
   }
 }
 
-// 여기부터는 다른거
+async function getUserInfo() {
+  await $.ajax({
+    type: 'GET',
+    url: '/userInfo',
+    error: () => {
+      userId = 0;
+    },
+    success: (data) => {
+      userId = data.userId;
+    },
+  });
+}
+
+function viewBtn() {
+  if (userId > 0) {
+    document.querySelector('#mypage').style.display = 'block';
+    document.querySelector('#bookmark').style.display = 'block';
+    document.querySelector('#myorder').style.display = 'block';
+    document.querySelector('#logout').style.display = 'block';
+    document.querySelector('#signUp').style.display = 'none';
+    document.querySelector('#login').style.display = 'none';
+  }
+}
+
+function registerAddress(event) {
+  event.preventDefault();
+  const address = document.querySelector('#userAddress').value;
+  $.ajax({
+    type: 'POST',
+    url: '/users/updateAddress',
+    data: { address },
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
+function home() {
+  window.location.href = '/';
+}
 
 function openKakaoAddress() {
   new daum.Postcode({
@@ -359,22 +408,44 @@ function openKakaoAddress() {
   }).open();
 }
 
+function openMyorder() {
+  window.open(`../order/order.html`, '_self');
+}
+
 function openMypage() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
 }
 
 function openBookmark() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../bookmark/bookmark.html?userId=${userId}`, '_self');
+  window.open(`../bookmark/bookmark.html`, '_self');
 }
 
-function openSignup() {
-  window.open('../auth/signup.html', '_self');
+function logout() {
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
 }
 
-function openLogin() {
-  window.open('../auth/login.html', '_self');
+function goToOrder() {
+  window.open(`../menu/menu.html?storeId=${storeId}`, '_self');
 }
+
+addressInput.addEventListener('click', openKakaoAddress);
+registerAddressBtn.addEventListener('click', registerAddress);

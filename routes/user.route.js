@@ -22,7 +22,17 @@ router.get('/user/store/likeStores', authMiddleware, userController.getMyLike);
 router.get('/user/myReviews', authMiddleware, userController.getMyReviews);
 router.get('/user/myOrders', authMiddleware, userController.getMyOrders);
 router.get('/userInfo', authMiddleware, userController.checkUserInfo);
-
+router.post('/cookie', async (req, res) => {
+  const token = await jwt.sign(
+    {
+      userId: 1,
+    },
+    env.JWT_SECRET_KEY,
+    { expiresIn: '1h' }
+  );
+  res.cookie('authorization', `Bearer ${token}`);
+  return res.status(200).json({ message: 'success' });
+});
 //카카오
 router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
 router.get('/users/kakao/callback', userController.kakaoCallBack); // 가져온 데이터로 로그인 or 회원가입

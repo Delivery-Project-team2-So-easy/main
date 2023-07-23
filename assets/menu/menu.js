@@ -1,20 +1,26 @@
-// const params = new URLSearchParams(window.location.search);
-// const storeId = params.get('storeId');
+const registerAddressBtn = document.querySelector('#registerAddressBtn');
+const addressInput = document.querySelector('#userAddress');
+let userId;
+const params = new URLSearchParams(window.location.search);
+const storeId = params.get('storeId');
 //메뉴 불러오기
 window.addEventListener('DOMContentLoaded', async () => {
-  storeId = 1; // 추후 삭제 필요
   fetch(`/store/${storeId}/menus`, {})
     .then((response) => response.json())
     .then((data) => {
       const menu_list = document.querySelector('.menu-list');
       const menus = data.menus;
-      menus.forEach((menu) => {
-        let menu_id = menu.id;
-        let menu_name = menu.menu;
-        let menu_img = menu.menu_img;
-        let menu_price = menu.price;
-        let menu_option = menu.option;
-        let temp_html = `
+      if (data.menus.length === 0) {
+        const menuList = document.querySelector('.menuList');
+        menuList.innerHTML = `<h2 class="noMenu">메뉴 정보가 없습니다! </h2>`;
+      } else {
+        menus.forEach((menu) => {
+          let menu_id = menu.id;
+          let menu_name = menu.menu;
+          let menu_img = menu.menu_img;
+          let menu_price = menu.price;
+          let menu_option = menu.option;
+          let temp_html = `
         <div class="menu-box" id="${menu_id}">
           <img
             src="${menu_img}"
@@ -22,21 +28,41 @@ window.addEventListener('DOMContentLoaded', async () => {
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
             <div class="menu-price">${menu_price} 원</div>
-            <label>수량</label><input type=number min="0" value="0" class="quantity ${menu_id}"><br>
-            <label>옵션</label><select>
+            <label style="margin:0 10px 0 10px">수량 : </label><input style="width:50px" type=number min="0" value="0" class="quantity ${menu_id}"><br>
+            <label style="margin:0 10px 0 10px">옵션 : </label><select>
             <option></option>
             <option value="${menu_option}">${menu_option}</option>
             </select>
           </div>
         </div>
         `;
-        menu_list.insertAdjacentHTML('beforeend', temp_html);
-      });
+          menu_list.insertAdjacentHTML('beforeend', temp_html);
+        });
+      }
     });
+  await getUserInfo();
 });
 
+async function getUserInfo() {
+  await $.ajax({
+    type: 'GET',
+    url: '/userInfo',
+    success: (data) => {
+      userId = data.userId;
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+  });
+}
+
 function order_menu() {
-  storeId = 1;
   const orders = [];
 
   const menuBoxs = document.querySelectorAll('.menu-list .menu-box');
@@ -64,22 +90,95 @@ function order_menu() {
     },
     body: JSON.stringify(orders),
   })
-    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      return res.json();
+    })
     .then((data) => {
+      console.log(data);
       if (data.errorMessage) {
         return Swal.fire({
           icon: 'error',
           title: 'Error',
           text: err.responseJSON.errorMessage,
         });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: data.message,
+        }).then(() => {
+          window.open(`../order/order.html`, '_self');
+        });
       }
+    });
+}
+function registerAddress(event) {
+  event.preventDefault();
+  const address = document.querySelector('#userAddress').value;
+  $.ajax({
+    type: 'POST',
+    url: '/users/updateAddress',
+    data: { address },
+    success: (data) => {
       Swal.fire({
         icon: 'success',
         title: 'Success!',
         text: data.message,
       });
-    })
-    .then(window.location.reload());
-
-  // window.location.reload(); // 추후 주문상세페이지로 이동으로 변경
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
 }
+
+function home() {
+  window.location.href = '/';
+}
+
+function openKakaoAddress() {
+  new daum.Postcode({
+    oncomplete: function (data) {
+      document.querySelector('#userAddress').value = data.address;
+    },
+  }).open();
+}
+
+function openMypage() {
+  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+}
+
+function openBookmark() {
+  window.open(`../bookmark/bookmark.html`, '_self');
+}
+
+function logout() {
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
+addressInput.addEventListener('click', openKakaoAddress);
+registerAddressBtn.addEventListener('click', registerAddress);
