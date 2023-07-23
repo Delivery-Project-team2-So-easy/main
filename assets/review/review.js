@@ -329,6 +329,7 @@ function handleKeyDown(event) {
   if (event.key === 'Escape') closeModal(), closeReviewModal();
 }
 
+// 버튼 숨기기
 function hideButtons() {
   const editButton = document.querySelector('#edit-button');
   const deleteButton = document.querySelector('#delete-button');
