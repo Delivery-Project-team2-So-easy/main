@@ -15,7 +15,7 @@ db.sequelize.sync({ force: false });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static('assets')); //정적파일 사용하기 위해, assets의 html, css, js, 이미지 등
+app.use(express.static('./assets')); //정적파일 사용하기 위해, assets의 html, css, js, 이미지 등
 app.use('/', [userRouter, storeRouter, reviewRouter, orderRouter]);
 
 app.use(async (err, req, res, next) => {
@@ -26,7 +26,7 @@ app.use(async (err, req, res, next) => {
 });
 
 //메인 페이지로 랜더링
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.sendFile(__dirname + '/assets/main/main.html');
 });
 

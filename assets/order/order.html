@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>참쉽조 배달 서비스</title>
-    <link href="./main/main.css" rel="stylesheet" />
+    <title>My Order</title>
+    <link href="order.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,11 +30,11 @@
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="../sock.js" defer></script>
-    <script src="./main/main.js" defer></script>
+    <script src="order.js" defer></script>
   </head>
   <header>
     <div class="navTitle">
-      <img class="navbar-brand" id="icon" src="../image/icon.JPG" />
+      <img class="navbar-brand" id="icon" onclick="home()" src="../image/icon.JPG" />
       <h1>참쉽조 Delivery Web Service Page</h1>
     </div>
     <nav class="navbar navbar-expand-lg">
@@ -44,34 +44,10 @@
           <input type="text" id="userAddress" name="address" readonly />
           <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">등록</button>
         </form>
-        <button class="btn btn-outline-primary ml-2" id="signUp" onclick="openSignup()">
-          회원가입
-        </button>
-        <button class="btn btn-outline-success ml-2" id="login" onclick="openLogin()">
-          로그인
-        </button>
-        <button
-          class="btn btn-outline-warning"
-          id="myorder"
-          onclick="openMyorder()"
-          style="display: none"
-        >
-          내 주문
-        </button>
-        <button
-          class="btn btn-outline-primary ml-2"
-          id="mypage"
-          onclick="openMypage()"
-          style="display: none"
-        >
+        <button class="btn btn-outline-primary ml-2" id="mypage" onclick="openMypage()">
           마이페이지
         </button>
-        <button
-          class="btn btn-outline-success ml-2"
-          id="bookmark"
-          onclick="openBookmark()"
-          style="display: none"
-        >
+        <button class="btn btn-outline-success ml-2" id="bookmark" onclick="openBookmark()">
           북마크
         </button>
         <button class="btn btn-outline-danger" id="logout" onclick="logout()" style="display: none">
@@ -81,23 +57,10 @@
     </nav>
   </header>
   <body>
-    <div class="content-area container mt-5">
-      <div class="search-tool input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          id="searchInput"
-          placeholder="찾는 음식점이나 메뉴이름을 입력해 보세요!"
-          aria-label="음식점 검색"
-          aria-describedby="button-addon2"
-        />
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" type="button" id="searchBtn">검색</button>
-        </div>
-      </div>
-
-      <section id="storeCard"></section>
-    </div>
+    <h3>< 내 주문 정보(고객) ></h3>
+    <div class="content-area container mt-5" id="clientDiv"></div>
+    <h3 id="ownerDivHeader" style="display: none">< 가게 주문 정보(사장) ></h3>
+    <div class="content-area container mt-5" id="ownerDiv" style="display: none"></div>
   </body>
   <footer class="bg-light text-center py-2">
     <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>

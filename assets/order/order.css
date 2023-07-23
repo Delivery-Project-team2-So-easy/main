@@ -2,9 +2,11 @@
   font-family: 'IBM Plex Sans KR', sans-serif;
 }
 
-html,
-body {
+html {
   height: 110%;
+}
+body {
+  height: 150%;
 }
 
 header {
@@ -37,7 +39,7 @@ header {
 #navbarNav {
   width: 100%;
   display: inline-flex;
-  margin-right: 8%;
+  margin: 0 8% 0 8%;
 }
 
 #navbarNav > button {
@@ -50,7 +52,7 @@ header {
 }
 
 .registerAddress {
-  margin: 0 0% 0 20%;
+  margin: 0 6% 0 20%;
 }
 
 .registerAddress label {
@@ -61,7 +63,6 @@ header {
 
 .registerAddress button {
   margin-left: 10px;
-  margin-right: 100px;
   font-weight: bold;
   font-size: 17px;
   border-radius: 10px;
@@ -79,65 +80,48 @@ header {
   margin-top: 20px;
 }
 
-.search-tool {
-  margin-bottom: 20px;
-}
-
-#storeCard {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(22%, auto));
-  grid-template-rows: repeat(5, minmax(55%, auto));
-  grid-auto-flow: dense;
-}
-
-.store {
-  color: black;
-  display: block;
-  width: 92%;
-  height: 350px;
-  margin: 2%;
-  justify-self: center;
-
-  border-radius: 10px;
-  background-color: rgb(127, 198, 230);
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
-
+body h3 {
+  font-weight: bold;
   text-align: center;
-  transition: transform 100ms ease-in;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
-.storeName {
-  margin-top: 20px;
-  color: rgb(255, 235, 226);
+.noOrder {
+  text-align: center;
   font-weight: bold;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  color: hotpink;
 }
 
-.storeAddress,
-.storeReorder {
-  color: rgb(255, 235, 226);
+#clientDiv {
+  margin-bottom: 100px;
+}
+
+.card {
+  margin-bottom: 15px;
+  height: 220px;
+}
+.card-header {
   font-weight: bold;
+  font-size: 20px;
+  color: #7a6ccf;
 }
 
-.storeImage {
-  margin-bottom: 20px;
-  width: 300px;
-  height: 200px;
-  display: block;
-  padding: 1rem;
-  border-radius: 20px;
-  object-fit: contain;
-}
-
-.store > img {
-  width: 100%;
+.card button {
+  margin-right: 10px;
+  height: 35px;
+  float: right;
+  font-weight: bold;
   border-radius: 10px;
-  object-fit: contain;
+  border-style: solid;
+  border-width: 2px;
 }
 
-@media (max-width: 768px) {
-  .content-area {
-    margin-left: 20px;
-  }
+.orderStatus {
+  font-weight: 900;
+  color: #7a6ccf;
 }
 
 footer {
