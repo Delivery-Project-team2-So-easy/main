@@ -50,8 +50,13 @@ function order_menu() {
     }
   });
   if (orders.length === 0) {
-    return alert('주문할 메뉴가 없습니다!');
+    return Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: '주문할 메뉴가 없습니다!',
+    });
   }
+
   fetch(`/order/store/${storeId}`, {
     method: 'POST',
     headers: {
@@ -62,11 +67,19 @@ function order_menu() {
     .then((res) => res.json())
     .then((data) => {
       if (data.errorMessage) {
-        alert(data.errorMessage);
-      } else if (data.message) {
-        alert(data.message);
-        window.location.reload();
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.responseJSON.errorMessage,
+        });
       }
-    });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
+    })
+    .then(window.location.reload());
+
   // window.location.reload(); // 추후 주문상세페이지로 이동으로 변경
 }

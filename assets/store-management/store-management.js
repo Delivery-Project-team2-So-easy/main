@@ -35,6 +35,7 @@ document.querySelector('.update-btn').addEventListener('click', function () {
   formData.append('storeName', storeName);
   formData.append('storeAddress', storeAddress);
   formData.append('newFile', storeImg.files[0]);
+
   fetch('/store/registration', {
     method: 'PATCH',
     cache: 'no-cache',
@@ -43,11 +44,19 @@ document.querySelector('.update-btn').addEventListener('click', function () {
     .then((res) => res.json())
     .then((data) => {
       if (data.errorMessage) {
-        alert(data.errorMessage);
-        return;
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.errorMessage,
+        });
       }
-      alert(data.message);
-      window.location.reload();
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.reload();
+      });
     });
 });
 
@@ -59,6 +68,7 @@ document.querySelector('.delete-btn').addEventListener('click', function () {
   formData.append('storeName', storeName);
   formData.append('storeAddress', storeAddress);
   formData.append('newFile', storeImg.files[0]);
+
   fetch('/store/registration', {
     method: 'PATCH',
     cache: 'no-cache',
@@ -66,8 +76,20 @@ document.querySelector('.delete-btn').addEventListener('click', function () {
   })
     .then((res) => res.json())
     .then((data) => {
-      alert(data.message);
-    });
+      if (data.errorMessage) {
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.responseJSON.errorMessage,
+        });
+      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
+    })
+    .then(window.location.reload());
 });
 
 document.querySelector('.register-btn').addEventListener('click', function () {});
@@ -82,6 +104,7 @@ document.querySelector('.register-btn').addEventListener('click', function () {
   formData.append('storeAddress', storeAddress);
   formData.append('openingDate', openingDate);
   formData.append('newFile', storeImg.files[0]);
+
   fetch('/store/registration', {
     method: 'POST',
     cache: 'no-cache',
@@ -90,10 +113,17 @@ document.querySelector('.register-btn').addEventListener('click', function () {
     .then((res) => res.json())
     .then((data) => {
       if (data.errorMessage) {
-        alert(data.errorMessage);
-        return;
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.responseJSON.errorMessage,
+        });
       }
-      alert(data.message);
-      window.location.reload();
-    });
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
+    })
+    .then(window.location.reload());
 });

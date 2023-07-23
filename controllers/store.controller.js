@@ -60,14 +60,13 @@ class StoreController {
       const userId = res.locals.user.id;
       const storeImg = req.file ? req.file.location : null;
       const { storeName, storeAddress } = req.body;
-      console.log(storeName, storeAddress);
       const { code, message } = await this.storeService.updateStore(
         userId,
         storeName,
         storeAddress,
         storeImg
       );
-
+      console.log(code, message);
       res.status(code).json({ message });
     } catch (err) {
       next(err);

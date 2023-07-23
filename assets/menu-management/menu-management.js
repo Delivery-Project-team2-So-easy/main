@@ -31,13 +31,16 @@ window.addEventListener('DOMContentLoaded', async () => {
         `;
         menu_list.insertAdjacentHTML('beforeend', temp_html);
         document.getElementById(menu_id).addEventListener('click', function (event) {
-          const price = event.target.parentNode.children[1].value;
-          const option = event.target.parentNode.children[2].value;
-          const menuImg = event.target.parentNode.children[3].files[0];
+          const price = event.target.parentNode.children[2].value;
+          const option = event.target.parentNode.children[5].value;
+          const menuImg = event.target.parentNode.children[7].files[0];
+          console.log(price);
+          console.log(option);
           let formData = new FormData();
           formData.append('price', price);
           formData.append('option', option);
           formData.append('newFile', menuImg);
+
           fetch(`/store/menu/${menu_id}`, {
             method: 'PATCH',
             cache: 'no-cache',
@@ -45,7 +48,18 @@ window.addEventListener('DOMContentLoaded', async () => {
           })
             .then((res) => res.json())
             .then((data) => {
-              alert(data.message);
+              if (data.errorMessage) {
+                return Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: err.responseJSON.errorMessage,
+                });
+              }
+              Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message,
+              });
               window.location.reload();
             });
         });
@@ -58,7 +72,18 @@ window.addEventListener('DOMContentLoaded', async () => {
             })
               .then((res) => res.json())
               .then((data) => {
-                alert(data.message);
+                if (data.errorMessage) {
+                  return Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: err.responseJSON.errorMessage,
+                  });
+                }
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success!',
+                  text: data.message,
+                });
                 window.location.reload();
               });
           });
@@ -87,10 +112,17 @@ document.querySelector('.register-btn').addEventListener('click', function (even
     .then((res) => res.json())
     .then((data) => {
       if (data.errorMessage) {
-        alert(data.errorMessage);
-        return;
+        return Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.errorMessage,
+        });
       }
-      alert(data.message);
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      });
       window.location.reload();
     });
 });
