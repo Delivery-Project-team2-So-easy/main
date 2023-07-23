@@ -179,6 +179,8 @@
     </main>
     <script>
       // 데이터 렌더링
+      const reviewContainer = document.querySelector('.review-container');
+      const shopContainer = document.querySelector('.shop-container');
       window.addEventListener('DOMContentLoaded', () => {
         const seller = document.querySelector('#seller');
         const noSeller = document.querySelector('#noSeller');
@@ -274,9 +276,8 @@
               storeProfile.innerHTML = temp_html_v2;
             }
           });
-        // 내 리뷰 렌더링
       });
-      const reviewContainer = document.querySelector('.review-container');
+
       reviewContainer.addEventListener('click', (e) => {
         const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
         const reviewId = e.target.parentElement.parentElement.id;
@@ -343,6 +344,26 @@
             // 삭제-취소
             deleteModalContainer.style.display = 'none';
           });
+        }
+      });
+
+      shopContainer.addEventListener('click', (e) => {
+        const registerButton = document.querySelector('.register-button');
+        const editButton = document.querySelector('.edit-button');
+        const menuButton = document.querySelector('.menu-button');
+        const orderButton = document.querySelector('.order-button');
+        // 페이지 이동
+        if (e.target.className == 'register-button') {
+          location.href = '/';
+        }
+        if (e.target.className == 'edit-button') {
+          location.href = '/';
+        }
+        if (e.target.className == 'menu-button') {
+          location.href = '/';
+        }
+        if (e.target.className == 'order-button') {
+          location.href = '/';
         }
       });
     </script>
