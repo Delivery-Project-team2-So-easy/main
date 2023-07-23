@@ -37,6 +37,9 @@ section::-webkit-scrollbar {
   height: 130px;
   width: 130px;
 }
+.quantity {
+  width: 25px;
+}
 .menu-details {
   width: 270px;
   margin: auto auto;

@@ -1,7 +1,7 @@
 const params = new URLSearchParams(window.location.search);
-const storeId = params.get('storeId');
+let storeId = params.get('storeId');
 //매장정보 불러오기
-
+storeId = 1;
 if (storeId) {
   window.addEventListener('DOMContentLoaded', async () => {
     fetch(`/store/${storeId}`)
