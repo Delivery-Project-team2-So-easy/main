@@ -5,11 +5,14 @@ const userController = new UserController();
 
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware');
-
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const env = process.env;
 router.post('/users/signup', uploadMiddleware, userController.signUp);
 router.post('/users/login', userController.login);
 router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
+router.post('/users/updateAddress', authMiddleware, userController.updateAddress);
 router.post('/users/checkEmail', userController.checkEmail);
 //좋아요 조회
 router.get('/user/store/:storeId/isliked', authMiddleware, userController.isStoreLiked);

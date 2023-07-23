@@ -1,4 +1,5 @@
 require('dotenv').config();
+const errorHandler = require('../errorHandler');
 
 module.exports = async (req, res, next) => {
   try {

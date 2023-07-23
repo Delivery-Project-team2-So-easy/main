@@ -10,7 +10,16 @@ class OrderController {
 
       if (is_seller === false) throw errorHandler.noSeller;
 
-      const result = await this.orderService.getOrders();
+      const result = await this.orderService.getOrders(res);
+      return res.status(result.code).json({ orders: result.orders });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getClientOrders = async (_, res, next) => {
+    try {
+      const result = await this.orderService.getClientOrders(res);
       return res.status(result.code).json({ orders: result.orders });
     } catch (err) {
       next(err);
@@ -43,22 +52,22 @@ class OrderController {
     try {
       const { orderId } = req.params;
       const { is_seller } = res.locals.user;
-    if (is_seller === false) throw errorHandler.noSeller;
+      if (is_seller === false) throw errorHandler.noSeller;
 
-    const result = await this.orderService.refundRequest(orderId, res);
-    return res.status(result.code).json({ message: result.message, data: result.data });
+      const result = await this.orderService.isDelivered(orderId, res);
+      return res.status(result.code).json({ message: result.message, data: result.data });
     } catch (err) {
       next(err);
     }
   };
-  
+
   refundRequestOrder = async (req, res, next) => {
     try {
       const { orderId } = req.params;
 
       const result = await this.orderService.refundRequest(orderId, res);
 
-      return res.status(result.code).json({ message: result.message, data: result.data  });
+      return res.status(result.code).json({ message: result.message, data: result.data });
     } catch (err) {
       next(err);
     }
