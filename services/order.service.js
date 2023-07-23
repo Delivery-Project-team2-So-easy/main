@@ -5,17 +5,15 @@ const OrderRepository = require('../repositories/order.repository.js');
 const UserRepository = require('../repositories/user.repository.js');
 const StoreRepository = require('../repositories/store.repository.js');
 const errorHandler = require('../errorHandler');
-// const { ConfigurationServicePlaceholders } = require('aws-sdk/lib/config_service_placeholders');
 
 class OrderService {
   orderRepository = new OrderRepository();
   userRepository = new UserRepository();
   storeRepository = new StoreRepository();
 
-  getOrders = async (res) => {
+  getOrders = async (id) => {
     try {
-      const user = res.locals.user;
-      const existStore = await this.storeRepository.getStoreInfo(user.id);
+      const existStore = await this.storeRepository.getStoreInfo(id);
       if (!existStore) throw errorHandler.notRegistered;
 
       const orders = await this.orderRepository.getOrders(existStore.id);
