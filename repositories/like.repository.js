@@ -3,7 +3,11 @@ const { Op, Sequelize } = require('sequelize');
 
 class LikeRepository {
   existUserLike = async (userId, storeId) => {
-    const existLike = await Store_like.findOne({ where: { user_id: userId, store_id: storeId } });
+    const existLike = await Store_like.findOne({
+      where: {
+        [Op.and]: [{ user_id: userId }, { store_id: storeId }],
+      },
+    });
     return existLike;
   };
 

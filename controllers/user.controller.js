@@ -90,6 +90,17 @@ class UserController {
     }
   };
 
+  isStoreLiked = async (req, res, next) => {
+    try {
+      const { storeId } = req.params;
+      const userId = res.locals.user.id;
+      const { code, result } = await this.userService.isStoreLiked(userId, storeId);
+      res.status(code).json({ result });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   storeLike = async (req, res, next) => {
     try {
       const { storeId } = req.params;

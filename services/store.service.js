@@ -75,9 +75,13 @@ class StoreService {
   updateMenu = async (userId, menuId, menu, price, menuImg, option, category) => {
     try {
       const store = await this.storeRepository.findMyStore(userId);
+      console.log('유저아이디', userId);
+      console.log('메뉴아이디', menuId);
       if (!store) throw errorHandler.noStore;
       const storeId = store.id;
-      const exMenu = await this.storeRepository.findMenuById(storeId, menu);
+      console.log('스토어아이디', storeId);
+      const exMenu = await this.storeRepository.findMenuById(storeId, menuId);
+      console.log('익스메뉴', exMenu);
       if (!exMenu) throw errorHandler.nonExistMenu;
       if (menu === exMenu.menu) throw errorHandler.duplicateMenu;
       const updateImg = menuImg ? menuImg : store.store_img;

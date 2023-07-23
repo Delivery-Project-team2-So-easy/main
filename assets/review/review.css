@@ -1,0 +1,306 @@
+.modal-bg-create,
+.modal-bg-review {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 999;
+  display: none;
+}
+
+/* 리뷰생성모달 시작*/
+#modal-wrap {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: auto;
+  background-color: #f0f0f0;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#create-review-btn {
+  color: #888;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+#create-review-btn:hover {
+  color: #696969;
+}
+
+.review-section {
+  margin-left: 20px;
+}
+
+.review-form {
+  padding: 20px;
+}
+
+.review-form h4 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.review-form input[type='file'] {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.star {
+  cursor: pointer;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  color: gold;
+}
+
+.star:hover {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+}
+
+.review-form textarea {
+  width: 100%;
+  height: 150px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+}
+
+.create-button {
+  margin-right: 10px;
+  background-color: #cfeeee;
+}
+
+.create-button:hover {
+  background-color: #baecec;
+}
+
+.cancel-button {
+  background-color: #b9b9b9;
+}
+
+.cancel-button:hover {
+  background-color: #a8a7a7;
+}
+/* 리뷰생성모달 끝*/
+
+/* 리뷰상세모달 시작*/
+#review-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: auto;
+  background-color: #f0f0f0;
+  z-index: 1000;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+#review-modal img {
+  width: 300px;
+  height: 300px;
+  border-radius: 4px;
+  margin: 20px 0 20px 20px;
+}
+
+.review-content input[type='file'] {
+  display: block;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.review-content {
+  margin: 0 10px 10px 10px;
+  text-align: left;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  resize: none;
+  text-align: left;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button#edit-button {
+  margin-right: 10px;
+  background-color: #cfeeee;
+}
+
+button#edit-button:hover {
+  background-color: #baecec;
+}
+
+button#delete-button {
+  margin-right: 10px;
+  background-color: #e9cfd1;
+}
+
+button#delete-button:hover {
+  background-color: #e7b8bc;
+}
+
+button#close-button {
+  margin-right: 10px;
+  background-color: #b9b9b9;
+}
+
+button#close-button:hover {
+  background-color: #a8a7a7;
+}
+
+.update-star-container {
+  font-size: 24px;
+}
+
+.update-star {
+  cursor: pointer;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  color: gold;
+}
+
+.update-star:hover {
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+}
+
+.review-box {
+  cursor: pointer;
+}
+
+.review-box:hover {
+  border: 1px solid black;
+}
+/* 리뷰상세모달 끝*/
+
+/* Section part */
+.review-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, auto));
+  grid-template-rows: repeat(4, minmax(300px, auto));
+  grid-auto-flow: row;
+  gap: 20px;
+}
+
+.review-container {
+  margin-right: 30px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+}
+
+.review-container .review-box {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#default-img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  height: 300px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+.postImage {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  height: 300px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+#name-tag {
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+
+#review-tag {
+  margin-bottom: 10px;
+  line-height: 1.5;
+  max-width: 100%;
+  height: 100px;
+  overflow: hidden;
+}
+
+#created-review {
+  font-size: 15px;
+  font-weight: bold;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.rate-tag {
+  font-size: 20px;
+  color: gold;
+}
+
+.like-tag {
+  float: right;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#preview {
+  width: 300px;
+  height: 300px;
+  border-radius: 4px;
+  margin: 20px 0 20px 30px;
+}
