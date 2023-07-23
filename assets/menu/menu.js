@@ -43,10 +43,10 @@ function order_menu() {
   menuBoxs.forEach((menu) => {
     const menuId = menu.id;
     const quantity = menu.getElementsByTagName('input')[0].value;
-    const option = menu.getElementsByTagName('option').value;
-    console.log(option);
+    const option = menu.getElementsByTagName('select')[0].value;
+
     if (quantity > 0) {
-      orders.push({ menuId, quantity });
+      orders.push({ menuId, quantity, option });
     }
   });
   if (orders.length === 0) {
