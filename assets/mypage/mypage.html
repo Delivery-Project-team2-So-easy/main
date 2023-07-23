@@ -111,14 +111,22 @@
           </div>
         </div>
       </div>
-      <!-- 모달창 -->
-      <div class="modal-container" id="modalContainer">
+      <!-- 수정 모달창 -->
+      <div class="modal-container" id="editModalContainer">
         <div class="modal-content">
           <h3>리뷰 수정</h3>
           <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
           <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
           <button id="saveBtn">저장</button>
           <button id="cancelBtn">취소</button>
+        </div>
+      </div>
+      <!-- 삭제 모달창 -->
+      <div class="modal-container" id="deleteModalContainer">
+        <div class="modal-content">
+          <h3>정말로 삭제하시겠습니까?</h3>
+          <button id="checkBtn">삭제</button>
+          <button id="deleteCancelBtn">취소</button>
         </div>
       </div>
       <!-- 기타 마이페이지 내용을 넣을 수 있습니다 -->
@@ -135,6 +143,9 @@
         })
           .then((response) => response.json())
           .then((data) => {
+            if (data.errorMessage) {
+              alert(data.errorMessage);
+            }
             const profile = document.querySelector('.profile');
             const myProfile = data.data;
             if (myProfile.profileImg == null) {
@@ -158,10 +169,6 @@
         </div>
         `;
             profile.innerHTML = temp_html;
-          })
-          .catch((error) => {
-            console.log(error);
-            alert(error);
           });
         // 내 리뷰 렌더링
         fetch('/myReviews', {
@@ -195,26 +202,23 @@
             reviewContainer.innerHTML = temp;
           });
       });
-      // 리뷰 수정 관련
       const reviewContainer = document.querySelector('.review-container');
       reviewContainer.addEventListener('click', (e) => {
-        // console.log(e.target);
-        // console.log(e.currentTarget);
-        // console.log(e.target.parentElement.parentElement);
-        // console.log(e.target.parentElement.parentElement.querySelector('h3').textContent);
+        const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
+        const reviewId = e.target.parentElement.parentElement.id;
+
         if (e.target.className == 'edit-button') {
-          const modalContainer = document.getElementById('modalContainer');
+          // 수정 버튼 누를 시
+          const editModalContainer = document.getElementById('editModalContainer');
           const saveBtn = document.getElementById('saveBtn');
           const cancelBtn = document.getElementById('cancelBtn');
           const reviewInput = document.getElementById('reviewInput');
           const ratingInput = document.getElementById('ratingInput');
 
-          const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
-          const reviewId = e.target.parentElement.parentElement.id;
-
-          modalContainer.style.display = 'flex';
+          editModalContainer.style.display = 'flex';
 
           saveBtn.addEventListener('click', () => {
+            // 수정-확인
             // 수정 api
             fetch(`/store/${storeId}/review/${reviewId}`, {
               method: 'PATCH',
@@ -228,12 +232,42 @@
             })
               .then((response) => response.json())
               .then((data) => {
+                if (data.errorMessage) {
+                  alert(data.errorMessage);
+                }
                 alert(data.message);
                 window.location.reload();
               });
           });
           cancelBtn.addEventListener('click', () => {
-            modalContainer.style.display = 'none';
+            // 수정-취소
+            editModalContainer.style.display = 'none';
+          });
+        }
+        if (e.target.className == 'delete-button') {
+          // 삭제 버튼 누를 시
+          const deleteModalContainer = document.getElementById('deleteModalContainer');
+          const checkBtn = document.getElementById('checkBtn');
+          const deleteCancelBtn = document.getElementById('deleteCancelBtn');
+
+          deleteModalContainer.style.display = 'flex';
+          checkBtn.addEventListener('click', () => {
+            // 삭제 - 확인
+            fetch(`/store/${storeId}/review/${reviewId}`, {
+              method: 'DELETE',
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.errorMessage) {
+                  alert(data.errorMessage);
+                }
+                alert(data.message);
+                window.location.reload();
+              });
+          });
+          deleteCancelBtn.addEventListener('click', () => {
+            // 삭제-취소
+            deleteModalContainer.style.display = 'none';
           });
         }
       });
