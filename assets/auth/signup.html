@@ -65,54 +65,55 @@
   <body>
     <div class="container">
       <h1>회원가입</h1>
-      <div>
-        <div class="form-group">
-          <label for="profileImage">프로필 사진:</label>
-          <input type="file" class="form-control" id="inputGroupFile02" />
+      <form class="'signUpForm" enctype="multipart/form-data>">
+        <div>
+          <div class="form-group">
+            <label for="email">이메일:</label>
+            <input id="signUpEmail" name="email" />
+            <button id="sendmail" type="button">인증번호 발송</button>
+          </div>
+          <div class="form-group" id="emailCheckForm" style="display: none">
+            <label>이메일 인증번호:</label>
+            <input type="text" id="emailNumber" />
+            <button id="authEmail">이메일 인증하기</button>
+          </div>
+          <div class="form-group">
+            <label for="username">이름 :</label>
+            <input type="text" id="username" name="username" />
+          </div>
+          <div class="form-group">
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" name="password" />
+          </div>
+          <div class="form-group">
+            <label for="confirm_password">비밀번호 확인:</label>
+            <input type="password" id="confirm_password" name="confirm_password" />
+          </div>
+          <div class="form-group">
+            <label for="address">주소:</label>
+            <input type="text" id="address" name="address" />
+          </div>
+          <div class="form-group">
+            <label>사용자 분류</label>
+            <button onclick="checkAnswer('소비자')">소비자</button>
+            <button onclick="checkAnswer('사업자')">사업자</button>
+            <p id="resultMessage"></p>
+          </div>
+          <div class="form-group" id="business_number_form" style="display: none">
+            <label for="business_registration_number">사업자번호:</label>
+            <input
+              type="text"
+              id="business_registration_number"
+              name="business_registration_number"
+            />
+          </div>
+          <div class="form-group">
+            <label for="profileImage">프로필 사진 :</label>
+            <input type="file" class="form-control" id="inputGroupFile02" />
+          </div>
+          <button type="button" class="checkBtn">가입하기</button>
         </div>
-        <div class="form-group">
-          <label for="email">이메일:</label>
-          <input type="email" id="email" name="email" />
-          <button id="emailAuth">인증번호 발송</button>
-        </div>
-        <div class="form-group" id="emailCheckForm" style="display: none">
-          <label>이메일 인증번호:</label>
-          <input type="text" id="emailNumber" />
-          <button id="authEmail">이메일 인증하기</button>
-        </div>
-        <div class="form-group">
-          <label for="username">사용자명:</label>
-          <input type="text" id="username" name="username" />
-        </div>
-        <div class="form-group">
-          <label for="password">비밀번호:</label>
-          <input type="password" id="password" name="password" />
-        </div>
-
-        <div class="form-group">
-          <label for="confirm_password">비밀번호 확인:</label>
-          <input type="password" id="confirm_password" name="confirm_password" />
-        </div>
-        <div class="form-group">
-          <label for="address">주소:</label>
-          <input type="text" id="address" name="address" />
-        </div>
-        <div class="form-group">
-          <label>사용자 분류</label>
-          <button onclick="checkAnswer('소비자')">소비자</button>
-          <button onclick="checkAnswer('사업자')">사업자</button>
-          <p id="resultMessage"></p>
-        </div>
-        <div class="form-group" id="business_number_form" style="display: none">
-          <label for="business_registration_number">사업자번호:</label>
-          <input
-            type="text"
-            id="business_registration_number"
-            name="business_registration_number"
-          />
-        </div>
-        <button type="button" class="checkBtn">가입하기</button>
-      </div>
+      </form>
     </div>
 
     <script>
