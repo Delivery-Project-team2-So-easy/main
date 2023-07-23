@@ -146,8 +146,10 @@
             if (data.errorMessage) {
               alert(data.errorMessage);
             }
+
             const profile = document.querySelector('.profile');
             const myProfile = data.data;
+            console.log(myProfile);
             if (myProfile.profileImg == null) {
               myProfile.profileImg = `https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp`;
             }
