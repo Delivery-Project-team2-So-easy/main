@@ -2,7 +2,7 @@
 // const storeId = params.get('storeId');
 
 window.addEventListener('DOMContentLoaded', async () => {
-  storeId = 1; // 추후 삭제 필요
+  storeId = 1;
   fetch(`/store/${storeId}/menus`, {})
     .then((response) => response.json())
     .then((data) => {
