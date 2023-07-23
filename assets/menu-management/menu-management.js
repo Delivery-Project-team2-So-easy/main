@@ -87,6 +87,10 @@ document.querySelector('.register-btn').addEventListener('click', function (even
   })
     .then((res) => res.json())
     .then((data) => {
+      if (data.errorMessage) {
+        alert(data.errorMessage);
+        return;
+      }
       alert(data.message);
       window.location.reload();
     });
