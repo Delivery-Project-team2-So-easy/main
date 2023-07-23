@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           />
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
-            <div class="menu-price">${menu_price}</div>
+            <div class="menu-price">${menu_price} 원</div>
           </div>
         </div>
         `;

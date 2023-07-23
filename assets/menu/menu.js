@@ -9,7 +9,6 @@ window.addEventListener('DOMContentLoaded', async () => {
       const menu_list = document.querySelector('.menu-list');
       const menus = data.menus;
       menus.forEach((menu) => {
-        console.log(menu);
         let menu_id = menu.id;
         let menu_name = menu.menu;
         let menu_img = menu.menu_img;
@@ -22,10 +21,11 @@ window.addEventListener('DOMContentLoaded', async () => {
           />
           <div class="menu-details">
             <div class="menu-name">${menu_name}</div>
-            <div class="menu-price">${menu_price}</div>
+            <div class="menu-price">${menu_price} 원</div>
             <label>수량</label><input type=number min="0" value="0" class="quantity ${menu_id}"><br>
             <label>옵션</label><select>
-            <option>${menu_option}</option>
+            <option></option>
+            <option value="${menu_option}">${menu_option}</option>
             </select>
           </div>
         </div>
@@ -43,6 +43,8 @@ function order_menu() {
   menuBoxs.forEach((menu) => {
     const menuId = menu.id;
     const quantity = menu.getElementsByTagName('input')[0].value;
+    const option = menu.getElementsByTagName('option').value;
+    console.log(option);
     if (quantity > 0) {
       orders.push({ menuId, quantity });
     }
