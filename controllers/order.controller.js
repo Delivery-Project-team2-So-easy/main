@@ -9,7 +9,16 @@ class OrderController {
 
       if (is_seller === false) throw errorHandler.noSeller;
 
-      const result = await this.orderService.getOrders(id);
+      const result = await this.orderService.getOrders(res);
+      return res.status(result.code).json({ orders: result.orders });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getClientOrders = async (_, res, next) => {
+    try {
+      const result = await this.orderService.getClientOrders(res);
       return res.status(result.code).json({ orders: result.orders });
     } catch (err) {
       next(err);
@@ -43,8 +52,9 @@ class OrderController {
       const { orderId } = req.params;
       const { is_seller } = res.locals.user;
       if (is_seller === false) throw errorHandler.noSeller;
+      if (is_seller === false) throw errorHandler.noSeller;
 
-      const result = await this.orderService.refundRequest(orderId, res);
+      const result = await this.orderService.isDelivered(orderId, res);
       return res.status(result.code).json({ message: result.message, data: result.data });
     } catch (err) {
       next(err);

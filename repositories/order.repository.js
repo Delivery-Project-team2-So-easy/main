@@ -1,13 +1,57 @@
-const { Order, Order_detail, Menu } = require('../models');
-const { Op } = require('sequelize');
+const { Order, Order_detail, Store } = require('../models');
+const { Op, Sequelize } = require('sequelize');
 
 class OrderRepository {
   getOrders = async (storeId) => {
     const orders = await Order.findAll({
       order: [['create_at', 'DESC']],
       where: { store_id: storeId },
+      attributes: [
+        'id',
+        'store_id',
+        'order_status',
+        'address',
+        'create_at',
+        'total_price',
+        [
+          Sequelize.literal(`(SELECT store_name FROM stores WHERE stores.id = Order.store_id)`),
+          'store_name',
+        ],
+      ],
+      include: [
+        {
+          model: Store,
+          attributes: [],
+        },
+      ],
     });
-    return orders;
+    return { orders };
+  };
+
+  getClientOrders = async (userId) => {
+    const orders = await Order.findAll({
+      order: [['create_at', 'DESC']],
+      where: { user_id: userId },
+      attributes: [
+        'id',
+        'store_id',
+        'order_status',
+        'address',
+        'create_at',
+        'total_price',
+        [
+          Sequelize.literal(`(SELECT store_name FROM stores WHERE stores.id = Order.store_id)`),
+          'store_name',
+        ],
+      ],
+      include: [
+        {
+          model: Store,
+          attributes: [],
+        },
+      ],
+    });
+    return { orders };
   };
 
   order = async (userId, storeId, menuId, quantity, address, option, totalPrice, t) => {

@@ -141,9 +141,11 @@ class StoreRepository {
     return oneStoreData;
   };
 
-  searchStore = async (searchKeyword) => {
+  searchStore = async (searchKeyword, storeIds) => {
     const searchStore = await Store.findAll({
-      where: { store_name: { [Op.substring]: searchKeyword } },
+      where: {
+        [Op.or]: [{ id: storeIds }, { store_name: { [Op.substring]: searchKeyword } }],
+      },
       attributes: [
         'id',
         'store_name',
@@ -176,7 +178,7 @@ class StoreRepository {
           { category: { [Op.substring]: searchKeyword } },
         ],
       },
-      attributes: ['store_id', 'id', 'category', 'menu', 'menu_img', 'price', 'option'],
+      attributes: ['store_id'],
     });
     return searchMenu;
   };

@@ -99,6 +99,11 @@ class UserService {
     }
   };
 
+  isStoreLiked = async (userId, storeId) => {
+    const result = await this.likeRepository.existUserLike(userId, storeId);
+    return { code: 200, result };
+  };
+
   storeLike = async (storeId, res) => {
     try {
       const user = res.locals.user;
@@ -112,7 +117,7 @@ class UserService {
       }
       await this.likeRepository.deleteUserLike(user.id, storeId);
       return { code: 200, message: '매장을 내 즐겨 찾기에서 취소 하였습니다.' };
-    } catch (error) {
+    } catch (err) {
       throw err;
     }
   };
@@ -141,32 +146,64 @@ class UserService {
 
   updateUser = async (
     userId,
-    email,
     name,
     password,
+    afterPassword,
+    afterConfirmPassword,
     isSeller,
     profileImg,
     address,
     businessRegistrationNumber
   ) => {
     try {
-      const hashPassword = await bcrypt.hash(password, salt);
-      const existUserData = await this.userRepository.existUser(email);
-      if (existUserData == null) {
-        await this.userRepository.updateUser(
-          userId,
-          email,
-          name,
-          hashPassword,
-          isSeller,
-          profileImg,
-          address,
-          businessRegistrationNumber
-        );
-        return { code: 201, message: '데이터가 수정되었습니다.' };
-      } else {
-        throw errorHandler.existEmail;
+      const currentUser = await this.userRepository.findUser(userId);
+      const match = await bcrypt.compare(password, currentUser.password);
+      if (!match) throw errorHandler.checkPassword;
+
+      // 변경할 비밀번호가 입력 되었을 때와 입력되지 않았을 때를 구분
+      if (afterPassword && afterConfirmPassword) {
+        const emailName = currentUser.email.split('@')[0];
+        if (afterPassword.length < 4 || emailName.includes(afterPassword))
+          throw errorHandler.passwordFormat;
+        if (afterPassword !== afterConfirmPassword) {
+          throw errorHandler.checkPassword;
+        }
+        password = await bcrypt.hash(afterPassword, salt);
+      } else password = currentUser.password;
+
+      if (isSeller) {
+        if (!businessRegistrationNumber) throw errorHandler.checkBusinessRegistrationNumber;
+        if (businessRegistrationNumber.includes('-')) {
+          businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+        } else {
+          businessRegistrationNumber = businessRegistrationNumber / 1;
+        }
+
+        if (!businessRegistrationNumber) throw errorHandler.businessRegistrationNumber;
       }
+
+      profileImg = profileImg ? profileImg : currentUser.profile_img;
+      // 내 정보 수정 버튼을 프론트에서 로그인 된 유저만 열 수 있고
+      // 로그인 된 유저의 정보를 안에서 가져오기 때문에 없는 사용자인지는 확인할 필요가 없어서 뺐습니다.
+      await this.userRepository.updateUser(
+        userId,
+        name,
+        password,
+        isSeller,
+        profileImg,
+        address,
+        businessRegistrationNumber
+      );
+      return { code: 201, message: '데이터가 수정되었습니다.' };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  updateAddress = async (address, userId) => {
+    try {
+      const user = await this.userRepository.updateAddress(address, userId);
+      return { code: 201, message: `${user.name}님의 주소가 ${user.address}로 변경되었습니다. ` };
     } catch (err) {
       throw err;
     }
@@ -264,6 +301,18 @@ class UserService {
       if (!myOrders) throw errorHandler.noOrder;
 
       return myOrders;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  checkUserInfo = async (res) => {
+    try {
+      const user = await res.locals.user;
+      if (!user) throw errorHandler.notExistUser;
+
+      const userInfo = await this.userRepository.findUser(user.id);
+      return { userId: userInfo.id, isSeller: userInfo.is_seller };
     } catch (err) {
       throw err;
     }

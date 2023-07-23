@@ -1,6 +1,8 @@
 const errorHandler = require('../errorHandler');
 const UserService = require('../services/user.service');
-
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const env = process.env;
 class UserController {
   userService = new UserService();
 
@@ -39,10 +41,7 @@ class UserController {
           businessRegistrationNumber = businessRegistrationNumber / 1;
         }
 
-        if (!businessRegistrationNumber)
-          return res
-            .status(400)
-            .json({ errorMessage: '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.' });
+        if (!businessRegistrationNumber) throw errorHandler.businessRegistrationNumber;
       }
       const result = await this.userService.signUp(
         email,
@@ -91,7 +90,18 @@ class UserController {
       const { email } = req.body;
       const result = await this.userService.checkEmail(email);
 
-      return res.status(result.code).json({ message: result.message, data: result.data });
+      return res.status(result.code).json({ message: result.message });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  isStoreLiked = async (req, res, next) => {
+    try {
+      const { storeId } = req.params;
+      const userId = res.locals.user.id;
+      const { code, result } = await this.userService.isStoreLiked(userId, storeId);
+      res.status(code).json({ result });
     } catch (err) {
       next(err);
     }
@@ -135,35 +145,44 @@ class UserController {
       const profileImg = req.file ? req.file.location : null;
 
       const {
-        email,
         name,
         password,
-        confirmPassword,
+        afterPassword,
+        afterConfirmPassword,
         isSeller,
         address,
         businessRegistrationNumber,
       } = req.body;
-      // 빈 내용이 있으면 걸리는 부분들이 있어서 수정중입니다
-      const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
-      if (email) {
-        if (!emailReg.test(email)) throw errorHandler.emailFormat;
-      }
-      if (password) {
-        const emailName = email.split('@')[0];
-        if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
 
-        if (password !== confirmPassword) throw errorHandler.checkPassword;
-      }
+      if (!password) throw errorHandler.notEnteredPassword;
+
       const result = await this.userService.updateUser(
         userId,
-        email,
         name,
         password,
+        afterPassword,
+        afterConfirmPassword,
         isSeller,
         profileImg,
         address,
         businessRegistrationNumber
       );
+
+      return res.status(result.code).json({ message: result.message });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  updateAddress = async (req, res, next) => {
+    try {
+      const { address } = req.body;
+      const userId = res.locals.user.id;
+      if (!address) {
+        throw errorHandler.notEnteredAddress;
+      }
+
+      const result = await this.userService.updateAddress(address, userId);
 
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
@@ -249,6 +268,15 @@ class UserController {
       const getMyOrders = await this.userService.getMyOrders(user.id);
 
       return res.status(200).json({ myOrders: getMyOrders });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  checkUserInfo = async (_, res, next) => {
+    try {
+      const result = await this.userService.checkUserInfo(res);
+      return res.status(200).json({ userId: result.userId, isSeller: result.isSeller });
     } catch (err) {
       next(err);
     }

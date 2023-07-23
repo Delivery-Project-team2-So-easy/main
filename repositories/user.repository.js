@@ -1,4 +1,5 @@
-const { User, Store } = require('../models');
+const { User } = require('../models');
+const errorHandler = require('../errorHandler');
 
 class UserRepository {
   signUp = async (
@@ -53,28 +54,47 @@ class UserRepository {
 
   updateUser = async (
     userId,
-    email,
     name,
-    hashPassword,
+    password,
     isSeller,
     profileImg,
     address,
     businessRegistrationNumber
   ) => {
-    return await User.update(
-      {
-        email,
-        name,
-        password: hashPassword,
-        is_seller: isSeller,
-        profile_img: profileImg,
-        address,
-        business_registration_number: businessRegistrationNumber,
-      },
-      {
-        where: { id: userId },
-      }
-    );
+    if (isSeller) {
+      return await User.update(
+        {
+          name,
+          password,
+          is_seller: true,
+          profile_img: profileImg,
+          address,
+          business_registration_number: businessRegistrationNumber,
+        },
+        {
+          where: { id: userId },
+        }
+      );
+    } else {
+      return await User.update(
+        {
+          name,
+          password,
+          is_seller: false,
+          profile_img: profileImg,
+          address,
+          business_registration_number: null,
+        },
+        {
+          where: { id: userId },
+        }
+      );
+    }
+  };
+
+  updateAddress = async (address, userId) => {
+    await User.update({ address }, { where: { id: userId } });
+    return await User.findOne({ where: { id: userId } });
   };
 }
 

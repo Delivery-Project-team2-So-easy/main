@@ -16,7 +16,18 @@ class OrderService {
       const existStore = await this.storeRepository.getStoreInfo(id);
       if (!existStore) throw errorHandler.notRegistered;
 
-      const orders = await this.orderRepository.getOrders(existStore.id);
+      const { orders } = await this.orderRepository.getOrders(existStore.id);
+
+      return { code: 200, orders };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getClientOrders = async (res) => {
+    try {
+      const user = res.locals.user;
+      const { orders } = await this.orderRepository.getClientOrders(user.id);
       return { code: 200, orders };
     } catch (err) {
       throw err;

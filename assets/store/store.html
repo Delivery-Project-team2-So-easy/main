@@ -3,99 +3,104 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./store.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="../sock.js" defer></script>
     <title>Store</title>
-    <style>
-      header {
-        text-align: center;
-        height: 100px;
-        width: 400px;
-        background-color: gray;
-      }
-      .store-overview {
-        background-color: beige;
-        width: 400px;
-        height: 100px;
-        position: relative;
-      }
-      .store-img {
-        height: 100px;
-        display: block;
-        margin: 0 auto;
-      }
-      .store-name {
-        text-align: center;
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      .like {
-        position: absolute;
-        bottom: 15px;
-        right: 15px;
-      }
-      .info {
-        position: absolute;
-        top: 70%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      .menu-list {
-        width: 400px;
-      }
-      .menu-list > .menu-box {
-        height: 130px;
-        display: flex;
-        margin: 0 auto;
-      }
-      .menu-box > img {
-        height: 130px;
-        width: 130px;
-      }
-      .menu-details {
-        width: 270px;
-        margin: auto auto;
-      }
-      .menu-name {
-        text-align: center;
-        padding: 5px;
-        font-size: 25px;
-      }
-      .menu-price {
-        text-align: right;
-        margin: 0 10px;
-      }
-      footer {
-        display: flex;
-        justify-content: space-between;
-        width: 400px;
-      }
-      .footer-btn {
-        border-style: solid;
-        padding: 11px;
-      }
-    </style>
+    <script src="./store.js" defer></script>
   </head>
   <body>
     <header>
-      <div>배달참쉽조</div>
+      <div class="navTitle">
+        <img class="navbar-brand" id="icon" onclick="home()" src="../images/icon.JPG" />
+        <h1>참쉽조 Delivery Web Service Page</h1>
+      </div>
+      <nav class="navbar navbar-expand-lg">
+        <div id="navbarNav">
+          <form class="registerAddress">
+            <label>배달 주소 등록 </label>
+            <input type="text" id="userAddress" name="address" readonly />
+            <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">등록</button>
+          </form>
+          <button class="btn btn-outline-primary ml-2" id="signUp" onclick="openSignup()">
+            회원가입
+          </button>
+          <button class="btn btn-outline-success ml-2" id="login" onclick="openLogin()">
+            로그인
+          </button>
+          <button
+            class="btn btn-outline-warning"
+            id="myorder"
+            onclick="openMyorder()"
+            style="display: none"
+          >
+            내 주문
+          </button>
+          <button
+            class="btn btn-outline-primary ml-2"
+            id="mypage"
+            onclick="openMypage()"
+            style="display: none"
+          >
+            마이페이지
+          </button>
+          <button
+            class="btn btn-outline-success ml-2"
+            id="bookmark"
+            onclick="openBookmark()"
+            style="display: none"
+          >
+            북마크
+          </button>
+          <button
+            class="btn btn-outline-danger"
+            id="logout"
+            onclick="logout()"
+            style="display: none"
+          >
+            로그아웃
+          </button>
+        </div>
+      </nav>
     </header>
     <section>
       <div class="store-overview">
         <!-- 매장정보 -->
       </div>
-      <a href="../menu/menu.html"><div>주문하러 가기</div></a>
       <div class="menu-list">
         <!-- 메뉴목록 -->
+        <a class="goOrder" onclick="goToOrder()"><div>주문하러 가기</div></a>
       </div>
     </section>
-    <footer>
-      <a href="../index.html" class="footer-btn">home</a>
-      <div class="footer-btn">search</div>
-      <div class="footer-btn">bookmark</div>
-      <div class="footer-btn">order</div>
-      <div class="footer-btn">mypage</div>
+    <footer class="bg-light text-center py-2">
+      <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>
     </footer>
   </body>
-  <script src="./store.js"></script>
 </html>

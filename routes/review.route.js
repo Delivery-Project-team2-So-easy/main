@@ -6,6 +6,7 @@ const upload = require('../middlewares/upload-middleware');
 const auth = require('../middlewares/auth-middleware');
 
 router.get('/store/:storeId/reviews', reviewController.getReviews);
+router.get('/store/:storeId/review/:reviewId', auth, reviewController.getReviewDetail);
 router.get('/myReviews', auth, reviewController.getMyReviews);
 router.post('/store/:storeId/review', auth, upload, reviewController.postReview);
 router.patch('/store/:storeId/review/:reviewId', auth, upload, reviewController.updateReview);

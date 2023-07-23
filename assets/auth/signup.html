@@ -4,6 +4,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
     <title>회원가입 페이지</title>
     <style>
       /* 스타일링을 위한 CSS 코드 */
@@ -112,10 +117,30 @@
     </div>
 
     <script>
-      // 회원가입 관련
-      const form = new FormData();
-      const fileInput = document.getElementById('profileImage');
-      const file = fileInput.files[0];
+      $(document).ready(() => {
+        $.ajax({
+          method: 'POST',
+          url: '/cookie',
+          success: () => {},
+          error: (error) => {},
+        });
+      });
+      function checkAnswer(answer) {
+        const resultMessageElement = document.getElementById('resultMessage');
+        const business_number_form = document.getElementById('business_number_form');
+
+        if (answer === '사업자') {
+          resultMessageElement.textContent = '사업자';
+          business_number_form.style.display = '';
+        } else if (answer === '소비자') {
+          resultMessageElement.textContent = '소비자';
+          business_number_form.style.display = 'none';
+        } else {
+          resultMessageElement.textContent = '선택된 값이 없습니다.';
+        }
+      }
+
+      const emailAuth = document.getElementById('emailAuth');
       const inputEmail = document.getElementById('email');
       const inputUsername = document.getElementById('username');
       const inputPassword = document.getElementById('password');

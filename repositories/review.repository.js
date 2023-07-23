@@ -30,10 +30,7 @@ class ReviewRepository {
           attributes: [],
         },
       ],
-      order: [
-        [Sequelize.literal('likes'), 'DESC'],
-        ['create_at', 'DESC'],
-      ],
+      order: [['create_at', 'DESC']],
     });
 
     return getReviews;
