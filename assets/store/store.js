@@ -24,7 +24,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   fetch(`/user/store/${storeId}/isliked`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data.result);
       const heart = document.querySelector('#heart');
       if (data.result) {
         heart.classList.remove('fa-heart-o');
@@ -78,25 +77,3 @@ window.addEventListener('DOMContentLoaded', async () => {
       });
     });
 });
-
-async function like(storeId) {
-  storeId = 1;
-  fetch(`/user/store/${storeId}/like`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      body: JSON.stringify({}),
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-  const liked = document.querySelector('.liked');
-  const unliked = document.querySelector('.unliked');
-  if (!liked.style.display === 'none') {
-    liked.style.display = 'block';
-    unliked.style.display = 'none';
-  } else if (liked.style.display === 'block') {
-    liked.style.display = 'none';
-    unliked.style.display = 'block';
-  }
-}

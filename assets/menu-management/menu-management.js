@@ -53,7 +53,6 @@ window.addEventListener('DOMContentLoaded', async () => {
           .getElementById(menu_id)
           .nextSibling.nextSibling.addEventListener('click', function (event) {
             const menuId = event.target.previousSibling.previousSibling.id;
-            console.log(menuId);
             fetch(`/store/menu/${menuId}`, {
               method: 'DELETE',
             })
