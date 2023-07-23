@@ -15,6 +15,7 @@ router.post('/user/store/:storeId/like', authMiddleware, userController.storeLik
 router.get('/user/store/likeStores', authMiddleware, userController.getMyLike);
 router.get('/user/myReviews', authMiddleware, userController.getMyReviews);
 router.get('/user/myOrders', authMiddleware, userController.getMyOrders);
+router.get('/userInfo', authMiddleware, userController.checkUserInfo);
 
 //카카오
 router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
