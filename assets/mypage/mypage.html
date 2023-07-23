@@ -81,6 +81,44 @@
         flex-direction: column; /* 요소들을 수직 방향으로 배치 */
         align-items: center; /* 가운데 정렬 */
       }
+      /* 상점 */
+      .shop-container {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* 요소 사이의 간격 조정 */
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin: 10px;
+      }
+      .shop-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .shop-name {
+        flex: 1; /* 상점 이름이 남은 공간 모두를 차지하도록 설정 */
+      }
+      .register-button,
+      .edit-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4caf50;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .menu-button,
+      .order-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        background-color: #66b4ef;
+        color: #fff;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -101,39 +139,49 @@
           <!-- 사용자 정보 및 프로필 사진 표시 등 추가 정보를 넣을 수 있습니다 -->
         </div>
       </div>
-      <div class="review-container">
-        <div class="review">
-          <h3>리뷰 1</h3>
-          <p>제품 A는 좋았어요! 가격 대비 품질이 좋습니다.</p>
-          <div class="button-container">
-            <button class="edit-button">수정</button>
-            <button class="delete-button">삭제</button>
+      <div id="noSeller">
+        <!-- 리뷰 컨테이너 -->
+        <div class="review-container"></div>
+        <!-- 수정 모달창 -->
+        <div class="modal-container" id="editModalContainer">
+          <div class="modal-content">
+            <h3>리뷰 수정</h3>
+            <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
+            <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
+            <button id="saveBtn">저장</button>
+            <button id="cancelBtn">취소</button>
+          </div>
+        </div>
+        <!-- 삭제 모달창 -->
+        <div class="modal-container" id="deleteModalContainer">
+          <div class="modal-content">
+            <h3>정말로 삭제하시겠습니까?</h3>
+            <button id="checkBtn">삭제</button>
+            <button id="deleteCancelBtn">취소</button>
           </div>
         </div>
       </div>
-      <!-- 수정 모달창 -->
-      <div class="modal-container" id="editModalContainer">
-        <div class="modal-content">
-          <h3>리뷰 수정</h3>
-          <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
-          <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
-          <button id="saveBtn">저장</button>
-          <button id="cancelBtn">취소</button>
+      <div id="seller">
+        <!-- 매장 컨테이너 -->
+        <div class="shop-container" id="storeProfile">
+          <img
+            class="shop-image"
+            src="https://src.hidoc.co.kr/image/lib/2021/6/30/1625033464239_0.jpg"
+            alt="https://src.hidoc.co.kr/image/lib/2021/6/30/1625033464239_0.jpg"
+          />
+          <div class="shop-name">상점 이름 1</div>
+          <button class="register-button">상점 등록</button>
+          <button class="edit-button">상점 수정</button>
+          <button class="menu-button">메뉴 관리</button>
+          <button class="order-button">주문 조회</button>
         </div>
       </div>
-      <!-- 삭제 모달창 -->
-      <div class="modal-container" id="deleteModalContainer">
-        <div class="modal-content">
-          <h3>정말로 삭제하시겠습니까?</h3>
-          <button id="checkBtn">삭제</button>
-          <button id="deleteCancelBtn">취소</button>
-        </div>
-      </div>
-      <!-- 기타 마이페이지 내용을 넣을 수 있습니다 -->
     </main>
     <script>
       // 데이터 렌더링
       window.addEventListener('DOMContentLoaded', () => {
+        const seller = document.querySelector('#seller');
+        const noSeller = document.querySelector('#noSeller');
         // 내 프로필 렌더링
         fetch('/userDetails', {
           method: 'GET',
@@ -146,10 +194,8 @@
             if (data.errorMessage) {
               alert(data.errorMessage);
             }
-
             const profile = document.querySelector('.profile');
             const myProfile = data.data;
-            console.log(myProfile);
             if (myProfile.profileImg == null) {
               myProfile.profileImg = `https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp`;
             }
@@ -171,22 +217,23 @@
         </div>
         `;
             profile.innerHTML = temp_html;
-          });
-        // 내 리뷰 렌더링
-        fetch('/myReviews', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const reviewContainer = document.querySelector('.review-container');
-            console.log(data);
-            const myReviews = data.reviews;
-            let temp = '';
-            myReviews.map((review) => {
-              let temp_html = `
+
+            if (myProfile.is_seller == '소비자') {
+              seller.style.display = 'none';
+              fetch('/myReviews', {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  const reviewContainer = document.querySelector('.review-container');
+                  console.log(data);
+                  const myReviews = data.reviews;
+                  let temp = '';
+                  myReviews.map((review) => {
+                    let temp_html = `
               <div class="review" id="${review.id}">
                 <img src="${review.Store.store_img}"/>
                 <h3 id=${review.store_id}>${review.Store.store_name}</h3>
@@ -199,10 +246,35 @@
                 </div>
               </div>
             `;
-              temp = temp + temp_html;
-            });
-            reviewContainer.innerHTML = temp;
+                    temp = temp + temp_html;
+                  });
+                  reviewContainer.innerHTML = temp;
+                });
+            }
+            if (myProfile.is_seller == '판매자') {
+              noSeller.style.display = 'none';
+              const storeProfile = document.querySelector('.shop-container');
+              const myStoreProfile = data.data.Store;
+              if (myStoreProfile.store_img == null) {
+                myStoreProfile.store_img = `https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/309/59932b0eb046f9fa3e063b8875032edd_crop.jpeg`;
+              }
+
+              let temp_html_v2 = `
+          <img
+            class="shop-image"
+            src="${myStoreProfile.store_img}"
+            alt="${myStoreProfile.store_img}"
+          />
+          <div class="shop-name">${myStoreProfile.store_name}</div>
+          <button class="register-button">상점 등록</button>
+          <button class="edit-button">상점 수정</button>
+          <button class="menu-button">메뉴 관리</button>
+        <button class="order-button">주문 조회</button>
+            `;
+              storeProfile.innerHTML = temp_html_v2;
+            }
           });
+        // 내 리뷰 렌더링
       });
       const reviewContainer = document.querySelector('.review-container');
       reviewContainer.addEventListener('click', (e) => {

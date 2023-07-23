@@ -5,6 +5,7 @@ const OrderRepository = require('../repositories/order.repository.js');
 const UserRepository = require('../repositories/user.repository.js');
 const StoreRepository = require('../repositories/store.repository.js');
 const errorHandler = require('../errorHandler');
+// const { ConfigurationServicePlaceholders } = require('aws-sdk/lib/config_service_placeholders');
 
 class OrderService {
   orderRepository = new OrderRepository();
@@ -18,7 +19,6 @@ class OrderService {
       if (!existStore) throw errorHandler.notRegistered;
 
       const orders = await this.orderRepository.getOrders(existStore.id);
-
       return { code: 200, orders };
     } catch (err) {
       throw err;
@@ -167,7 +167,7 @@ class OrderService {
 
       const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
       if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
-      
+
       const totalSales = myStore.total_sales - existOrder.total_price;
       const userPoint = user.point + existOrder.total_price;
 
@@ -205,7 +205,6 @@ class OrderService {
 
       const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
       if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
-
 
       if (existOrder.order_status === 'refundRequest') {
         await this.orderRepository.updateDeliveryStatus(orderId);
