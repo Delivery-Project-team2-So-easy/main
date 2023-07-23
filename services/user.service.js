@@ -99,6 +99,11 @@ class UserService {
     }
   };
 
+  isStoreLiked = async (userId, storeId) => {
+    const result = await this.likeRepository.existUserLike(userId, storeId);
+    return { code: 200, result };
+  };
+
   storeLike = async (storeId, res) => {
     try {
       const user = res.locals.user;

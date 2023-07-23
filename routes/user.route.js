@@ -11,6 +11,9 @@ router.post('/users/login', userController.login);
 router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
 router.post('/users/checkEmail', userController.checkEmail);
+//좋아요 조회
+router.get('/user/store/:storeId/isliked', authMiddleware, userController.isStoreLiked);
+
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
 router.get('/user/store/likeStores', authMiddleware, userController.getMyLike);
 router.get('/user/myReviews', authMiddleware, userController.getMyReviews);
