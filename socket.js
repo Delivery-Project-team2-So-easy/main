@@ -23,7 +23,7 @@ io.use((socket, next) => {
     const token = authorization.split(' ')[1];
     if (!token) return;
 
-    const decode = await jwt.verify(token, env.JWT_SECRET_KEY);
+    const decode = jwt.verify(token, env.JWT_SECRET_KEY);
     loginList[sock.id] = decode.userId;
 
     const {

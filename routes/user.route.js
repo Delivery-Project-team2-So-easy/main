@@ -13,7 +13,11 @@ router.post('/users/login', userController.login);
 router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
 router.post('/users/updateAddress', authMiddleware, userController.updateAddress);
+router.get('/userDetails', authMiddleware, userController.userDetails);
 router.post('/users/checkEmail', userController.checkEmail);
+//좋아요 조회
+router.get('/user/store/:storeId/isliked', authMiddleware, userController.isStoreLiked);
+
 router.post('/user/store/:storeId/like', authMiddleware, userController.storeLike);
 router.get('/user/store/likeStores', authMiddleware, userController.getMyLike);
 router.get('/user/myReviews', authMiddleware, userController.getMyReviews);
@@ -30,7 +34,6 @@ router.post('/cookie', async (req, res) => {
   res.cookie('authorization', `Bearer ${token}`);
   return res.status(200).json({ message: 'success' });
 });
-
 //카카오
 router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
 router.get('/users/kakao/callback', userController.kakaoCallBack); // 가져온 데이터로 로그인 or 회원가입

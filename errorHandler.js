@@ -80,9 +80,9 @@ const errorHandler = {
   nonExistMenu: new CustomError(404, '존재하지 않는 메뉴입니다.'),
   noPermissions: new CustomError(401, '해당 권한이 없습니다.'),
   emptyContent: new CustomError(400, '내용을 모두 입력해주세요.'),
-  noUpdateContent: new CustomError(400, '변경내역이 없습니다.'),
 
   //socket
   socketError: new CustomError(500, '소켓 연결에 실패했습니다.'),
+  noUpdateContent: new CustomError(400, '변경내역이 없습니다.'),
 };
 module.exports = errorHandler;

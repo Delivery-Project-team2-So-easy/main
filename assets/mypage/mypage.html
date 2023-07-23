@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>마이페이지</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="mypage.css" />
+    <script src="mypage.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>마이페이지</h1>
+    </header>
+    <div style="float: right">
+      <button class="menu-button" id="editBtn">내 정보 수정</button>
+      <button class="menu-button" id="logoutBtn">로그아웃</button>
+    </div>
+    <div class="profile">
+      <img
+        src="https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp"
+        alt="https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp"
+      />
+      <div>
+        <h2>사용자 이름</h2>
+        <p>이메일</p>
+        <p>소비자 혹은 판매자</p>
+        <p>address</p>
+        <!-- 사용자 정보 및 프로필 사진 표시 등 추가 정보를 넣을 수 있습니다 -->
+      </div>
+    </div>
+    <div id="noSeller">
+      <!-- 리뷰 컨테이너 -->
+      <div class="review-container"></div>
+      <!-- 수정 모달창 -->
+      <div class="modal-container" id="editModalContainer">
+        <div class="modal-content">
+          <h3>리뷰 수정</h3>
+          <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
+          <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
+          <button id="saveBtn">저장</button>
+          <button id="cancelBtn">취소</button>
+        </div>
+      </div>
+      <!-- 삭제 모달창 -->
+      <div class="modal-container" id="deleteModalContainer">
+        <div class="modal-content">
+          <h3>정말로 삭제하시겠습니까?</h3>
+          <button id="checkBtn">삭제</button>
+          <button id="deleteCancelBtn">취소</button>
+        </div>
+      </div>
+    </div>
+    <div id="seller">
+      <!-- 매장 컨테이너 -->
+      <div class="shop-container" id="storeProfile">
+        <img
+          class="shop-image"
+          src="https://src.hidoc.co.kr/image/lib/2021/6/30/1625033464239_0.jpg"
+          alt="https://src.hidoc.co.kr/image/lib/2021/6/30/1625033464239_0.jpg"
+        />
+        <div class="shop-name">상점 이름 1</div>
+        <button class="register-button">상점 등록</button>
+        <button class="edit-button">상점 수정</button>
+        <button class="menu-button">메뉴 관리</button>
+        <button class="order-button">주문 조회</button>
+      </div>
+      <div class="order-Container">
+        <div class="order">
+          <div>
+            <span class="order-label">배달 메뉴:</span>
+            <span>John Doe</span>
+          </div>
+
+          <div>
+            <span class="order-label">주소:</span>
+            <span>서울시 강남구</span>
+          </div>
+
+          <div>
+            <span class="order-label">가격:</span>
+            <span>3222222222222222222220</span>
+          </div>
+
+          <div class="order"><span>Status</span></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

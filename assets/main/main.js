@@ -22,11 +22,9 @@ async function getUserInfo() {
       userId = data.userId;
     },
   });
-  console.log(userId);
 }
 
 function viewBtn() {
-  console.log(userId);
   if (userId > 0) {
     document.querySelector('#mypage').style.display = 'block';
     document.querySelector('#bookmark').style.display = 'block';
@@ -47,8 +45,8 @@ async function getStoreInfo() {
       results.forEach((store) => {
         let Img = '';
         store.storeImg
-          ? (Img = `<img src="${store.storeImg}" class="storeImage" alt="../image/defaultImage.jpg" />`)
-          : (Img = '<img src="../image/store.png" id="preview" class="storeImage" />');
+          ? (Img = `<img src="${store.storeImg}" class="storeImage" alt="../images/store.png" />`)
+          : (Img = '<img src="../images/store.png" id="preview" class="storeImage" />');
 
         stores += `
                   <div class="store" >
@@ -81,48 +79,38 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
 }
 
 function openMyorder() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../order/order.html`, '_self');
+  window.open(`../order/order.html`, '_self');
 }
 
 function openBookmark() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../bookmark/bookmark.html?userId=${userId}`, '_self');
+  window.open(`../bookmark/bookmark.html`, '_self');
 }
 
 function logout() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else {
-    $.ajax({
-      type: 'POST',
-      url: '/users/logout',
-      success: (data) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: data.message,
-        }).then(() => {
-          window.location.href = '/';
-        });
-      },
-      error: (error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.responseJSON.errorMessage,
-        });
-      },
-    });
-  }
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
 }
 
 function openSignup() {
@@ -170,8 +158,8 @@ function searchStore() {
       results.forEach((store) => {
         let Img = '';
         store.store_img
-          ? (Img = `<img src="${store.store_img}" class="storeImage" alt="../image/defaultImage.jpg" />`)
-          : (Img = '<img src="../image/store.png" id="priview" class="storeImage" />');
+          ? (Img = `<img src="${store.store_img}" class="storeImage" alt="../images/store.png" />`)
+          : (Img = '<img src="../images/store.png" id="priview" class="storeImage" />');
 
         stores += `
                   <div class="store" >

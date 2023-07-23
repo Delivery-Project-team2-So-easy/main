@@ -93,10 +93,15 @@ class UserService {
         text: `인증 번호: ${authNumber}`, // plain text body
         html: `<b>인증 번호: ${authNumber}</b>`, // html body
       });
-      return { code: 200, message: '인증 메시지를 발송했습니다.' };
+      return { code: 200, message: '인증 메시지를 발송했습니다.', data: authNumber };
     } catch (err) {
       throw err;
     }
+  };
+
+  isStoreLiked = async (userId, storeId) => {
+    const result = await this.likeRepository.existUserLike(userId, storeId);
+    return { code: 200, result };
   };
 
   storeLike = async (storeId, res) => {
@@ -125,6 +130,15 @@ class UserService {
         return { code: 404, errorMessage: '즐겨찾기에 추가된 매장이 없습니다.' };
       }
       return getMyLike;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getUserDetails = async (userId) => {
+    try {
+      const userDetail = await this.userRepository.findUser(userId);
+      return { code: 200, data: userDetail };
     } catch (err) {
       throw err;
     }
@@ -296,6 +310,7 @@ class UserService {
     try {
       const user = await res.locals.user;
       if (!user) throw errorHandler.notExistUser;
+
       const userInfo = await this.userRepository.findUser(user.id);
       return { userId: userInfo.id, isSeller: userInfo.is_seller };
     } catch (err) {

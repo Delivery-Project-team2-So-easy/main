@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./menu-management.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <title>Store</title>
+  </head>
+  <body>
+    <header>
+      <div>배달참쉽조</div>
+    </header>
+    <section>
+      <div class="menu-list">
+        <div class="order-title">메뉴 수정 페이지</div>
+        <!-- 메뉴목록 -->
+      </div>
+      <div class="menu-register">
+        <fieldset style="width: 150">
+          <legend>메뉴등록</legend>
+          <lable>메뉴이름</lable>
+          <input id="menu-name" type="text" name="menu" placeholder="메뉴이름" /><br />
+          <lable>가격</lable>
+          <input id="menu-price" type="text" name="price" placeholder="가격" /><br />
+          <lable>옵션</lable>
+          <input id="menu-option" type="text" name="option" placeholder="옵션" /><br />
+          <lable>카테고리</lable>
+          <input id="menu-category" type="text" name="option" placeholder="카테고리" /><br />
+          <input id="menu-image" type="file" name="newFile" /><br />
+          <input class="register-btn" type="button" value="메뉴등록" /><br />
+        </fieldset>
+      </div>
+    </section>
+    <footer>
+      <a href="../index.html" class="footer-btn">home</a>
+      <div class="footer-btn">search</div>
+      <div class="footer-btn">bookmark</div>
+      <div class="footer-btn">order</div>
+      <div class="footer-btn">mypage</div>
+    </footer>
+  </body>
+  <script src="./menu-management.js"></script>
+</html>
