@@ -130,9 +130,11 @@ function closeModal() {
   setRating(0);
   document.querySelector('#review').value = '';
   document.querySelector('#newFile').value = '';
+  document.querySelector('#preview').src = '';
 
   document.body.style.overflow = 'auto';
   document.removeEventListener('keydown', handleKeyDown);
+  window.location.reload();
 }
 
 // 리뷰생성
@@ -149,7 +151,11 @@ async function createReview() {
     formData.append('rating', selectedRating);
 
     if (selectedRating == 0) {
-      alert('별점은 최소 1점 이상 입력해주세요.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: '별점은 1점 이상 등록해주세요',
+      });
       return;
     }
 
@@ -328,6 +334,19 @@ function hideButtons() {
   const deleteButton = document.querySelector('#delete-button');
   editButton.style.display = 'none';
   deleteButton.style.display = 'none';
+}
+
+// 이미지 업로드 시 미리보기 기능
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      document.querySelector('#preview').src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  } else {
+    document.querySelector('#preview').src = '../images/noimage.png';
+  }
 }
 
 // 여기부터는 다른거

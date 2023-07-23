@@ -79,7 +79,8 @@
       <div class="modal" id="modal-wrap" style="display: none">
         <div class="review-form" enctype="mulitpart/form-data">
           <h4 id="menu-name">메뉴이름</h4>
-          <input type="file" id="newFile" name="newFile" />
+          <input type="file" id="newFile" name="newFile" onchange="readURL(this)" />
+          <img id="preview" src="../images/noimage.png" />
           <div class="star-container">
             <span class="star" data-rating="1" onclick="setRating(1)">☆</span>
             <span class="star" data-rating="2" onclick="setRating(2)">☆</span>

@@ -1,3 +1,6 @@
+// const params = new URLSearchParams(window.location.search);
+// const storeId = params.get('storeId');
+
 let currentUserId = 0;
 
 $(document).ready(async () => {
@@ -27,14 +30,16 @@ async function getBookmarks(userId) {
       stores.forEach((store) => {
         let Img = '';
         store.storeImg
-          ? (Img = `<img src="${store.storeImg}" alt="../images/store.png" />`)
-          : (Img = '<img src="../images/store.png" id="preview" class="storeImage" />');
+          ? (Img = `<img src="${store.storeImg}" class="post-image" alt="../images/store.png" />`)
+          : (Img = '<img src="../images/store.png" id="preview" class="store-image" />');
 
-        result += `<div class=store-container" >
-                     ${Img}
-                     <div id="store-name-tag">${store.storeName}</div>
-                     <button class="like-btn" storeId="${store.store_id}" onclick="confirmDelete(this)">❤</button>
+        result += ` <div class="store-card">
+                      <div class="store-container" >
+                      <h4 id="store-name">${store.storeName}</h4>
+                        ${Img}
+                      <span id="like-btn" storeId="${store.store_id}" onclick="confirmDelete(this)">❤</span>
                       </div>
+                    </div>
                      `;
       });
       printStores.innerHTML = result;
@@ -76,9 +81,8 @@ async function deleteLike(storeId) {
 }
 
 // 좋아요 삭제 버튼을 눌렀을 때 호출되는 함수
-async function confirmDelete(button) {
-  const storeId = button.getAttribute('storeId');
-  console.log(storeId);
+async function confirmDelete(span) {
+  const storeId = span.getAttribute('storeId');
 
   const result = await Swal.fire({
     icon: 'warning',

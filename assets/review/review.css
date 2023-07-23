@@ -297,3 +297,10 @@ button#close-button:hover {
   cursor: pointer;
   margin-top: 10px;
 }
+
+#preview {
+  width: 300px;
+  height: 300px;
+  border-radius: 4px;
+  margin: 20px 0 20px 30px;
+}
