@@ -41,17 +41,14 @@ section::-webkit-scrollbar {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.mylike {
+i {
+  font-size: 20px;
   color: red;
   position: absolute;
   bottom: 15px;
   right: 15px;
 }
-i {
-  color: red;
-}
 .info {
-  opacity: 0.8;
   position: absolute;
   top: 70%;
   left: 50%;
@@ -61,16 +58,8 @@ i {
   width: 400px;
   text-align: center;
 }
-.goToOrder {
-  color: black;
-  display: inline-block;
-  text-align: center;
-  font-size: 40px;
-  text-decoration: none;
-}
 .menu-list > .menu-box {
   height: 130px;
-  display: flex;
   margin: 0 auto;
 }
 .menu-box > img {

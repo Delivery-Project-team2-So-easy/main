@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./store-management.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <title>Store</title>
+  </head>
+  <body>
+    <header>
+      <div>배달참쉽조</div>
+    </header>
+    <section>
+      <div class="store-overview">
+        <!-- 매장정보 -->
+      </div>
+      <div class="menu-list">
+        <fieldset id="update-field" style="width: 150; display: none">
+          <legend>매장 정보 수정</legend>
+          <lable>매장이름</lable>
+          <input id="store-name" type="text" name="storeName" placeholder="매장이름" /><br />
+          <lable>매장주소</lable>
+          <input id="store-address" type="text" name="storeAddress" placeholder="매장주소" /><br />
+          <input id="image" type="file" name="newFile" /><br />
+          <button class="update-btn">수정하기</button>
+          <button class="delete-btn">매장삭제</button>
+        </fieldset>
+        <fieldset id="register-field" style="width: 150; display: none">
+          <legend>매장 등록</legend>
+          <lable>매장이름</lable>
+          <input id="rg-store-name" type="text" name="storeName" placeholder="매장이름" /><br />
+          <lable>매장주소</lable>
+          <input
+            id="rg-store-address"
+            type="text"
+            name="storeAddress"
+            placeholder="매장주소"
+          /><br />
+          <lable>개업일</lable>
+          <input
+            id="rg-store-opening-date"
+            type="text"
+            name="openingDate"
+            placeholder="개업일"
+          /><br />
+          <input id="rg-image" type="file" name="newFile" /><br />
+          <button class="register-btn">수정하기</button>
+        </fieldset>
+      </div>
+    </section>
+    <footer>
+      <a href="../index.html" class="footer-btn">home</a>
+      <div class="footer-btn">search</div>
+      <div class="footer-btn">bookmark</div>
+      <div class="footer-btn">order</div>
+      <div class="footer-btn">mypage</div>
+    </footer>
+  </body>
+  <script src="./store-management.js"></script>
+</html>
