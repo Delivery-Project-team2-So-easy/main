@@ -20,12 +20,12 @@ app.use('/', [userRouter, storeRouter, reviewRouter, orderRouter]);
 
 app.use(async (err, req, res, next) => {
   const { status, errorMessage } = await err;
-  console.log(err);
   console.error(errorMessage);
 
   res.status(status || 500).json({ errorMessage: errorMessage || '서버 오류가 발생했습니다.' });
 });
 
+//메인 페이지로 랜더링
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/assets/main/main.html');
 });

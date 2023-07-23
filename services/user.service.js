@@ -117,7 +117,7 @@ class UserService {
       }
       await this.likeRepository.deleteUserLike(user.id, storeId);
       return { code: 200, message: '매장을 내 즐겨 찾기에서 취소 하였습니다.' };
-    } catch (error) {
+    } catch (err) {
       throw err;
     }
   };

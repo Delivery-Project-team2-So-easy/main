@@ -248,6 +248,11 @@ class UserController {
       next(err);
     }
   };
+
+  checkUserInfo = async (_, res) => {
+    const user = res.locals.user;
+    return res.status(200).json({ userId: user.id });
+  };
 }
 
 module.exports = UserController;

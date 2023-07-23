@@ -7,9 +7,24 @@ class ReviewController {
   getReviews = async (req, res, next) => {
     try {
       const { storeId } = req.params;
-      const getReviews = await this.reviewService.getReviews(storeId);
+      const getReviews = await this.reviewService.getReviews(storeId, res);
 
       return res.status(200).json({ reviews: getReviews });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getReviewDetail = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { storeId, reviewId } = req.params;
+
+      const result = await this.reviewService.getReviewDetail(user.id, storeId, reviewId);
+
+      return res
+        .status(result.code)
+        .json({ data: result.data, checkPermission: result.checkPermission });
     } catch (err) {
       next(err);
     }
@@ -39,12 +54,12 @@ class ReviewController {
       const { storeId, reviewId } = req.params;
       const { review, rating } = req.body;
 
-      if (!review && !rating && !req.file) throw errorHandler.emptyContent;
-
       let filepath = req.file ? req.file.location : null;
       const reviewImg = filepath
         ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
         : '';
+
+      if (!review && !filepath) throw errorHandler.emptyContent;
 
       await this.reviewService.updateReview(review, rating, user.id, storeId, reviewId, reviewImg);
 

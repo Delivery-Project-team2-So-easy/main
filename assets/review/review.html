@@ -3,9 +3,131 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/assets/review/review.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="./review.js" defer></script>
     <title>리뷰페이지</title>
   </head>
-  <body></body>
+  <body>
+    <header>
+      <h1>여기가 가게명</h1>
+    </header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">로고</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <form class="registerAddress">
+            <input type="text" id="userAddress" name="address" readonly />
+            <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">
+              배달 주소 등록
+            </button>
+          </form>
+          <button
+            class="btn btn-outline-primary ml-2"
+            id="mypage"
+            onclick="openMypage()"
+            style="display: none"
+          >
+            마이페이지
+          </button>
+          <button
+            class="btn btn-outline-success ml-2"
+            id="bookmark"
+            onclick="openBookmark()"
+            style="display: none"
+          >
+            북마크
+          </button>
+          <button class="btn btn-outline-primary ml-2" id="signUp" onclick="openSignup()">
+            회원가입
+          </button>
+          <button class="btn btn-outline-success ml-2" id="login" onclick="openLogin()">
+            로그인
+          </button>
+        </div>
+      </div>
+    </nav>
+    <button onclick="openModal()" id="create-review-btn">리뷰 작성</button>
+    <div class="modal-bg-create">
+      <div class="modal" id="modal-wrap" style="display: none">
+        <div class="review-form" enctype="mulitpart/form-data">
+          <h4 id="menu-name">메뉴이름</h4>
+          <input type="file" id="newFile" name="newFile" onchange="readURL(this)" />
+          <img id="preview" src="../images/noimage.png" />
+          <div class="star-container">
+            <span class="star" data-rating="1" onclick="setRating(1)">☆</span>
+            <span class="star" data-rating="2" onclick="setRating(2)">☆</span>
+            <span class="star" data-rating="3" onclick="setRating(3)">☆</span>
+            <span class="star" data-rating="4" onclick="setRating(4)">☆</span>
+            <span class="star" data-rating="5" onclick="setRating(5)">☆</span>
+          </div>
+          <textarea id="review" placeholder="리뷰를 작성하세요" style="resize: none"></textarea>
+          <div class="button-container">
+            <button class="button create-button" onclick="createReview()" id="create-button">
+              리뷰 생성
+            </button>
+            <button class="button cancel-button" onclick="closeModal()" id="close-button">
+              취소
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section class="review-section"></section>
+    <div class="modal-bg-review">
+      <div class="modal" id="review-modal" style="display: none">
+        <!-- 리뷰 세부 정보를 표시할 모달 내용 -->
+        <div class="modal-content">
+          <div class="user-info">
+            <span id="user-id">작성자 정보</span>
+          </div>
+          <div class="review-content">
+            <input type="file" id="update-newFile" name="newFile" />
+            <textarea id="update--text" style="resize: none">리뷰 내용</textarea>
+            <div class="update-star-container">
+              <span class="update-star" data-rating="1" onclick="updateRating(1)">☆</span>
+              <span class="update-star" data-rating="2" onclick="updateRating(2)">☆</span>
+              <span class="update-star" data-rating="3" onclick="updateRating(3)">☆</span>
+              <span class="update-star" data-rating="4" onclick="updateRating(4)">☆</span>
+              <span class="update-star" data-rating="5" onclick="updateRating(5)">☆</span>
+            </div>
+          </div>
+          <div class="modal-buttons">
+            <!-- 리뷰 작성자인 경우에만 출력 -->
+            <button id="edit-button">수정</button>
+            <button id="delete-button">삭제</button>
+            <!-- 리뷰 작성자가 아닌 경우 닫기 버튼만 출력 -->
+            <button id="close-button">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
