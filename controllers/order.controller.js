@@ -9,7 +9,7 @@ class OrderController {
 
       if (is_seller === false) throw errorHandler.noSeller;
 
-      const result = await this.orderService.getOrders(id);
+      const result = await this.orderService.getOrders(res);
       return res.status(result.code).json({ orders: result.orders });
     } catch (err) {
       next(err);

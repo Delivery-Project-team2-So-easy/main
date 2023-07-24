@@ -3,7 +3,6 @@ const StoreRepository = require('../repositories/store.repository');
 const OrderRepository = require('../repositories/order.repository');
 const LikeRepository = require('../repositories/like.repository');
 const errorHandler = require('../errorHandler');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const env = process.env;
 
@@ -13,19 +12,10 @@ class ReviewService {
   orderRepository = new OrderRepository();
   likeRepository = new LikeRepository();
 
-  getReviews = async (storeId, res) => {
+  getReviews = async (storeId) => {
     try {
       const findStore = await this.storeRepository.findStoreById(storeId);
       const getReviews = await this.reviewRepository.getReviews(storeId);
-
-      const token = jwt.sign(
-        {
-          userId: 5,
-        },
-        env.JWT_SECRET_KEY,
-        { expiresIn: '1h' }
-      );
-      res.cookie('authorization', `Bearer ${token}`);
 
       if (!findStore) throw errorHandler.nonExistStore;
       return getReviews;

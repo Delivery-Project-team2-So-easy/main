@@ -104,7 +104,6 @@ shopContainer.addEventListener('click', (e) => {
 });
 
 const getProfile = () => {
-  console.log(userId, isSeller);
   fetch('/userDetails', {
     method: 'GET',
     headers: {

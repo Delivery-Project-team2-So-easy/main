@@ -2,7 +2,6 @@
 // const storeId = params.get('storeId');
 
 window.addEventListener('DOMContentLoaded', async () => {
-  storeId = 1;
   fetch(`/store/${storeId}/menus`, {})
     .then((response) => response.json())
     .then((data) => {

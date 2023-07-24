@@ -110,6 +110,7 @@ async function getOwnerOrderInfo() {
     type: 'GET',
     url: '/ownerOrder',
     success: (data) => {
+      console.log(data);
       let results = data.orders;
       let orders = [];
       results.forEach((order, idx) => {
@@ -186,6 +187,7 @@ async function getOwnerOrderInfo() {
       }
     },
     error: (error) => {
+      console.log(error);
       Swal.fire({
         icon: 'error',
         title: 'Error',

@@ -1,7 +1,6 @@
 const registerAddressBtn = document.querySelector('#registerAddressBtn');
 const addressInput = document.querySelector('#userAddress');
-const params = new URLSearchParams(window.location.search);
-let storeId = params.get('storeId');
+let storeId;
 //매장정보 불러오기
 
 let userId;
@@ -9,22 +8,39 @@ let isSeller = false;
 // if (storeId) {
 window.addEventListener('DOMContentLoaded', async () => {
   await getUserInfo();
-  fetch(`/store/${storeId}`)
-    .then((response) => response.json())
-    .then((data) => {
-      const store_name = data.data.store_name;
-      const store_img = data.data.store_img;
-      const temp_html = `<img class="store-img" src="${store_img}"
-        />
-        <div class="store-name">${store_name}</div> `;
-      const store_overview = document.querySelector('.store-overview');
-      store_overview.insertAdjacentHTML('beforeend', temp_html);
+  if (!isSeller) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: '사업자가 아니여서 매장 관리를 하실 수 없습니다!',
+    }).then(() => {
+      window.location.href = '/';
     });
+  }
+
+  await getStoreInfo();
+
+  if (storeId === 0) {
+    const update_field = document.querySelector('#update-field');
+    const register_field = document.querySelector('#register-field');
+    update_field.style.display = 'none';
+    register_field.style.display = 'block';
+  } else {
+    fetch(`/store/${storeId}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        // const store_name = data.data.store_name;
+        // const store_img = data.data.store_img;
+        // const temp_html = `<img class="store-img" src="${store_img}"
+        // />
+        // <div class="store-name">${store_name}</div> `;
+        // const store_overview = document.querySelector('.store-overview');
+        // store_overview.insertAdjacentHTML('beforeend', temp_html);
+      });
+  }
 });
-const update_field = document.querySelector('#update-field');
-const register_field = document.querySelector('#register-field');
-update_field.style.display = 'block';
-register_field.style.display = 'none';
+
 // } else {
 //   const update_field = document.querySelector('#update-field');
 //   const register_field = document.querySelector('#register-field');
@@ -47,6 +63,25 @@ async function getUserInfo() {
         text: error.responseJSON.errorMessage,
       }).then(() => {
         window.location.href = '/';
+      });
+    },
+  });
+}
+
+async function getStoreInfo() {
+  await $.ajax({
+    type: 'GET',
+    url: '/myStore',
+    success: (result) => {
+      const { data } = result;
+      if (!data) storeId = 0;
+      else storeId = data.id;
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
       });
     },
   });

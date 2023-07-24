@@ -1,6 +1,5 @@
 const errorHandler = require('../errorHandler');
 const StoreService = require('../services/store.service');
-const jwt = require('jsonwebtoken');
 
 class StoreController {
   storeService = new StoreService();
@@ -8,15 +7,7 @@ class StoreController {
   getStore = async (_, res, next) => {
     try {
       const { code, data } = await this.storeService.getStore();
-      //개발테스트용 토큰 발급
-      const token = jwt.sign(
-        {
-          userId: 1,
-        },
-        process.env.JWT_SECRET_KEY,
-        { expiresIn: '1h' }
-      );
-      res.cookie('authorization', `Bearer ${token}`);
+
       return res.status(code).json({ data });
     } catch (err) {
       next(err);

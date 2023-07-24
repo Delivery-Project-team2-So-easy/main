@@ -15,7 +15,7 @@ class OrderService {
     try {
       const user = res.locals.user;
       const existStore = await this.storeRepository.getStoreInfo(user.id);
-      if (!existStore) throw errorHandler.notRegistered;
+      if (!existStore) return { code: 200, orders: [] };
 
       const { orders } = await this.orderRepository.getOrders(existStore.id);
 
