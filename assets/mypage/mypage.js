@@ -57,18 +57,21 @@ async function getStoreInfo() {
         seller.innerHTML = `   <div class="card">
                                 <div class="card-header">매장이름 : ${data.store_name}</div>
                                       <div class="card-body">
-                                      ${Img}
                                         <p><label class='orderStatus'>주소 :</label> ${data.store_address}</p>
                                         <p><label class='orderStatus'>개업 일자 :</label> ${data.opening_date}<p>
-                                          <button type="button" onclick="refundRequest(this)" class="btn btn-outline-danger" orderId="${order.id}" id="refundBtn">매장 정보 수정</button>
-                                          <button type="button" onclick="goReview(this)" class="btn btn-outline-warning"  storeId="${order.store_id}" id="reviewBtn">매장 삭제</button>
+                                          <button type="button" onclick="deleteStore(this)" class="btn btn-outline-danger" storeId="${data.id}" id="refundBtn">매장 삭제</button>
+                                          <button type="button" onclick="updateStore(this)" class="btn btn-outline-warning"  storeId="${data.id}" id="reviewBtn">매장 정보 수정</button>
                                       </div>
                                     </div>
   `;
       }
     },
     error: (error) => {
-      console.log(error.responseJSON.errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
     },
   });
 }
@@ -234,6 +237,31 @@ const getProfile = () => {
       }
     });
 };
+function deleteStore(id) {
+  const storeId = id.getAttribute('storeId');
+
+  $.ajax({
+    method: 'DELETE',
+    url: '/store/registration',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
 const reviewModify = (e) => {
   const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
   const reviewId = e.target.parentElement.parentElement.id;
