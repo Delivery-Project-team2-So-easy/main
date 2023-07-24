@@ -47,7 +47,9 @@
 | /order/:orderId/refundRefuse         |    GET     |   ✔    |       주문취소(환불) 요청 거절       |
 | /order/store/:storeId                |    POST    |   ✔    |          음식 주문(여러개)           |
 
-[상세 API 명세보기](https://charming-castanet-ba9.notion.site/17e5fa0a09b94064a39e9c468625352a?v=7ca9b026f7c4438ba77a6186aa7dbcb6)
+## [상세 API 명세보기](https://charming-castanet-ba9.notion.site/17e5fa0a09b94064a39e9c468625352a?v=7ca9b026f7c4438ba77a6186aa7dbcb6)
+
+## [시연 영상](https://www.youtube.com/watch?v=phyM0muRtjo)
 
 ## 역할 분담
 
@@ -69,8 +71,6 @@
 > - [x] 간단한 랭킹기능(주문건수별, 재주문율) 구현 (프론트는 재주문만 사용중)
 
 ---
-
-## [시연 영상](https://www.youtube.com/watch?v=phyM0muRtjo)
 
 ## Problems
 
