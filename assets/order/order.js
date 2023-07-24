@@ -232,7 +232,7 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${orderUserId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openBookmark() {

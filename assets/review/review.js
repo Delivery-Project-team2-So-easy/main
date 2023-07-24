@@ -54,6 +54,8 @@ async function getReviews() {
         icon: 'error',
         title: 'Error',
         text: err.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.href = '/';
       });
     },
   });
@@ -73,7 +75,6 @@ async function likeReview(id) {
         }).then(() => {
           window.location.reload();
         });
-        // // updateLikeStatus(reviewId, data.likeCount);
       },
       error: () => {},
     });
@@ -171,7 +172,7 @@ async function createReview() {
           title: 'Success!',
           text: data.message,
         }).then(() => {
-          window.location.href = `/review/review.html`;
+          window.location.reload();
         });
       },
       error: () => {},
@@ -282,24 +283,24 @@ async function updateReview(button) {
           title: 'Success!',
           text: data.message,
         }).then(() => {
-          window.location.href = `/review/review.html`;
+          window.location.reload();
         });
       },
-      error: () => {},
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.responseJSON.errorMessage,
+        });
+      },
     });
-  } catch (err) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: err.responseJSON.errorMessage,
-    });
-  }
+  } catch (err) {}
 }
 
 // 리뷰삭제
 async function deleteReview(button) {
   const reviewId = button.getAttribute('reviewId');
-
+  console.log(storeId);
   try {
     await $.ajax({
       method: 'DELETE',
@@ -310,7 +311,7 @@ async function deleteReview(button) {
           title: 'Success!',
           text: data.message,
         }).then(() => {
-          window.location.href = `/review/review.html`;
+          window.location.reload();
         });
       },
       error: () => {},
@@ -328,6 +329,7 @@ function handleKeyDown(event) {
   if (event.key === 'Escape') closeModal(), closeReviewModal();
 }
 
+// 버튼 숨기기
 function hideButtons() {
   const editButton = document.querySelector('#edit-button');
   const deleteButton = document.querySelector('#delete-button');
@@ -400,6 +402,14 @@ function home() {
   window.location.href = '/';
 }
 
+function openSignup() {
+  window.open('../auth/signup.html', '_self');
+}
+
+function openLogin() {
+  window.open('../auth/login.html', '_self');
+}
+
 function openKakaoAddress() {
   new daum.Postcode({
     oncomplete: function (data) {
@@ -413,7 +423,7 @@ function openMyorder() {
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openBookmark() {

@@ -286,7 +286,7 @@ class UserService {
       const myReviews = await this.reviewRepository.getMyReviews(userId);
 
       if (!myReviews) throw errorHandler.nonExistReview;
-
+      console.log(myReviews);
       return myReviews;
     } catch (err) {
       throw err;

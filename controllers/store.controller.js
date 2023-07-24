@@ -33,6 +33,16 @@ class StoreController {
     }
   };
 
+  getMyStore = async (_, res, next) => {
+    try {
+      const result = await this.storeService.getMyStore(res);
+
+      return res.status(result.code).json({ data: result.data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   registerStore = async (req, res, next) => {
     try {
       const userId = res.locals.user.id;

@@ -29,14 +29,20 @@ class UserRepository {
   };
 
   findUser = async (userId) => {
-    return await User.findOne({
-      where: { id: userId },
-      include: [
-        {
-          model: Store,
-        },
-      ],
-    });
+    try {
+      if (!userId) throw errorHandler.notExistUser;
+      return await User.findOne({
+        where: { id: userId },
+        include: [
+          {
+            model: Store,
+            attributes: [],
+          },
+        ],
+      });
+    } catch (err) {
+      throw err;
+    }
   };
 
   getPoint = async (userId) => {

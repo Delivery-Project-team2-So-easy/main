@@ -116,6 +116,7 @@ header {
 .storeReorder {
   color: rgb(255, 235, 226);
   font-weight: bold;
+  font-size: 18px;
 }
 
 .storeImage {
@@ -132,6 +133,11 @@ header {
   width: 100%;
   border-radius: 10px;
   object-fit: contain;
+}
+
+.like {
+  color: white;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {

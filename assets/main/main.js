@@ -40,6 +40,7 @@ async function getStoreInfo() {
     type: 'GET',
     url: '/stores/reorderRanking',
     success: (result) => {
+      console.log(result);
       const results = result.reorderRanking;
       let stores = [];
       results.forEach((store) => {
@@ -55,7 +56,7 @@ async function getStoreInfo() {
                       ${Img} 
                     </div>
                     <label class="storeAddress">주소 : ${store.storeAddress}</label> </br>
-                    <label class="storeReorder">재주문율 : ${store.reorderCount}명이 재주문 했어요!</label>
+                    <label class="storeReorder">${store.reorderCount}명이 재주문 했어요!</label>
                   </div>`;
       });
       storeCard.innerHTML = stores;
@@ -79,7 +80,7 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openMyorder() {
@@ -168,7 +169,8 @@ function searchStore() {
                       ${Img} 
                     </div>
                     <label class="storeAddress">주소 : ${store.store_address}</label>
-                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">👍 ${store.likes}</label>
+                    <br>
+                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">❤ ${store.likes}</label>
                   </div>`;
       });
       storeCard.innerHTML = stores;
@@ -178,6 +180,8 @@ function searchStore() {
         icon: 'error',
         title: 'Error',
         text: error.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.reload();
       });
     },
   });
@@ -191,3 +195,8 @@ function storeDetail(id) {
 addressInput.addEventListener('click', openKakaoAddress);
 registerAddressBtn.addEventListener('click', registerAddress);
 searchBtn.addEventListener('click', searchStore);
+document.addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    searchBtn.click();
+  }
+});

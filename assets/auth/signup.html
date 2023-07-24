@@ -4,22 +4,97 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
     <script
       src="https://code.jquery.com/jquery-3.5.1.js"
       integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
       crossorigin="anonymous"
     ></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <title>회원가입 페이지</title>
     <style>
-      /* 스타일링을 위한 CSS 코드 */
-      body {
-        font-family: Arial, sans-serif;
+      footer {
+        background-color: #f0f0f0;
+        text-align: center;
+        font-size: 12px;
+        transform: translateY(0%);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4%;
       }
+      * {
+        font-family: 'IBM Plex Sans KR', sans-serif;
+      }
+
+      html,
+      body {
+        height: 115%;
+      }
+
+      header {
+        padding-left: 10%;
+        width: 100%;
+        background-color: #eff1f0;
+      }
+
+      #icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        margin-left: 5%;
+      }
+
+      .navTitle {
+        width: 100%;
+        margin-top: 20px;
+        margin-left: 100px;
+        display: inline-flex;
+      }
+
+      .navTitle h1 {
+        margin-left: 10%;
+        padding-top: 25px;
+        font-weight: bold;
+        color: #374999;
+      }
+
       .container {
-        max-width: 400px;
-        margin: 0 auto;
+        max-width: 500px;
+        margin: 30px auto;
         padding: 20px;
         border: 1px solid #ccc;
+      }
+      .container button {
+        font-weight: bold;
+        font-size: 17px;
+        border-radius: 10px;
+        border-style: solid;
+        border-width: 2px;
+      }
+      .signUpBtn {
+        margin-left: 33%;
+      }
+      #radioBox > button {
+        background-color: #eff1f0;
+      }
+      .signUpBtn > button {
+        margin-right: 5px;
       }
       .container h1 {
         text-align: center;
@@ -32,216 +107,257 @@
         margin-bottom: 5px;
       }
       .form-group input {
-        width: 100%;
+        width: 70%;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
       }
-      .form-group input[type='submit'] {
-        background-color: #4caf50;
-        color: white;
-        cursor: pointer;
-      }
-      .form-group input[type='submit']:hover {
-        background-color: #45a049;
-      }
-      .checkBtn {
-        padding: 10px 20px;
-        background-color: #4caf50;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-      }
-
-      .checkBtn:hover {
-        background-color: #45a049;
-      }
     </style>
   </head>
+  <header>
+    <div class="navTitle">
+      <img class="navbar-brand" id="icon" src="../images/icon.JPG" onclick="home()" />
+      <h1>참쉽조 Delivery Web Service Page</h1>
+    </div>
+  </header>
   <body>
     <div class="container">
       <h1>회원가입</h1>
-      <div>
-        <div class="form-group">
-          <label for="email">이메일:</label>
-          <input type="email" id="email" name="email" />
-          <button id="emailAuth">인증번호 발송</button>
+      <form class="'signUpForm" enctype="multipart/form-data>">
+        <div>
+          <div class="form-group">
+            <label for="email">이메일:</label>
+            <input id="signUpEmail" name="email" class="inputBox" />
+            <button
+              type="button"
+              class="btn btn-outline-info"
+              id="sendMail"
+              style="margin-left: 10px"
+            >
+              인증번호 전송
+            </button>
+          </div>
+          <div class="form-group" id="emailCheckForm" style="display: none">
+            <label>이메일 인증번호:</label>
+            <input type="text" id="authCode" />
+            <button
+              type="button"
+              class="btn btn-outline-warning"
+              style="margin-left: 10px"
+              id="verifyCode"
+            >
+              인증하기
+            </button>
+          </div>
+          <div class="form-group">
+            <label for="username">이름 :</label>
+            <input type="text" id="signUpName" name="username" class="inputBox" />
+          </div>
+          <div class="form-group">
+            <label for="password">비밀번호:</label>
+            <input type="password" id="signUpPwd" name="password" class="inputBox" />
+          </div>
+          <div class="form-group">
+            <label for="confirm_password">비밀번호 확인:</label>
+            <input type="password" id="signUpConfirmPwd" name="confirm_password" class="inputBox" />
+          </div>
+          <div class="form-group">
+            <label for="address">주소:</label>
+            <input type="text" id="signUpAddress" name="address" class="inputBox" readonly />
+          </div>
+          <div class="form-group" id="radioBox">
+            <label>가입 유형</label>
+            <input type="text" id="signUpIsOwner" class="inputBox" />
+          </div>
+          <div class="form-group" id="business_number_form">
+            <label for="business_registration_number">사업자번호: </label>
+            <input
+              type="text"
+              id="businessRegistrationNumber"
+              name="business_registration_number"
+              class="inputBox"
+            />
+          </div>
+          <div class="form-group">
+            <label for="profileImage">프로필 사진 :</label>
+            <input type="file" name="newFile" id="newFile" />
+          </div>
+          <div class="signUpBtn">
+            <button type="button" class="btn btn-outline-success" id="signUpBtn">가입하기</button>
+            <button type="button" onclick="home()" class="btn btn-outline-danger" id="close">
+              취소
+            </button>
+          </div>
         </div>
-        <div class="form-group" id="emailCheckForm" style="display: none">
-          <label>이메일 인증번호:</label>
-          <input type="text" id="inputAuthenticationNumber" />
-          <button id="confirmEmail">이메일 인증하기</button>
-        </div>
-
-        <div class="form-group">
-          <label for="profileImage">프로필 사진:</label>
-          <input type="file" id="profileImage" />
-        </div>
-        <div class="form-group">
-          <label for="username">사용자명:</label>
-          <input type="text" id="username" name="username" />
-        </div>
-        <div class="form-group">
-          <label for="password">비밀번호:</label>
-          <input type="password" id="password" name="password" />
-        </div>
-
-        <div class="form-group">
-          <label for="confirm_password">비밀번호 확인:</label>
-          <input type="password" id="confirm_password" name="confirm_password" />
-        </div>
-        <div class="form-group">
-          <label for="address">주소:</label>
-          <input type="text" id="address" name="address" />
-        </div>
-        <div class="form-group">
-          <label>사용자 분류</label>
-          <button onclick="checkUser('소비자')">소비자</button>
-          <button onclick="checkUser('사업자')">사업자</button>
-          <p id="userType"></p>
-        </div>
-        <div class="form-group" id="business_number_form" style="display: none">
-          <label for="business_registration_number">사업자번호:</label>
-          <input
-            type="text"
-            id="business_registration_number"
-            name="business_registration_number"
-          />
-        </div>
-        <button type="button" class="checkBtn" id="login">가입하기</button>
-      </div>
+      </form>
     </div>
-
-    <script>
-      $(document).ready(() => {
-        $.ajax({
-          method: 'POST',
-          url: '/cookie',
-          success: () => {},
-          error: (error) => {},
-        });
-      });
-      function checkAnswer(answer) {
-        const resultMessageElement = document.getElementById('resultMessage');
-        const business_number_form = document.getElementById('business_number_form');
-
-        if (answer === '사업자') {
-          resultMessageElement.textContent = '사업자';
-          business_number_form.style.display = '';
-        } else if (answer === '소비자') {
-          resultMessageElement.textContent = '소비자';
-          business_number_form.style.display = 'none';
-        } else {
-          resultMessageElement.textContent = '선택된 값이 없습니다.';
-        }
-      }
-
-      const inputEmail = document.getElementById('email');
-      const inputUsername = document.getElementById('username');
-      const inputPassword = document.getElementById('password');
-      const inputConfirmPassword = document.getElementById('confirm_password');
-      const userType = document.getElementById('userType');
-      const inputAddress = document.getElementById('address');
-      const inputBusinessRegistrationNumber = document.getElementById(
-        'business_registration_number'
-      );
-      if (file) {
-        form.append('file', file);
-      }
-      if (inputBusinessRegistrationNumber) {
-        form.append('businessRegistrationNumber', inputBusinessRegistrationNumber.value);
-      }
-      form.append('email', inputEmail.value);
-      form.append('name', inputUsername.value);
-      form.append('password', inputPassword.value);
-      form.append('confirmPassword', inputConfirmPassword.value);
-      form.append('isSeller', userType.value == '사업자' ? true : false);
-      form.append('adress', inputAddress.value);
-      const login = document.getElementById('login');
-
-      // 사업자 번호 창
-      const business_number_form = document.getElementById('business_number_form');
-
-      // 이메일 인증 관련
-      const emailCheckForm = document.getElementById('emailCheckForm');
-      const emailAuth = document.getElementById('emailAuth');
-      const confirmEmail = document.getElementById('confirmEmail');
-      var authenticationNumberToEmail = '';
-      const inputAuthenticationNumber = document.getElementById('inputAuthenticationNumber');
-
-      emailAuth.addEventListener('click', () => {
-        fetch('/users/checkEmail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: inputEmail.value,
-          }),
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            if (data.errorMessage) alert(data.errorMessage);
-            else {
-              alert(data.message);
-              authenticationNumberToEmail = data.data;
-              emailCheckForm.style.display = '';
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert('오류');
-          });
-      });
-      confirmEmail.addEventListener('click', () => {
-        if (inputAuthenticationNumber.value == authenticationNumberToEmail) {
-          login.style.display = '';
-          alert('인증되었습니다 가입을 진행해주세요');
-          emailCheckForm.style.display = 'none';
-        } else {
-          alert('인증번호가 다릅니다.');
-        }
-      });
-      login.addEventListener('click', () => {
-        fetch('/users/signup', {
-          method: 'POST',
-          headers: {
-            // 'Content-Type': 'application/json',
-          },
-          body: form,
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((data) => {
-            if (data.errorMessage) alert(data.errorMessage);
-            else {
-              alert(data.message);
-            }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert('오류');
-          });
-      });
-      function checkUser(answer) {
-        if (answer === '사업자') {
-          userType.textContent = '사업자';
-          business_number_form.style.display = '';
-        } else if (answer === '소비자') {
-          userType.textContent = '소비자';
-          business_registration_number.value = '';
-          business_number_form.style.display = 'none';
-        } else {
-          userType.textContent = '선택된 값이 없습니다.';
-        }
-      }
-    </script>
   </body>
+  <footer class="bg-light text-center py-2">
+    <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>
+  </footer>
+  <script>
+    const signUpSubmitBtn = document.querySelector('#signUpBtn');
+    const addressInput = document.querySelector('#signUpAddress');
+    const sendMailBtn = document.querySelector('#sendMail');
+
+    async function signUp(event) {
+      event.preventDefault();
+      const form = new FormData();
+      const email = document.querySelector('#signUpEmail').value;
+      const password = document.querySelector('#signUpPwd').value;
+      const confirmPassword = document.querySelector('#signUpConfirmPwd').value;
+      const address = document.querySelector('#signUpAddress').value;
+      const name = document.querySelector('#signUpName').value;
+      const isSellerInput = document.querySelector('#signUpIsOwner').value;
+      const businessRegistrationNumber = document.querySelector(
+        '#businessRegistrationNumber'
+      ).value;
+      const newFile = document.querySelector('#newFile').files[0];
+      if (document.querySelector('#signUpEmail').readOnly === false) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '이메일 인증을 해주세요.',
+        });
+        return;
+      }
+
+      if (newFile) {
+        form.append('newFile', newFile);
+      }
+      if (isSellerInput !== 'client' && isSellerInput !== 'owner') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '고객이라면 client, 사업자라면 owner를 입력해 주세요.',
+        });
+        return;
+      }
+      const isSeller = isSellerInput === 'client' ? false : true;
+      if (isSeller === true && !businessRegistrationNumber) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '사업자로 가입하시려면 사업자 등록 번호를 입력해 주세요.',
+        });
+        return;
+      }
+      console.log(isSeller);
+      form.append('email', email);
+      form.append('name', name);
+      form.append('password', password);
+      form.append('confirmPassword', confirmPassword);
+      form.append('address', address);
+      form.append('isSeller', isSeller);
+      form.append('businessRegistrationNumber', businessRegistrationNumber);
+      $.ajax({
+        type: 'POST',
+        url: `/users/signup`,
+        processData: false,
+        contentType: false,
+        data: form,
+        success: (data) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message,
+          }).then(() => {
+            window.location.href = '/';
+          });
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.responseJSON.errorMessage,
+          });
+          return;
+        },
+      });
+    }
+
+    async function sendMail() {
+      const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
+      const email = document.querySelector('#signUpEmail').value;
+      const emailCheckForm = document.querySelector('#emailCheckForm');
+      const verifyCode = document.querySelector('#verifyCode');
+      let code, expireTime;
+
+      if (!email || !emailReg.test(email)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '이메일이 비어 있거나 이메일이 형식에 맞지 않습니다.',
+        });
+        return;
+      }
+
+      emailCheckForm.style = 'display: block';
+
+      await $.ajax({
+        type: 'POST',
+        url: '/sendMail',
+        data: { email },
+        success: (data) => {
+          [code, expireTime] = [data.code, data.expire_time];
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message,
+          });
+          return;
+        },
+        error: (error) => {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.errorMessage,
+          });
+          emailCheckForm.style = 'display: none';
+          return;
+        },
+      });
+
+      verifyCode.addEventListener('click', () => {
+        const authCode = document.querySelector('#authCode').value;
+        if (authCode === code && Date.now() < expireTime) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '인증에 성공하셨습니다.',
+          });
+          document.querySelector('#signUpEmail').readOnly = true;
+          emailCheckForm.style = 'display:none';
+          sendMailBtn.style.display = 'none';
+          return;
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: '인증에 실패하셨습니다. 다시 인증해주세요. ',
+          });
+          document.querySelector('#signUpEmail').value = '';
+          document.querySelector('#authCode').value = '';
+          return;
+        }
+      });
+    }
+
+    function openKakaoAddress() {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          document.querySelector('#signUpAddress').value = data.address;
+        },
+      }).open();
+    }
+
+    function home() {
+      window.location.href = '/';
+    }
+
+    addressInput.addEventListener('click', openKakaoAddress);
+    signUpSubmitBtn.addEventListener('click', signUp);
+    sendMailBtn.addEventListener('click', sendMail);
+  </script>
 </html>
