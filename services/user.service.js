@@ -170,7 +170,6 @@ class UserService {
         }
         password = await bcrypt.hash(afterPassword, salt);
       } else password = currentUser.password;
-
       if (isSeller) {
         if (!businessRegistrationNumber) throw errorHandler.checkBusinessRegistrationNumber;
         if (businessRegistrationNumber.includes('-')) {
@@ -287,7 +286,7 @@ class UserService {
       const myReviews = await this.reviewRepository.getMyReviews(userId);
 
       if (!myReviews) throw errorHandler.nonExistReview;
-
+      console.log(myReviews);
       return myReviews;
     } catch (err) {
       throw err;

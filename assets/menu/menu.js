@@ -8,6 +8,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   fetch(`/store/${storeId}/menus`, {})
     .then((response) => response.json())
     .then((data) => {
+      if (!storeId) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '비정상적인 접근입니다.',
+        }).then(() => {
+          window.location.href = '/';
+        });
+      }
       const menu_list = document.querySelector('.menu-list');
       const menus = data.menus;
       if (data.menus.length === 0) {
@@ -151,7 +160,7 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openBookmark() {

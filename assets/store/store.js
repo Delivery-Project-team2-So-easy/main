@@ -139,6 +139,14 @@ function home() {
   window.location.href = '/';
 }
 
+function openSignup() {
+  window.open('../auth/signup.html', '_self');
+}
+
+function openLogin() {
+  window.open('../auth/login.html', '_self');
+}
+
 function openKakaoAddress() {
   new daum.Postcode({
     oncomplete: function (data) {
@@ -147,12 +155,16 @@ function openKakaoAddress() {
   }).open();
 }
 
+function storeReview() {
+  window.open(`../review/review.html?storeId=${storeId}`, '_self');
+}
+
 function openMyorder() {
   window.open(`../order/order.html`, '_self');
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openBookmark() {
