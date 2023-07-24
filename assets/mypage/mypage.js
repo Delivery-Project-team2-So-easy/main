@@ -14,6 +14,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
   getProfile();
 });
+window.addEventListener('DOMContentLoaded', () => {
+  modify();
+});
 reviewContainer.addEventListener('click', (e) => {
   reviewModify(e);
 });
@@ -98,6 +101,10 @@ shopContainer.addEventListener('click', (e) => {
   if (e.target.className == 'order-button') {
     location.href = '../order/order.html';
   }
+});
+
+editProfile.addEventListener('click', () => {
+  editContainer.style.display = 'flex';
 });
 
 const getProfile = () => {
@@ -191,49 +198,59 @@ const getProfile = () => {
       alt="${myStoreProfile.store_img}"
     />
     <div class="shop-name">${myStoreProfile.store_name}</div>
-    <button class="register-button">상점 등록</button>
     <button class="edit-button">상점 수정</button>
     <button class="menu-button">메뉴 관리</button>
   <button class="order-button">주문 조회</button>
       `;
-        storeProfile.innerHTML = temp_html_v2;
+          storeProfile.innerHTML = temp_html_v2;
+          fetch('/ownerOrder', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const orderContainer = document.querySelector('.order-Container');
 
-        fetch('/order', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const orderContainer = document.querySelector('.order-Container');
-
-            const orders = data.orders;
-            let temp = '';
-            orders.map((order) => {
-              let temp_html = `
-              <div class="order">
-                <div>
-                  <span class="order-label">배달 메뉴:</span>
-                  <span>${order.id}</span>
-                </div>
-
-                <div>
-                  <span class="order-label">주소:</span>
-                  <span>${order.address}</span>
-                </div>
-
-                <div>
-                  <span class="order-label">가격:</span>
-                  <span>${order.total_price}</span>
-                </div>
-
-                <div class="order"><span>${order.order_status}</span></div>
-              </div>`;
-              temp = temp + temp_html;
+              const orders = data.orders;
+              let temp = '';
+              orders.map((order) => {
+                let temp_html = `
+                <div class="order">
+                  <div>
+                    <span class="order-label">배달 메뉴:</span>
+                    <span>${order.id}</span>
+                  </div>
+  
+                  <div>
+                    <span class="order-label">주소:</span>
+                    <span>${order.address}</span>
+                  </div>
+  
+                  <div>
+                    <span class="order-label">가격:</span>
+                    <span>${order.total_price}</span>
+                  </div>
+  
+                  <div class="order"><span>${order.order_status}</span></div>
+                </div>`;
+                temp = temp + temp_html;
+              });
+              orderContainer.innerHTML = temp;
             });
-            orderContainer.innerHTML = temp;
-          });
+        } else {
+          let temp_html_v2 = `
+    <img
+      class="shop-image"
+      src=""
+      alt=""
+    />
+    <div class="shop-name">상점을 등록해야 합니다.</div>
+    <button class="register-button">상점 등록</button>
+      `;
+          storeProfile.innerHTML = temp_html_v2;
+        }
       }
     });
 };

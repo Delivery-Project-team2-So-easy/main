@@ -170,7 +170,6 @@ class UserService {
         }
         password = await bcrypt.hash(afterPassword, salt);
       } else password = currentUser.password;
-
       if (isSeller) {
         if (!businessRegistrationNumber) throw errorHandler.checkBusinessRegistrationNumber;
         if (businessRegistrationNumber.includes('-')) {
