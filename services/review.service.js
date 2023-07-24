@@ -36,7 +36,7 @@ class ReviewService {
   getMyReviews = async (userId) => {
     try {
       const getReviews = await this.reviewRepository.getMyReviews(userId);
-      console.log(getReviews);
+
       return getReviews;
     } catch (err) {
       throw err;

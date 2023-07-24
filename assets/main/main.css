@@ -135,6 +135,11 @@ header {
   object-fit: contain;
 }
 
+.like {
+  color: white;
+  font-weight: bold;
+}
+
 @media (max-width: 768px) {
   .content-area {
     margin-left: 20px;

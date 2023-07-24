@@ -169,7 +169,8 @@ function searchStore() {
                       ${Img} 
                     </div>
                     <label class="storeAddress">주소 : ${store.store_address}</label>
-                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">👍 ${store.likes}</label>
+                    <br>
+                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">❤ ${store.likes}</label>
                   </div>`;
       });
       storeCard.innerHTML = stores;
@@ -179,6 +180,8 @@ function searchStore() {
         icon: 'error',
         title: 'Error',
         text: error.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.reload();
       });
     },
   });
@@ -192,3 +195,8 @@ function storeDetail(id) {
 addressInput.addEventListener('click', openKakaoAddress);
 registerAddressBtn.addEventListener('click', registerAddress);
 searchBtn.addEventListener('click', searchStore);
+document.addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    searchBtn.click();
+  }
+});

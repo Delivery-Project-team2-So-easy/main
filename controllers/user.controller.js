@@ -9,7 +9,6 @@ class UserController {
 
       const { email, name, password, confirmPassword, isSeller, address } = req.body;
       let { businessRegistrationNumber } = req.body;
-      console.log(typeof isSeller);
       if (!email || !name || !password || !confirmPassword || !address)
         throw errorHandler.emptyContent;
 
