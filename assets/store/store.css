@@ -121,9 +121,11 @@ section::-webkit-scrollbar {
   bottom: 15px;
   right: 15px;
 }
+
 i {
   color: red;
 }
+
 .info {
   opacity: 0.8;
   position: absolute;
@@ -131,47 +133,86 @@ i {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .menu-list {
   width: 400px;
   text-align: center;
 }
+
 .goOrder {
-  color: black;
-  display: inline-block;
+  cursor: pointer;
+  display: block;
   text-align: center;
-  font-size: 40px;
+  margin-top: 20px;
+  font-size: 20px;
   text-decoration: none;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #fff;
+  color: #000;
+  transition: background-color 0.3s, color 0.3s;
 }
+
+.goOrder:hover {
+  background-color: #e6e6e6;
+  color: #333;
+}
+
+.menu-box {
+  cursor: pointer;
+  position: relative;
+  height: 130px;
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.menu-box:hover .menu-details {
+  display: block;
+}
+
 .menu-list > .menu-box {
   height: 130px;
   display: flex;
-  margin: 0 auto;
+  margin: 20px auto;
 }
+
 .menu-box > img {
-  height: 130px;
+  height: auto;
   width: 130px;
+  object-fit: contain;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
+
 .menu-details {
   width: 270px;
   margin: auto auto;
 }
+
 .menu-name {
   text-align: center;
   padding: 5px;
   font-size: 25px;
 }
+
 .menu-price {
   text-align: right;
   margin: 0 10px;
 }
+
 #storeReview {
-  margin-top: 30px;
-  margin-left: 47%;
+  display: block;
+  margin: 30px auto;
   font-weight: bold;
   border-radius: 10px;
   border-style: solid;
   border-width: 2px;
+  padding: 10px 20px;
 }
+
 footer {
   background-color: #f0f0f0;
   text-align: center;
