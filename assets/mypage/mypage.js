@@ -199,21 +199,21 @@ const getProfile = () => {
     <button class="menu-button">메뉴 관리</button>
   <button class="order-button">주문 조회</button>
       `;
-          storeProfile.innerHTML = temp_html_v2;
-          fetch('/ownerOrder', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const orderContainer = document.querySelector('.order-Container');
+        storeProfile.innerHTML = temp_html_v2;
+        fetch('/ownerOrder', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const orderContainer = document.querySelector('.order-Container');
 
-              const orders = data.orders;
-              let temp = '';
-              orders.map((order) => {
-                let temp_html = `
+            const orders = data.orders;
+            let temp = '';
+            orders.map((order) => {
+              let temp_html = `
                 <div class="order">
                   <div>
                     <span class="order-label">배달 메뉴:</span>
@@ -232,12 +232,12 @@ const getProfile = () => {
   
                   <div class="order"><span>${order.order_status}</span></div>
                 </div>`;
-                temp = temp + temp_html;
-              });
-              orderContainer.innerHTML = temp;
+              temp = temp + temp_html;
             });
-        } else {
-          let temp_html_v2 = `
+            orderContainer.innerHTML = temp;
+          });
+      } else {
+        let temp_html_v2 = `
     <img
       class="shop-image"
       src=""
@@ -246,8 +246,7 @@ const getProfile = () => {
     <div class="shop-name">상점을 등록해야 합니다.</div>
     <button class="register-button">상점 등록</button>
       `;
-          storeProfile.innerHTML = temp_html_v2;
-        }
+        storeProfile.innerHTML = temp_html_v2;
       }
     });
 };
