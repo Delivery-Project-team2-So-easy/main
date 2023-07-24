@@ -20,6 +20,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           let menu_img = menu.menu_img;
           let menu_price = menu.price;
           let menu_option = menu.option;
+
           let temp_html = `
         <div class="menu-box" id="${menu_id}">
           <img

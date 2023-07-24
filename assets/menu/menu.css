@@ -108,8 +108,8 @@ section::-webkit-scrollbar {
   margin: 0 auto;
 }
 .menu-box > img {
-  height: 130px;
-  width: 130px;
+  height: 300px;
+  width: 300px;
 }
 .quantity {
   width: 25px;
