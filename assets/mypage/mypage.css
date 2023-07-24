@@ -190,7 +190,8 @@ main {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  width: 300px;
+  width: 500px;
+  height: 300px;
   display: flex;
   flex-direction: column; /* 요소들을 수직 방향으로 배치 */
   align-items: center; /* 가운데 정렬 */
