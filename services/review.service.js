@@ -33,6 +33,15 @@ class ReviewService {
       throw err;
     }
   };
+  getMyReviews = async (userId) => {
+    try {
+      const getReviews = await this.reviewRepository.getMyReviews(userId);
+      console.log(getReviews);
+      return getReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
 
   getReviewDetail = async (userId, storeId, reviewId) => {
     try {

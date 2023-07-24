@@ -122,6 +122,19 @@ class StoreService {
       throw err;
     }
   };
+
+  getMyStore = async (res) => {
+    try {
+      const user = res.locals.user;
+
+      const myStore = await this.storeRepository.getMyStore(user.id);
+
+      return { code: 200, data: myStore };
+    } catch (err) {
+      throw err;
+    }
+  };
+
   getAllMenuInfo = async (storeId) => {
     try {
       const findStoreById = await this.storeRepository.findStoreById(storeId);

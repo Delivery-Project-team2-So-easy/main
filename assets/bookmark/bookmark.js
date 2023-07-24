@@ -35,6 +35,7 @@ async function getBookmarks() {
     url: `/user/store/likeStores`,
     success: (data) => {
       let stores = data.stores;
+      console.log(stores);
       let result = [];
 
       stores.forEach((store) => {
@@ -46,8 +47,10 @@ async function getBookmarks() {
         result += ` <div class="store-card">
                       <div class="store-container" >
                       <h4 id="store-name">${store.storeName}</h4>
-                        ${Img}
-                      <span id="like-btn" storeId="${store.store_id}" onclick="confirmDelete(this)">❤</span>
+                      <div storeDetailId=${store.store_id} onclick="storeDetail(this)">
+                      ${Img} 
+                      </div>
+                      <span id="like-btn" storeId="${store.store_id}" onclick="confirmDelete(this)">👉 ❤</span>
                       </div>
                     </div>
                      `;
@@ -155,7 +158,7 @@ function home() {
 }
 
 function openMypage() {
-  window.open(`../mypage/mypage-customer.html?userId=${currentUserId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openMyorder() {
@@ -183,6 +186,11 @@ function logout() {
       });
     },
   });
+}
+
+function storeDetail(id) {
+  const storeId = id.getAttribute('storeDetailId');
+  window.open(`../store/store.html?storeId=${storeId}`, '_self');
 }
 
 addressInput.addEventListener('click', openKakaoAddress);

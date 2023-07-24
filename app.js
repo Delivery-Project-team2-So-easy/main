@@ -5,7 +5,6 @@ const userRouter = require('./routes/user.route.js');
 const storeRouter = require('./routes/store.route.js');
 const reviewRouter = require('./routes/review.route.js');
 const orderRouter = require('./routes/order.route.js');
-const errorHandler = require('./errorHandler.js');
 const db = require('./models');
 
 const app = express();
@@ -14,6 +13,7 @@ const http = Server(app);
 db.sequelize.sync({ force: false });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
 app.use(express.static('./assets')); //정적파일 사용하기 위해, assets의 html, css, js, 이미지 등
 app.use('/', [userRouter, storeRouter, reviewRouter, orderRouter]);

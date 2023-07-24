@@ -141,6 +141,10 @@ class StoreRepository {
     return oneStoreData;
   };
 
+  getMyStore = async (userId) => {
+    return await Store.findOne({ where: { user_id: userId } });
+  };
+
   searchStore = async (searchKeyword, storeIds) => {
     const searchStore = await Store.findAll({
       where: {

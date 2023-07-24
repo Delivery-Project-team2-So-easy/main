@@ -1,8 +1,5 @@
 const errorHandler = require('../errorHandler');
 const UserService = require('../services/user.service');
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const env = process.env;
 class UserController {
   userService = new UserService();
 
@@ -11,32 +8,31 @@ class UserController {
       const profileImg = req.file ? req.file.location : null;
 
       const { email, name, password, confirmPassword, isSeller, address } = req.body;
-
       let { businessRegistrationNumber } = req.body;
-
-      const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
-
+      console.log(typeof isSeller);
       if (!email || !name || !password || !confirmPassword || !address)
         throw errorHandler.emptyContent;
-
-      if (!emailReg.test(email)) throw errorHandler.emailFormat;
 
       const emailName = email.split('@')[0];
       if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
 
       if (password !== confirmPassword) throw errorHandler.checkPassword;
 
-      if (isSeller === true) {
+      if (Boolean(isSeller) === true) {
+        console.log('???');
         if (!businessRegistrationNumber) throw errorHandler.emptyContent;
 
         if (businessRegistrationNumber.includes('-')) {
           businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+          console.log('1');
         } else {
           businessRegistrationNumber = businessRegistrationNumber / 1;
+          console.log('2');
         }
-
+        console.log(businessRegistrationNumber);
         if (!businessRegistrationNumber) throw errorHandler.businessRegistrationNumber;
       }
+
       const result = await this.userService.signUp(
         email,
         name,
@@ -101,6 +97,16 @@ class UserController {
     }
   };
 
+  userDetails = async (req, res, next) => {
+    try {
+      const user = res.locals.user;
+      const { code, data } = await this.userService.getUserDetails(user.id);
+
+      return res.status(code).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
   storeLike = async (req, res, next) => {
     try {
       const { storeId } = req.params;

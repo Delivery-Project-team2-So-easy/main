@@ -116,6 +116,7 @@ header {
 .storeReorder {
   color: rgb(255, 235, 226);
   font-weight: bold;
+  font-size: 18px;
 }
 
 .storeImage {

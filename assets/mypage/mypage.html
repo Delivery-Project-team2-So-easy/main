@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>마이페이지</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./menu-management.css" />
+    <link rel="stylesheet" type="text/css" href="mypage.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -29,8 +30,9 @@
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="../sock.js" defer></script>
-    <title>Store</title>
+    <script src="./mypage.js" defer></script>
   </head>
+
   <header>
     <div class="navTitle">
       <img class="navbar-brand" id="icon" onclick="home()" src="../images/icon.JPG" />
@@ -43,8 +45,8 @@
           <input type="text" id="userAddress" name="address" readonly />
           <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">등록</button>
         </form>
-        <button class="btn btn-outline-primary ml-2" id="mypage" onclick="openMypage()">
-          마이페이지
+        <button class="btn btn-outline-warning" id="myorder" onclick="openMyorder()">
+          내 주문
         </button>
         <button class="btn btn-outline-success ml-2" id="bookmark" onclick="openBookmark()">
           북마크
@@ -54,30 +56,36 @@
     </nav>
   </header>
   <body>
-    <section>
-      <div class="menu-list">
-        <div class="order-title">메뉴 수정 페이지</div>
-        <!-- 메뉴목록 -->
+    <div class="profile"></div>
+    <div id="noSeller">
+      <!-- 리뷰 컨테이너 -->
+      <div class="review-container"></div>
+      <!-- 수정 모달창 -->
+      <div class="modal-container" id="editModalContainer">
+        <div class="modal-content">
+          <h3>리뷰 수정</h3>
+          <textarea type="text" id="reviewInput" placeholder="리뷰" rows="4"></textarea>
+          <input type="number" id="ratingInput" placeholder="점수" min="0" max="100" />
+          <button id="saveBtn">저장</button>
+          <button id="cancelBtn">취소</button>
+        </div>
       </div>
-      <div class="menu-register">
-        <fieldset style="width: 150">
-          <legend>메뉴등록</legend>
-          <lable>메뉴이름</lable>
-          <input id="menu-name" type="text" name="menu" placeholder="메뉴이름" /><br />
-          <lable>가격</lable>
-          <input id="menu-price" type="text" name="price" placeholder="가격" /><br />
-          <lable>옵션</lable>
-          <input id="menu-option" type="text" name="option" placeholder="옵션" /><br />
-          <lable>카테고리</lable>
-          <input id="menu-category" type="text" name="option" placeholder="카테고리" /><br />
-          <input id="menu-image" type="file" name="newFile" /><br />
-          <input class="register-btn" type="button" value="메뉴등록" /><br />
-        </fieldset>
+      <!-- 삭제 모달창 -->
+      <div class="modal-container" id="deleteModalContainer">
+        <div class="modal-content">
+          <h3>정말로 삭제하시겠습니까?</h3>
+          <button id="checkBtn">삭제</button>
+          <button id="deleteCancelBtn">취소</button>
+        </div>
       </div>
-    </section>
+    </div>
+    <div id="seller">
+      <!-- 매장 컨테이너 -->
+      <div id="storeProfile"></div>
+      <div class="order-Container"></div>
+    </div>
   </body>
   <footer class="bg-light text-center py-2">
     <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>
   </footer>
-  <script src="./menu-management.js"></script>
 </html>
