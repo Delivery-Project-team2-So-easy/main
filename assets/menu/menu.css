@@ -2,9 +2,9 @@
   font-family: 'IBM Plex Sans KR', sans-serif;
 }
 
-/* html {
+html {
   height: 110%;
-} */
+}
 body {
   height: 110%;
 }
@@ -16,6 +16,7 @@ header {
 }
 
 #icon {
+  cursor: pointer;
   width: 100px;
   height: 100px;
   border-radius: 20px;
