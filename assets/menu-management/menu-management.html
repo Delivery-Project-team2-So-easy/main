@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>참쉽조 배달 서비스</title>
-    <link href="./main/main.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./menu-management.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -30,11 +29,11 @@
     <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="../sock.js" defer></script>
-    <script src="./main/main.js" defer></script>
+    <title>Store</title>
   </head>
   <header>
     <div class="navTitle">
-      <img class="navbar-brand" id="icon" src="../images/icon.JPG" />
+      <img class="navbar-brand" id="icon" onclick="home()" src="../images/icon.JPG" />
       <h1>참쉽조 Delivery Web Service Page</h1>
     </div>
     <nav class="navbar navbar-expand-lg">
@@ -44,62 +43,41 @@
           <input type="text" id="userAddress" name="address" readonly />
           <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">등록</button>
         </form>
-        <button class="btn btn-outline-primary ml-2" id="signUp" onclick="openSignup()">
-          회원가입
-        </button>
-        <button class="btn btn-outline-success ml-2" id="login" onclick="openLogin()">
-          로그인
-        </button>
-        <button
-          class="btn btn-outline-warning"
-          id="myorder"
-          onclick="openMyorder()"
-          style="display: none"
-        >
-          내 주문
-        </button>
-        <button
-          class="btn btn-outline-primary ml-2"
-          id="mypage"
-          onclick="openMypage()"
-          style="display: none"
-        >
+        <button class="btn btn-outline-primary ml-2" id="mypage" onclick="openMypage()">
           마이페이지
         </button>
-        <button
-          class="btn btn-outline-success ml-2"
-          id="bookmark"
-          onclick="openBookmark()"
-          style="display: none"
-        >
+        <button class="btn btn-outline-success ml-2" id="bookmark" onclick="openBookmark()">
           북마크
         </button>
-        <button class="btn btn-outline-danger" id="logout" onclick="logout()" style="display: none">
-          로그아웃
-        </button>
+        <button class="btn btn-outline-danger" id="logout" onclick="logout()">로그아웃</button>
       </div>
     </nav>
   </header>
   <body>
-    <div class="content-area container mt-5">
-      <div class="search-tool input-group mb-3">
-        <input
-          type="text"
-          class="form-control"
-          id="searchInput"
-          placeholder="찾는 음식점이나 메뉴이름을 입력해 보세요!"
-          aria-label="음식점 검색"
-          aria-describedby="button-addon2"
-        />
-        <div class="input-group-append">
-          <button class="btn btn-outline-primary" type="button" id="searchBtn">검색</button>
-        </div>
+    <section>
+      <div class="menu-list">
+        <div class="order-title">메뉴 수정 페이지</div>
+        <!-- 메뉴목록 -->
       </div>
-
-      <section id="storeCard"></section>
-    </div>
+      <div class="menu-register">
+        <fieldset style="width: 150">
+          <legend>메뉴등록</legend>
+          <lable>메뉴이름</lable>
+          <input id="menu-name" type="text" name="menu" placeholder="메뉴이름" /><br />
+          <lable>가격</lable>
+          <input id="menu-price" type="text" name="price" placeholder="가격" /><br />
+          <lable>옵션</lable>
+          <input id="menu-option" type="text" name="option" placeholder="옵션" /><br />
+          <lable>카테고리</lable>
+          <input id="menu-category" type="text" name="option" placeholder="카테고리" /><br />
+          <input id="menu-image" type="file" name="newFile" /><br />
+          <input class="register-btn" type="button" value="메뉴등록" /><br />
+        </fieldset>
+      </div>
+    </section>
   </body>
   <footer class="bg-light text-center py-2">
     <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>
   </footer>
+  <script src="./menu-management.js"></script>
 </html>

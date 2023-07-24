@@ -1,6 +1,5 @@
 const errorHandler = require('../errorHandler');
 const StoreService = require('../services/store.service');
-const jwt = require('jsonwebtoken');
 
 class StoreController {
   storeService = new StoreService();
@@ -20,6 +19,16 @@ class StoreController {
       const { code, data } = await this.storeService.getStoreDetail(storeId);
 
       return res.status(code).json({ data });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getMyStore = async (_, res, next) => {
+    try {
+      const result = await this.storeService.getMyStore(res);
+
+      return res.status(result.code).json({ data: result.data });
     } catch (err) {
       next(err);
     }
@@ -58,7 +67,7 @@ class StoreController {
         storeAddress,
         storeImg
       );
-
+      console.log(code, message);
       res.status(code).json({ message });
     } catch (err) {
       next(err);

@@ -22,7 +22,6 @@ async function getUserInfo() {
       if (isSeller === true) {
         document.querySelector('#ownerDiv').style.display = 'block';
         document.querySelector('#ownerDivHeader').style.display = 'block';
-        document.querySelector('#logout').style.display = 'block';
       }
     },
     error: (error) => {
@@ -60,9 +59,6 @@ async function getClientOrderInfo() {
                           } 원<p>
                           <p><label class='orderStatus'>주소 :</label> ${order.address}</p>
                           <label class='orderStatus'>주문 일자 :</label> ${time[0]}  ${time[1]}
-                            <button type="button" onclick="goReview(this)" class="btn btn-outline-warning"  storeId="${
-                              order.store_id
-                            }" id="reviewBtn">리뷰 쓰기</button>
                         </div>
                       </div>
                   `;
@@ -94,7 +90,7 @@ async function getClientOrderInfo() {
       clientDiv.innerHTML = orders;
 
       if (results.length === 0) {
-        clientDiv.innerHTML = '<h2 class="noOrder">주문 정보가 없습니다! </h4>';
+        clientDiv.innerHTML = '<h2 class="noOrder">주문 정보가 없습니다! </h2>';
       }
     },
     error: (error) => {
@@ -114,6 +110,7 @@ async function getOwnerOrderInfo() {
     type: 'GET',
     url: '/ownerOrder',
     success: (data) => {
+      console.log(data);
       let results = data.orders;
       let orders = [];
       results.forEach((order, idx) => {
@@ -190,6 +187,7 @@ async function getOwnerOrderInfo() {
       }
     },
     error: (error) => {
+      console.log(error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -236,44 +234,34 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  if (orderUserId < 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-    window.location.href = '/';
-  } else window.open(`../mypage/mypage-customer.html?userId=${orderUserId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openBookmark() {
-  if (orderUserId < 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-    window.location.href = '/';
-  } else window.open(`../bookmark/bookmark.html?userId=${orderUserId}`, '_self');
+  window.open(`../bookmark/bookmark.html`, '_self');
 }
 
 function logout() {
-  if (orderUserId < 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else {
-    $.ajax({
-      type: 'POST',
-      url: '/users/logout',
-      success: (data) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: data.message,
-        }).then(() => {
-          window.location.href = '/';
-        });
-      },
-      error: (error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.responseJSON.errorMessage,
-        });
-      },
-    });
-  }
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
 }
 
 function goReview(id) {

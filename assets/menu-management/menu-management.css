@@ -75,56 +75,57 @@ header {
   width: 400px;
   height: 35px;
 }
-
-.content-area {
-  margin-left: 220px;
-  margin-top: 20px;
+section {
+  width: 400px;
+  height: 500px;
+  overflow: auto;
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none;
 }
-
-body h3 {
-  font-weight: bold;
+section::-webkit-scrollbar {
+  display: none;
+}
+.menu-list {
+  width: 400px;
+}
+.menu-register {
+  width: 400px;
+}
+.order-title {
   text-align: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  font-size: 40px;
 }
-
-.noOrder {
+.menu-list > .menu-box {
+  height: 130px;
+  display: flex;
+  margin: 0 auto;
+}
+.menu-box > img {
+  height: 130px;
+  width: 130px;
+}
+.menu-details {
+  width: 270px;
+  margin: auto auto;
+}
+.menu-name {
   text-align: center;
-  font-weight: bold;
-  margin-top: 50px;
-  margin-bottom: 100px;
-  color: hotpink;
+  padding: 5px;
+  font-size: 16px;
 }
-
-#clientDiv {
-  margin-bottom: 100px;
+.menu-price {
+  text-align: right;
+  margin: 0 10px;
 }
-
-.card {
-  margin-bottom: 15px;
-  height: 220px;
+.order-bar {
+  width: 400px;
+  text-align: center;
+  padding: 10px;
 }
-.card-header {
-  font-weight: bold;
+.order-btn {
   font-size: 20px;
-  color: #7a6ccf;
+  display: inline-block;
 }
-
-.card button {
-  margin-right: 10px;
-  height: 35px;
-  float: right;
-  font-weight: bold;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-}
-
-.orderStatus {
-  font-weight: 900;
-  color: #7a6ccf;
-}
-
 footer {
   background-color: #f0f0f0;
   text-align: center;

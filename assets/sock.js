@@ -1,12 +1,13 @@
 const socket = io.connect('/');
 
 async function order(event) {
+  const params = new URLSearchParams(window.location.search);
+  let storeId = params.get('storeId');
   event.preventDefault();
   let ownerId = 0;
-  //5번 가게에 대한 사장 id를 찾기 위함
   await $.ajax({
     type: 'GET',
-    url: '/store/5',
+    url: `/store/${storeId}`,
     success: (result) => {
       const { user_id } = result.data;
       ownerId = user_id;

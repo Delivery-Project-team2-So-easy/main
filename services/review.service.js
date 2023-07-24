@@ -3,6 +3,8 @@ const StoreRepository = require('../repositories/store.repository');
 const OrderRepository = require('../repositories/order.repository');
 const LikeRepository = require('../repositories/like.repository');
 const errorHandler = require('../errorHandler');
+require('dotenv').config();
+const env = process.env;
 
 class ReviewService {
   reviewRepository = new ReviewRepository();
@@ -17,6 +19,30 @@ class ReviewService {
 
       if (!findStore) throw errorHandler.nonExistStore;
       return getReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
+  getMyReviews = async (userId) => {
+    try {
+      const getReviews = await this.reviewRepository.getMyReviews(userId);
+
+      return getReviews;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  getReviewDetail = async (userId, storeId, reviewId) => {
+    try {
+      const getReviewDetail = await this.reviewRepository.getReviewDetail(storeId, reviewId);
+      let checkPermission = false;
+
+      if (getReviewDetail.user_id === userId) {
+        checkPermission = true;
+      }
+
+      return { code: 200, data: getReviewDetail, checkPermission };
     } catch (err) {
       throw err;
     }
@@ -55,8 +81,12 @@ class ReviewService {
       if (!findStore) throw errorHandler.nonExistStore;
       else if (!getReviewDetail) throw errorHandler.nonExistReview;
       else if (getReviewDetail.user_id != userId) throw errorHandler.noPermissions;
-      else if (getReviewDetail.review === review && getReviewDetail.rating === rating)
-        throw errorHandler.emptyContent;
+      else if (
+        getReviewDetail.review == review &&
+        getReviewDetail.rating == rating &&
+        getReviewDetail.review_img == reviewImg
+      )
+        throw errorHandler.noUpdateContent;
 
       await this.reviewRepository.updateReview(review, rating, reviewId, reviewImg);
       return true;

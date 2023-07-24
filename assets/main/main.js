@@ -22,11 +22,9 @@ async function getUserInfo() {
       userId = data.userId;
     },
   });
-  console.log(userId);
 }
 
 function viewBtn() {
-  console.log(userId);
   if (userId > 0) {
     document.querySelector('#mypage').style.display = 'block';
     document.querySelector('#bookmark').style.display = 'block';
@@ -42,13 +40,14 @@ async function getStoreInfo() {
     type: 'GET',
     url: '/stores/reorderRanking',
     success: (result) => {
+      console.log(result);
       const results = result.reorderRanking;
       let stores = [];
       results.forEach((store) => {
         let Img = '';
         store.storeImg
-          ? (Img = `<img src="${store.storeImg}" class="storeImage" alt="../image/defaultImage.jpg" />`)
-          : (Img = '<img src="../image/store.png" id="preview" class="storeImage" />');
+          ? (Img = `<img src="${store.storeImg}" class="storeImage" alt="../images/store.png" />`)
+          : (Img = '<img src="../images/store.png" id="preview" class="storeImage" />');
 
         stores += `
                   <div class="store" >
@@ -57,7 +56,7 @@ async function getStoreInfo() {
                       ${Img} 
                     </div>
                     <label class="storeAddress">주소 : ${store.storeAddress}</label> </br>
-                    <label class="storeReorder">재주문율 : ${store.reorderCount}명이 재주문 했어요!</label>
+                    <label class="storeReorder">${store.reorderCount}명이 재주문 했어요!</label>
                   </div>`;
       });
       storeCard.innerHTML = stores;
@@ -81,48 +80,38 @@ function openKakaoAddress() {
 }
 
 function openMypage() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../mypage/mypage-customer.html?userId=${userId}`, '_self');
+  window.open(`../mypage/mypage.html`, '_self');
 }
 
 function openMyorder() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../order/order.html`, '_self');
+  window.open(`../order/order.html`, '_self');
 }
 
 function openBookmark() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else window.open(`../bookmark/bookmark.html?userId=${userId}`, '_self');
+  window.open(`../bookmark/bookmark.html`, '_self');
 }
 
 function logout() {
-  if (userId === 0) {
-    alert('로그인 후 이용할 수 있습니다.');
-  } else {
-    $.ajax({
-      type: 'POST',
-      url: '/users/logout',
-      success: (data) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: data.message,
-        }).then(() => {
-          window.location.href = '/';
-        });
-      },
-      error: (error) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: error.responseJSON.errorMessage,
-        });
-      },
-    });
-  }
+  $.ajax({
+    type: 'POST',
+    url: '/users/logout',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.href = '/';
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
 }
 
 function openSignup() {
@@ -170,8 +159,8 @@ function searchStore() {
       results.forEach((store) => {
         let Img = '';
         store.store_img
-          ? (Img = `<img src="${store.store_img}" class="storeImage" alt="../image/defaultImage.jpg" />`)
-          : (Img = '<img src="../image/store.png" id="priview" class="storeImage" />');
+          ? (Img = `<img src="${store.store_img}" class="storeImage" alt="../images/store.png" />`)
+          : (Img = '<img src="../images/store.png" id="priview" class="storeImage" />');
 
         stores += `
                   <div class="store" >
@@ -180,7 +169,8 @@ function searchStore() {
                       ${Img} 
                     </div>
                     <label class="storeAddress">주소 : ${store.store_address}</label>
-                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">👍 ${store.likes}</label>
+                    <br>
+                    <label class="like" countStoreLike=${store.id} onclick="countLike(this)">❤ ${store.likes}</label>
                   </div>`;
       });
       storeCard.innerHTML = stores;
@@ -190,6 +180,8 @@ function searchStore() {
         icon: 'error',
         title: 'Error',
         text: error.responseJSON.errorMessage,
+      }).then(() => {
+        window.location.reload();
       });
     },
   });
@@ -203,3 +195,8 @@ function storeDetail(id) {
 addressInput.addEventListener('click', openKakaoAddress);
 registerAddressBtn.addEventListener('click', registerAddress);
 searchBtn.addEventListener('click', searchStore);
+document.addEventListener('keydown', function (event) {
+  if (event.keyCode === 13) {
+    searchBtn.click();
+  }
+});

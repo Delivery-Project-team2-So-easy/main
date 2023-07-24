@@ -75,56 +75,76 @@ header {
   width: 400px;
   height: 35px;
 }
-
-.content-area {
-  margin-left: 220px;
-  margin-top: 20px;
+section {
+  margin-top: 3%;
+  margin-left: 39%;
+  width: 500px;
+  height: 500px;
+  overflow: auto;
+  -ms-overflow-style: none; /* 인터넷 익스플로러 */
+  scrollbar-width: none;
 }
-
-body h3 {
-  font-weight: bold;
+section::-webkit-scrollbar {
+  display: none;
+}
+.store-overview {
+  background-color: white;
+  width: 400px;
+  height: 100px;
+  position: relative;
+}
+.store-img {
+  opacity: 0.2;
+  height: 100px;
+  display: block;
+  margin: 0 auto;
+}
+.store-name {
+  font-size: 30px;
   text-align: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-
-.noOrder {
-  text-align: center;
-  font-weight: bold;
-  margin-top: 50px;
-  margin-bottom: 100px;
-  color: hotpink;
-}
-
-#clientDiv {
-  margin-bottom: 100px;
-}
-
-.card {
-  margin-bottom: 15px;
-  height: 220px;
-}
-.card-header {
-  font-weight: bold;
+i {
   font-size: 20px;
-  color: #7a6ccf;
+  color: red;
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
 }
-
-.card button {
-  margin-right: 10px;
-  height: 35px;
-  float: right;
-  font-weight: bold;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
+.info {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-
-.orderStatus {
-  font-weight: 900;
-  color: #7a6ccf;
+.menu-list {
+  width: 400px;
+  text-align: center;
 }
-
+.menu-list > .menu-box {
+  height: 130px;
+  margin: 0 auto;
+}
+.menu-box > img {
+  height: 130px;
+  width: 130px;
+}
+.menu-details {
+  width: 270px;
+  margin: auto auto;
+}
+.menu-name {
+  text-align: center;
+  padding: 5px;
+  font-size: 25px;
+}
+.menu-price {
+  text-align: right;
+  margin: 0 10px;
+}
 footer {
   background-color: #f0f0f0;
   text-align: center;

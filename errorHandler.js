@@ -83,5 +83,6 @@ const errorHandler = {
 
   //socket
   socketError: new CustomError(500, '소켓 연결에 실패했습니다.'),
+  noUpdateContent: new CustomError(400, '변경내역이 없습니다.'),
 };
 module.exports = errorHandler;

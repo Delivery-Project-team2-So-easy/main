@@ -15,6 +15,7 @@ router.delete('/store/menu/:menuId', authMiddleware, storeController.deleteMenu)
 router.get('/store/:storeId/menus', storeController.getAllMenuInfo);
 
 router.get('/store/', storeController.getStore);
+router.get('/myStore', authMiddleware, storeController.getMyStore);
 router.get('/store/:storeId', storeController.getStoreDetail);
 router.post('/store/search', storeController.search);
 router.post('/stores/ranking', storeController.getStoreRanking);

@@ -3,9 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="./bookmark.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="../sock.js" defer></script>
+    <script src="./bookmark.js" defer></script>
+    <title>My Bookmark</title>
   </head>
   <body>
-    호호호호호
+    <header>
+      <div class="navTitle">
+        <img class="navbar-brand" id="icon" onclick="home()" src="../images/icon.JPG" />
+        <h1>참쉽조 Delivery Web Service Page</h1>
+      </div>
+      <nav class="navbar navbar-expand-lg">
+        <div id="navbarNav">
+          <form class="registerAddress">
+            <label>배달 주소 등록 </label>
+            <input type="text" id="userAddress" name="address" readonly />
+            <button class="btn btn-outline-secondary ml-2" id="registerAddressBtn">등록</button>
+          </form>
+          <button class="btn btn-outline-warning" id="myorder" onclick="openMyorder()">
+            내 주문
+          </button>
+          <button class="btn btn-outline-primary ml-2" id="mypage" onclick="openMypage()">
+            마이페이지
+          </button>
+          <button class="btn btn-outline-danger" id="logout" onclick="logout()">로그아웃</button>
+        </div>
+      </nav>
+    </header>
+    <section class="store-section"></section>
   </body>
+  <footer class="bg-light text-center py-2">
+    <p>&copy; 스파르타 참쉽조 서비스 주식회사. All Rights Reserved.</p>
+  </footer>
 </html>
