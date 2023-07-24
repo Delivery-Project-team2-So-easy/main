@@ -60,18 +60,21 @@ async function getStoreInfo() {
         seller.innerHTML = `   <div class="card">
                                 <div class="card-header">매장이름 : ${data.store_name}</div>
                                       <div class="card-body">
-                                      ${Img}
                                         <p><label class='orderStatus'>주소 :</label> ${data.store_address}</p>
                                         <p><label class='orderStatus'>개업 일자 :</label> ${data.opening_date}<p>
-                                          <button type="button" onclick="refundRequest(this)" class="btn btn-outline-danger" orderId="${order.id}" id="refundBtn">매장 정보 수정</button>
-                                          <button type="button" onclick="goReview(this)" class="btn btn-outline-warning"  storeId="${order.store_id}" id="reviewBtn">매장 삭제</button>
+                                          <button type="button" onclick="deleteStore(this)" class="btn btn-outline-danger" storeId="${data.id}" id="refundBtn">매장 삭제</button>
+                                          <button type="button" onclick="updateStore(this)" class="btn btn-outline-warning"  storeId="${data.id}" id="reviewBtn">매장 정보 수정</button>
                                       </div>
                                     </div>
   `;
       }
     },
     error: (error) => {
-      console.log(error.responseJSON.errorMessage);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
     },
   });
 }
@@ -98,10 +101,6 @@ shopContainer.addEventListener('click', (e) => {
   if (e.target.className == 'order-button') {
     location.href = '../order/order.html';
   }
-});
-
-editProfile.addEventListener('click', () => {
-  editContainer.style.display = 'flex';
 });
 
 const getProfile = () => {
@@ -169,7 +168,6 @@ const getProfile = () => {
           <h3 id=${review.store_id}>${review.Store.store_name}</h3>
           <p>내 리뷰 : ${review.review}</p>
           <p>${review.rating} 점 </p>
-
           <div class="button-container">
             <button class="edit-button">수정</button>
             <button class="delete-button">삭제</button>
@@ -195,12 +193,13 @@ const getProfile = () => {
       alt="${myStoreProfile.store_img}"
     />
     <div class="shop-name">${myStoreProfile.store_name}</div>
+    <button class="register-button">상점 등록</button>
     <button class="edit-button">상점 수정</button>
     <button class="menu-button">메뉴 관리</button>
   <button class="order-button">주문 조회</button>
       `;
         storeProfile.innerHTML = temp_html_v2;
-        fetch('/ownerOrder', {
+        fetch('/order', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -214,42 +213,54 @@ const getProfile = () => {
             let temp = '';
             orders.map((order) => {
               let temp_html = `
-                <div class="order">
-                  <div>
-                    <span class="order-label">배달 메뉴:</span>
-                    <span>${order.id}</span>
-                  </div>
-  
-                  <div>
-                    <span class="order-label">주소:</span>
-                    <span>${order.address}</span>
-                  </div>
-  
-                  <div>
-                    <span class="order-label">가격:</span>
-                    <span>${order.total_price}</span>
-                  </div>
-  
-                  <div class="order"><span>${order.order_status}</span></div>
-                </div>`;
+              <div class="order">
+                <div>
+                  <span class="order-label">배달 메뉴:</span>
+                  <span>${order.id}</span>
+                </div>
+                <div>
+                  <span class="order-label">주소:</span>
+                  <span>${order.address}</span>
+                </div>
+                <div>
+                  <span class="order-label">가격:</span>
+                  <span>${order.total_price}</span>
+                </div>
+                <div class="order"><span>${order.order_status}</span></div>
+              </div>`;
               temp = temp + temp_html;
             });
             orderContainer.innerHTML = temp;
           });
-      } else {
-        let temp_html_v2 = `
-    <img
-      class="shop-image"
-      src=""
-      alt=""
-    />
-    <div class="shop-name">상점을 등록해야 합니다.</div>
-    <button class="register-button">상점 등록</button>
-      `;
-        storeProfile.innerHTML = temp_html_v2;
       }
     });
 };
+
+function deleteStore(id) {
+  const storeId = id.getAttribute('storeId');
+
+  $.ajax({
+    method: 'DELETE',
+    url: '/store/registration',
+    success: (data) => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: data.message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+}
+
 const reviewModify = (e) => {
   const storeId = e.target.parentElement.parentElement.querySelector('h3').id;
   const reviewId = e.target.parentElement.parentElement.id;
