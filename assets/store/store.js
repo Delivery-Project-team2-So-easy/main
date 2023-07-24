@@ -70,6 +70,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           let menu_name = menu.menu;
           let menu_img = menu.menu_img;
           let menu_price = menu.price;
+
+          menu_img === null ? (menu_img = '../images/noimage.png') : menu_img;
           let temp_html = `
         <div class="menu-box">
           <img
