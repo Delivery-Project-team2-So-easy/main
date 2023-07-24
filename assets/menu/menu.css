@@ -2,9 +2,9 @@
   font-family: 'IBM Plex Sans KR', sans-serif;
 }
 
-html {
+/* html {
   height: 110%;
-}
+} */
 body {
   height: 110%;
 }
@@ -96,37 +96,73 @@ section::-webkit-scrollbar {
 }
 
 .menu-list {
-  width: 400px;
+  display: flex;
+  flex-direction: column;
 }
+
 .order-title {
   text-align: center;
   font-size: 40px;
 }
 .menu-list > .menu-box {
-  height: 130px;
-  display: flex;
-  margin: 0 auto;
+  cursor: pointer;
+  position: relative;
+  height: 300px;
+  margin-bottom: 20px;
 }
 .menu-box > img {
   height: 300px;
-  width: 300px;
+  width: 100%;
+  object-fit: contain;
+  border: 1px solid #cacaca;
+  border-radius: 8px;
+  margin: 5px, 0, 5px, 20px;
 }
 .quantity {
   width: 25px;
 }
+
 .menu-details {
-  width: 270px;
-  margin: auto auto;
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1;
 }
+
+.menu-list > .menu-box:hover {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.menu-list > .menu-box:hover .menu-details {
+  display: block;
+}
+
+.menu-details img {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
 .menu-name {
-  text-align: center;
-  padding: 5px;
-  font-size: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
-.menu-price {
-  text-align: right;
-  margin: 0 10px;
+
+.menu-price,
+.menu-option {
+  font-size: 14px;
+  margin-bottom: 5px;
 }
+
 .order-bar {
   width: 400px;
   margin-bottom: 30px;
@@ -135,7 +171,12 @@ section::-webkit-scrollbar {
 }
 .order-btn {
   font-size: 20px;
-  display: inline-block;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #374999;
+  color: #fff;
 }
 footer {
   background-color: #f0f0f0;

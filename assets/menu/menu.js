@@ -30,6 +30,7 @@ window.addEventListener('DOMContentLoaded', async () => {
           let menu_price = menu.price;
           let menu_option = menu.option;
 
+          menu_img === null ? (menu_img = '../images/noimage.png') : menu_img;
           let temp_html = `
         <div class="menu-box" id="${menu_id}">
           <img
