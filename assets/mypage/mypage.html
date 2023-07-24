@@ -5,16 +5,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="mypage.css" />
-    <script src="mypage.js" defer></script>
   </head>
   <body>
     <header>
       <h1>마이페이지</h1>
     </header>
     <div style="float: right">
-      <button class="menu-button" id="editBtn">내 정보 수정</button>
-      <button class="menu-button" id="logoutBtn">로그아웃</button>
+      <button class="menu-button" id="editProfile">내 정보 수정</button>
+      <button class="menu-button" id="logout">로그아웃</button>
     </div>
+    <div class="modal-container" id="editProfileContainer"></div>
     <div class="profile">
       <img
         src="https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp"
@@ -85,5 +85,6 @@
         </div>
       </div>
     </div>
+    <script src="mypage.js" defer></script>
   </body>
 </html>

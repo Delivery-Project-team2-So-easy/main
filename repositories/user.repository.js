@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Store } = require('../models');
 const errorHandler = require('../errorHandler');
 
 class UserRepository {
@@ -31,9 +31,6 @@ class UserRepository {
   findUser = async (userId) => {
     return await User.findOne({
       where: { id: userId },
-      attributes: {
-        exclude: ['password'],
-      },
       include: [
         {
           model: Store,

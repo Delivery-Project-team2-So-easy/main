@@ -3,11 +3,23 @@ const reviewContainer = document.querySelector('.review-container');
 const shopContainer = document.querySelector('.shop-container');
 const seller = document.querySelector('#seller');
 const noSeller = document.querySelector('#noSeller');
+const editProfile = document.querySelector('#editProfile');
+const logout = document.querySelector('#logout');
+const editProfileContainer = document.querySelector('#editProfileContainer');
+const editContainer = document.querySelector('#editProfileContainer');
+
 window.addEventListener('DOMContentLoaded', () => {
   getProfile();
 });
+window.addEventListener('DOMContentLoaded', () => {
+  modify();
+});
 reviewContainer.addEventListener('click', (e) => {
   reviewModify(e);
+});
+
+editProfileContainer.addEventListener('click', (e) => {
+  profileModify(e);
 });
 
 shopContainer.addEventListener('click', (e) => {
@@ -28,6 +40,10 @@ shopContainer.addEventListener('click', (e) => {
   if (e.target.className == 'order-button') {
     location.href = '/';
   }
+});
+
+editProfile.addEventListener('click', () => {
+  editContainer.style.display = 'flex';
 });
 
 const getProfile = () => {
@@ -120,7 +136,7 @@ const getProfile = () => {
       `;
         storeProfile.innerHTML = temp_html_v2;
 
-        fetch('/order', {
+        fetch('/ownerOrder', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -225,5 +241,116 @@ const reviewModify = (e) => {
       // 삭제-취소
       deleteModalContainer.style.display = 'none';
     });
+  }
+};
+
+const editModal = document.querySelector('#editProfileContainer');
+
+const modify = () => {
+  fetch('/userDetails', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.errorMessage) {
+        alert(data.errorMessage);
+      }
+      const myProfile = data.data;
+      if (myProfile.profileImg == null) {
+        myProfile.profileImg = `https://i.namu.wiki/i/Ln7MiLrZm65kiItiQWdvJQpIaRJ5NZpvg9XZ08hFBTai0imKv6UaRRFCYUefmKOP8rdCwdBiwOm_aFTYo6Ib7A.webp`;
+      }
+      if (myProfile.is_seller) {
+        myProfile.is_seller = '판매자';
+      } else {
+        myProfile.is_seller = '소비자';
+      }
+      let temp_html = `
+<div class="modal-content">
+<h3>내 정보 수정</h3>
+<div>
+<span>이름</span>
+<input type="text" id="editName" value="${myProfile.name}" />
+</div>
+<div>
+<span>현재 비밀번호</span>
+<input type="password" id="editPassword" />
+</div>
+<div>
+<span>새로운 비밀번호</span>
+<input type="password" id="editNewPassword" />
+</div>
+<div>
+<span>비밀번호 확인</span>
+<input type="password" id="editNewConfirmPassword" />
+</div>
+<div>
+<label for="cunsumer">
+  <input type="radio" id="cunsumer" name="options" checked />
+  소비자
+</label>
+<label for="seller">
+  <input type="radio" id="seller" name="options" />
+  판매자
+</label>
+</div>
+
+<div class="sellerNumber">
+<span>사업자 번호</span>
+<input type="text" id="editBusinessRegistrationNumber" value="${myProfile.business_registration_number}" />
+</div>
+<div>
+<span>주소</span>
+<input type="text" id="editAdress" value="${myProfile.address}"/>
+</div>
+<div>
+<button id="saveBtn">저장</button>
+<button id="cancelBtn">취소</button>
+</div>
+</div>
+`;
+      editModal.innerHTML = temp_html;
+    });
+};
+
+const profileModify = (e) => {
+  const editName = document.getElementById('editName');
+  const editPassword = document.getElementById('editPassword');
+  const editNewPassword = document.getElementById('editNewPassword');
+  const editNewConfirmPassword = document.getElementById('editNewConfirmPassword');
+  const cunsumer = document.getElementById('cunsumer');
+  const editBusinessRegistrationNumber = document.getElementById('editBusinessRegistrationNumber');
+  const editAdress = document.getElementById('editAdress');
+
+  console.log(editBusinessRegistrationNumber.value);
+  if (e.target.id == 'saveBtn') {
+    fetch(`/users`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: editName.value,
+        password: editPassword.value,
+        afterPassword: editNewPassword.value,
+        afterConfirmPassword: editNewConfirmPassword.value,
+        isSeller: cunsumer.checked ? 0 : 1,
+        address: editAdress.value,
+        businessRegistrationNumber: editBusinessRegistrationNumber.value,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.errorMessage) {
+          alert(data.errorMessage);
+        }
+        alert(data.message);
+        window.location.reload();
+      });
+  }
+  if (e.target.id == 'cancelBtn') {
+    editContainer.style.display = 'none';
   }
 };
