@@ -199,7 +199,6 @@ const getProfile = () => {
   <button class="order-button">주문 조회</button>
       `;
         storeProfile.innerHTML = temp_html_v2;
-
         fetch('/order', {
           method: 'GET',
           headers: {
@@ -236,6 +235,7 @@ const getProfile = () => {
       }
     });
 };
+
 function deleteStore(id) {
   const storeId = id.getAttribute('storeId');
 
