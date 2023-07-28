@@ -127,7 +127,7 @@ function initSocket(socket) {
         const payload = {
           date: new Date().toISOString(),
         };
-        console.log('환불 요청 거절에 대한 응답 데이터', data);
+        console.log('환불 요청 거절에 대한 응답 데이터', data.userId);
         notifyToUser(data.userId, 'REFUND_REFUSE_CUSTOMER', payload);
       });
     },

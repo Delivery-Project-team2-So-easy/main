@@ -78,7 +78,7 @@ async function getClientOrderInfo() {
                             <label class='orderStatus'>주문 일자 :</label> ${time[0]}  ${time[1]}
                               <button type="button" onclick="refundRequest(this)" class="btn btn-outline-danger" orderId="${
                                 order.id
-                              }" id="refundBtn">주문 취소</button>
+                              }" storeId="${order.store_id}" id="refundBtn">주문 취소</button>
                               <button type="button" onclick="goReview(this)" class="btn btn-outline-warning"  storeId="${
                                 order.store_id
                               }" id="reviewBtn">리뷰 쓰기</button>
@@ -130,7 +130,7 @@ async function getOwnerOrderInfo() {
                             } 원<p>
                             <p><label class='orderStatus'>주소 :</label> ${order.address}</p>
                             <label class='orderStatus'>주문 일자 :</label> ${time[0]}  ${time[1]}
-                            <button type="button" onclick="orderDelivered(this)" class="btn btn-outline-success" orderId="${
+                            <button type="button" onclick="delivered(this)" class="btn btn-outline-success" orderId="${
                               order.id
                             }" id="Delivered">배달 완료</button>
                         </div>
@@ -264,106 +264,144 @@ function logout() {
   });
 }
 
+async function delivered(id) {
+  const orderId = id.getAttribute('orderId');
+
+  let header = {};
+  await $.ajax({
+    type: 'GET',
+    url: `/order/${orderId}`,
+    success: (result) => {
+      const { message } = result;
+      const { userId } = result.data;
+      header.userId = userId;
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+
+  socket.emit('DELIVERED', header);
+}
+
+async function refundRequest(id) {
+  const orderId = id.getAttribute('orderId');
+  const storeId = id.getAttribute('storeId');
+  let ownerId = 0;
+  await $.ajax({
+    type: 'GET',
+    url: `/store/${storeId}`,
+    success: (result) => {
+      const { user_id } = result.data;
+      ownerId = user_id;
+    },
+    error: (error) => {
+      alert(error.responseJSON.errorMessage);
+    },
+  });
+  let header = {};
+  await $.ajax({
+    type: 'GET',
+    url: `/order/${orderId}/refundRequest`,
+    success: (result) => {
+      const { message } = result;
+      const { status, orderId } = result.data;
+      header = { status, orderId, userId: ownerId };
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+
+  socket.emit('REFUND_REQUEST', header);
+}
+
+async function refundComplete(id) {
+  const orderId = id.getAttribute('orderId');
+  let header = {};
+  await $.ajax({
+    type: 'GET',
+    url: `/order/${orderId}/refundComplete`,
+    success: (result) => {
+      const { message } = result;
+      const { userId, point } = result.data;
+      header = { userId, point };
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+
+  socket.emit('REFUND_COMPLETE', header);
+}
+
+async function refundRefuse(id) {
+  const orderId = id.getAttribute('orderId');
+  let header = {};
+  await $.ajax({
+    type: 'GET',
+    url: `/order/${orderId}/refundRefuse`,
+    success: (result) => {
+      const { message } = result;
+      const { userId } = result.data;
+      console.log(userId);
+      header = { userId };
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: message,
+      }).then(() => {
+        window.location.reload();
+      });
+    },
+    error: (error) => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.responseJSON.errorMessage,
+      });
+    },
+  });
+
+  socket.emit('REFUND_REFUSE', header);
+}
+
 function goReview(id) {
   const storeId = id.getAttribute('storeId');
   window.open(`../review/review.html?storeId=${storeId}`, '_self');
-}
-
-function refundRequest(id) {
-  const orderId = id.getAttribute('orderId');
-
-  $.ajax({
-    type: 'GET',
-    url: `/order/${orderId}/refundRequest`,
-    success: (data) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: data.message,
-      }).then(() => {
-        window.location.reload();
-      });
-    },
-    error: (error) => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.responseJSON.errorMessage,
-      });
-    },
-  });
-}
-
-function refundComplete(id) {
-  const orderId = id.getAttribute('orderId');
-  $.ajax({
-    type: 'GET',
-    url: `/order/${orderId}/refundComplete`,
-    success: (data) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: data.message,
-      }).then(() => {
-        window.location.reload();
-      });
-    },
-    error: (error) => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.responseJSON.errorMessage,
-      });
-    },
-  });
-}
-
-function refundRefuse(id) {
-  const orderId = id.getAttribute('orderId');
-  $.ajax({
-    type: 'GET',
-    url: `/order/${orderId}/refundRefuse`,
-    success: (data) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: data.message,
-      }).then(() => {
-        window.location.reload();
-      });
-    },
-    error: (error) => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.responseJSON.errorMessage,
-      });
-    },
-  });
-}
-
-function orderDelivered(id) {
-  const orderId = id.getAttribute('orderId');
-  $.ajax({
-    type: 'GET',
-    url: `/order/${orderId}`,
-    success: (data) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: data.message,
-      }).then(() => {
-        window.location.reload();
-      });
-    },
-    error: (error) => {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.responseJSON.errorMessage,
-      });
-    },
-  });
 }
 
 addressInput.addEventListener('click', openKakaoAddress);

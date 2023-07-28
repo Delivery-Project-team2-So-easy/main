@@ -341,6 +341,8 @@ function registerAddress(event) {
         icon: 'success',
         title: 'Success!',
         text: data.message,
+      }).then(() => {
+        window.location.reload();
       });
     },
     error: (error) => {

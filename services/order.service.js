@@ -1,5 +1,5 @@
 const { sequelize } = require('../models');
-const { Transaction } = require('sequelize');
+const { Transaction, or } = require('sequelize');
 
 const OrderRepository = require('../repositories/order.repository.js');
 const UserRepository = require('../repositories/user.repository.js');
@@ -171,15 +171,17 @@ class OrderService {
   refundComplete = async (orderId, res) => {
     try {
       const user = res.locals.user;
-
       const existOrder = await this.orderRepository.findOrder(orderId);
       if (!existOrder) throw errorHandler.orderNotFound;
+
+      // 고객의 포인트를 올려줘야 하므로 order에 있는 user_id를 통해 고객을 검색
+      const client = await this.userRepository.findUser(existOrder.user_id);
 
       const myStore = await this.storeRepository.findByStoreId(existOrder.store_id);
       if (myStore.user_id !== user.id) throw errorHandler.noPermissions;
 
       const totalSales = myStore.total_sales - existOrder.total_price;
-      const userPoint = user.point + existOrder.total_price;
+      const userPoint = client.point + existOrder.total_price;
 
       const t = await sequelize.transaction({
         isolationLevel: Transaction.ISOLATION_LEVELS.READ_COMMITTED,
@@ -260,9 +262,14 @@ class OrderService {
       const remainedPoint = userPoint - totalPrice;
       await this.orderRepository.updateOrder(orderId, totalPrice, t);
       await this.userRepository.updatePoint(userId, remainedPoint, t);
-
       await t.commit();
-      return { code: 200, message: '정상적으로 주문되었습니다.' };
+
+      const orders = await this.orderRepository.findOrder(orderId);
+      return {
+        code: 200,
+        message: '정상적으로 주문되었습니다.',
+        data: { address: orders.address, totalPrice: orders.total_price },
+      };
     } catch (err) {
       await t.rollback();
       throw err;

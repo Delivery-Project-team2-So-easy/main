@@ -1,5 +1,7 @@
 const errorHandler = require('../errorHandler');
 const UserService = require('../services/user.service');
+const querystring = require('querystring');
+const Joi = require('joi');
 class UserController {
   userService = new UserService();
 
@@ -9,26 +11,22 @@ class UserController {
 
       const { email, name, password, confirmPassword, isSeller, address } = req.body;
       let { businessRegistrationNumber } = req.body;
-      if (!email || !name || !password || !confirmPassword || !address)
-        throw errorHandler.emptyContent;
+      // if (!email || !name || !password || !confirmPassword || !address)
+      //   throw errorHandler.emptyContent;
 
-      const emailName = email.split('@')[0];
-      if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
+      // const emailName = email.split('@')[0];
+      // if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
 
-      if (password !== confirmPassword) throw errorHandler.checkPassword;
+      // if (password !== confirmPassword) throw errorHandler.checkPassword;
 
       if (Boolean(isSeller) === true) {
-        console.log('???');
         if (!businessRegistrationNumber) throw errorHandler.emptyContent;
 
         if (businessRegistrationNumber.includes('-')) {
           businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
-          console.log('1');
         } else {
           businessRegistrationNumber = businessRegistrationNumber / 1;
-          console.log('2');
         }
-        console.log(businessRegistrationNumber);
         if (!businessRegistrationNumber) throw errorHandler.businessRegistrationNumber;
       }
 
@@ -178,65 +176,146 @@ class UserController {
       next(err);
     }
   };
-
-  kakaoLogin = async (req, res, next) => {
-    // 카카오 로그인 페이지 동작
-    try {
-      const result = await this.userService.kakaoLogin();
-
-      return res.redirect(result.data);
-    } catch (err) {
-      next(err);
-    }
-  };
-
-  kakaoCallBack = async (req, res, next) => {
+  kakaoAuth = async (req, res, next) => {
     try {
       const code = req.query.code;
-      const result = await this.userService.kakaoCallBack(code);
+      const result = await this.userService.kakaoAuth(code);
       if (result.token) {
-        // 토큰이 있을때
         res.cookie('authorization', `Bearer ${result.token}`);
-        return res.status(result.code).json({ message: result.message });
-      } else if (result.data) {
-        // 데이터가 있을 때
-        return res.status(result.code).json({ message: result.message, data: result.data });
+        return res.redirect('http://127.0.0.1:3000');
       }
+
+      //session에 저장후 리다이렉션
+      req.session.email = result.data.email;
+      req.session.name = result.data.name;
+      req.session.profileImg = result.data.profileImg;
+      return res.redirect('http://127.0.0.1:3000/auth/addInfo.html');
+
+      //쿼리스트링으로 리다이렉션하기(개인정보가 uri에 담기기 때문에 안전하지 않다 생각함)
+      // const query = querystring.stringify(result.data);
+      // return res.redirect('http://127.0.0.1:3000/auth/addInfo.html?' + query);
     } catch (err) {
       next(err);
     }
   };
 
-  kakaoSignUp = async (req, res, next) => {
+  googleAuth = async (req, res, next) => {
     try {
-      const profileImg = req.file ? req.file.location : null;
-      const email = req.params.kakaoEmail; // 프론트측에서 kakaoCallBack 의 data를 가져와야 한다.
+      const code = req.query.code;
+      const result = await this.userService.googleAuth(code);
+      if (result.token) {
+        res.cookie('authorization', `Bearer ${result.token}`);
+        return res.redirect('http://127.0.0.1:3000');
+      }
 
-      const { name, password, confirmPassword, isSeller, address, businessRegistrationNumber } =
-        req.body;
+      //session에 저장후 리다이렉션
+      req.session.email = result.data.email;
+      req.session.name = result.data.name;
+      req.session.profileImg = result.data.profileImg;
+      return res.redirect('http://127.0.0.1:3000/auth/addInfo.html');
+    } catch (err) {
+      next(err);
+    }
+  };
 
-      if (!name || !password || !confirmPassword || !address) throw errorHandler.emptyContent;
+  socialSignUp = async (req, res, next) => {
+    try {
+      const email = req.session.email;
+      const name = req.session.name;
+      const profileImg = req.session.profileImg;
 
-      const emailName = email.split('@')[0];
-      if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
+      if (!email || !name || !profileImg) throw errorHandler.notExistSession;
+      const { address } = req.body;
+      let { isSeller, businessRegistrationNumber } = req.body;
+      isSeller = Boolean(isSeller / 1);
 
-      if (password !== confirmPassword) throw errorHandler.checkPassword;
+      if (!address) throw errorHandler.notInfo;
+      if (isSeller) {
+        if (!businessRegistrationNumber) throw errorHandler.checkBusinessRegistrationNumber;
 
-      const result = await this.userService.signUp(
+        if (businessRegistrationNumber.includes('-')) {
+          businessRegistrationNumber = businessRegistrationNumber.split('-').join('') / 1;
+        } else {
+          businessRegistrationNumber = businessRegistrationNumber / 1;
+        }
+        if (!businessRegistrationNumber) throw errorHandler.businessRegistrationNumber;
+      } else businessRegistrationNumber = null;
+
+      const result = await this.userService.socialSignUp(
         email,
         name,
-        password,
-        isSeller,
-        profileImg,
         address,
-        businessRegistrationNumber
+        isSeller,
+        businessRegistrationNumber,
+        profileImg
       );
 
+      res.cookie('authorization', `Bearer ${result.token}`);
+      res.clearCookie('social-session');
       return res.status(result.code).json({ message: result.message });
     } catch (err) {
       next(err);
     }
   };
+
+  // kakaoLogin = async (req, res, next) => {
+  //   // 카카오 로그인 페이지 동작
+  //   try {
+  //     const result = await this.userService.kakaoLogin();
+
+  //     return res.redirect(result.data);
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
+
+  // kakaoCallBack = async (req, res, next) => {
+  //   try {
+  //     const code = req.query.code;
+  //     const result = await this.userService.kakaoCallBack(code);
+  //     if (result.token) {
+  //       // 토큰이 있을때
+  //       res.cookie('authorization', `Bearer ${result.token}`);
+  //       return res.status(result.code).json({ message: result.message });
+  //     } else if (result.data) {
+  //       // 데이터가 있을 때
+  //       return res.status(result.code).json({ message: result.message, data: result.data });
+  //     }
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
+
+  // kakaoSignUp = async (req, res, next) => {
+  //   try {
+  //     const profileImg = req.file ? req.file.location : null;
+  //     const email = req.params.kakaoEmail; // 프론트측에서 kakaoCallBack 의 data를 가져와야 한다.
+
+  //     const { name, password, confirmPassword, isSeller, address, businessRegistrationNumber } =
+  //       req.body;
+
+  //     if (!name || !password || !confirmPassword || !address) throw errorHandler.emptyContent;
+
+  //     const emailName = email.split('@')[0];
+  //     if (password.length < 4 || emailName.includes(password)) throw errorHandler.passwordFormat;
+
+  //     if (password !== confirmPassword) throw errorHandler.checkPassword;
+
+  //     const result = await this.userService.signUp(
+  //       email,
+  //       name,
+  //       password,
+  //       isSeller,
+  //       profileImg,
+  //       address,
+  //       businessRegistrationNumber
+  //     );
+
+  //     return res.status(result.code).json({ message: result.message });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 
   getMyReviews = async (_, res, next) => {
     try {

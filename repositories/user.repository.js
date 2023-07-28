@@ -11,7 +11,7 @@ class UserRepository {
     address,
     businessRegistrationNumber
   ) => {
-    await User.create({
+    const user = await User.create({
       email,
       name,
       password: hashPassword,
@@ -20,7 +20,7 @@ class UserRepository {
       address,
       business_registration_number: businessRegistrationNumber,
     });
-    return;
+    return user;
   };
 
   existUser = async (email) => {

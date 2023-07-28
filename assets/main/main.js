@@ -2,6 +2,7 @@ const registerAddressBtn = document.querySelector('#registerAddressBtn');
 const addressInput = document.querySelector('#userAddress');
 const searchBtn = document.querySelector('#searchBtn');
 const storeCard = document.querySelector('#storeCard');
+const kakaoLoginBtn = document.querySelector('.kakaoLogin');
 let userId;
 
 //로그인 전 후 구분해서 해야 함(메인페이지는 userId쿼리스트링이 없고 로그인하고 메인으로 왔을 때는 쿼리스트링 값이 있음)

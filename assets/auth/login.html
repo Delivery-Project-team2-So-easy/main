@@ -134,6 +134,16 @@
         padding: 10px; /* 배너 여백 */
         text-align: center; /* 텍스트 가운데 정렬 */
       }
+      .kakaoLogin {
+        width: 200px;
+        margin-top: 20px;
+        margin-left: 80px;
+      }
+      .googleLogin {
+        width: 220px;
+        margin-top: 20px;
+        margin-left: 70px;
+      }
     </style>
   </head>
   <header>
@@ -156,6 +166,8 @@
           <input type="password" id="password" name="password" />
         </div>
         <button type="button" id="login" class="checkBtn">로그인</button>
+        <img src="../images/kakao.png" class="kakaoLogin" />
+        <img src="../images/google.png" class="googleLogin" />
       </div>
     </div>
 
@@ -202,6 +214,27 @@
       function home() {
         window.location.href = '/';
       }
+
+      const kakaoLoginBtn = document.querySelector('.kakaoLogin');
+      const googleLoginBtn = document.querySelector('.googleLogin');
+
+      function kakaoLogin() {
+        window.location.href =
+          `https://kauth.kakao.com/oauth/authorize?client_id=6cdf7b0e538d88b2284a5dee284f9b5b&redirect_uri=` +
+          encodeURIComponent(`http://127.0.0.1:3000/socialLogin/kakao`) +
+          '&response_type=code';
+      }
+
+      function googleLogin() {
+        window.location.href =
+          `https://accounts.google.com/o/oauth2/auth?client_id=1098266876328-ibg7lfkte0358vsqt5cprv6akf1l2mdq.apps.googleusercontent.com` +
+          '&redirect_uri=' +
+          encodeURIComponent(`http://127.0.0.1:3000/socialLogin/google`) +
+          '&response_type=code' +
+          '&scope=email profile';
+      }
+      kakaoLoginBtn.addEventListener('click', kakaoLogin);
+      googleLoginBtn.addEventListener('click', googleLogin);
     </script>
   </body>
   <footer class="bg-light text-center py-2">

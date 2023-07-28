@@ -113,9 +113,9 @@ class OrderController {
 
       if (orderDetail.length === 0) throw errorHandler.nonList;
 
-      const { code, message } = await this.orderService.orderMany(orderDetail, user, storeId);
+      const { code, message, data } = await this.orderService.orderMany(orderDetail, user, storeId);
 
-      return res.status(code).json({ message });
+      return res.status(code).json({ message, data });
     } catch (err) {
       next(err);
     }

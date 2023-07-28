@@ -130,14 +130,7 @@ class StoreRepository {
           'likes',
         ],
       ],
-      include: [
-        {
-          model: Store_like,
-          attributes: [],
-        },
-      ],
     });
-
     return oneStoreData;
   };
 

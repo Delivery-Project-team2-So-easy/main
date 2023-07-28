@@ -6,6 +6,7 @@ const LikeRepository = require('../repositories/like.repository');
 const ReviewRepository = require('../repositories/review.repository');
 const OrderRepository = require('../repositories/order.repository');
 const errorHandler = require('../errorHandler');
+const Axios = require('axios');
 const jwt = require('jsonwebtoken');
 const env = process.env;
 const bcrypt = require('bcrypt');
@@ -208,78 +209,197 @@ class UserService {
     }
   };
 
-  kakaoLogin = async () => {
+  kakaoAuth = async (code) => {
     try {
-      const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
-      const config = {
-        client_id: env.KAKAO_CLIENT_ID,
-        redirect_uri: env.KAKAO_REDIRECT_URI,
-        response_type: 'code',
-      };
-      const params = new URLSearchParams(config).toString();
-      const finalUrl = `${baseUrl}?${params}`;
-      return { code: 200, data: finalUrl };
+      const authToken = await Axios.post(
+        'https://kauth.kakao.com/oauth/token',
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          params: {
+            grant_type: 'authorization_code',
+            client_id: env.KAKAO_RESTAPI_KEY,
+            code,
+            redirect_uri: 'http://127.0.0.1:3000/socialLogin/kakao',
+          },
+        }
+      );
+
+      const authInfo = await Axios.post(
+        'https://kapi.kakao.com/v2/user/me',
+        {},
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Bearer ` + authToken.data.access_token,
+          },
+        }
+      );
+
+      const userInfo = authInfo.data.kakao_account;
+      const existUser = await this.userRepository.existUser(userInfo.email);
+
+      if (!existUser) {
+        const email = userInfo.email;
+        const name = userInfo.profile.nickname;
+        const profileImg = userInfo.profile.profile_image_url;
+        return { code: 200, data: { email, name, profileImg } };
+      }
+
+      const token = jwt.sign(
+        {
+          userId: existUser.id,
+        },
+        env.JWT_SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+      return { code: 200, token };
     } catch (err) {
       throw err;
     }
   };
 
-  kakaoCallBack = async (code) => {
+  googleAuth = async (code) => {
     try {
-      const baseUrl = 'https://kauth.kakao.com/oauth/token';
-      const config = {
-        client_id: env.KAKAO_CLIENT_ID,
-        client_secret: env.KAKAO_CLIENT_SECRET,
+      const authToken = await Axios.post('https://oauth2.googleapis.com/token', {
         grant_type: 'authorization_code',
-        redirect_uri: env.KAKAO_REDIRECT_URI,
+        client_id: env.GOOGLE_CLIENT_ID,
+        client_secret: env.GOOGLE_CLIENT_SECRET,
         code,
-      };
-      const params = new URLSearchParams(config).toString(); //URL 형식으로 변환
-      const finalUrl = `${baseUrl}?${params}`;
-      const kakaoTokenRequest = await (
-        await fetch(finalUrl, {
-          method: 'POST',
-          headers: {
-            'Content-type': 'application/json', // 이 부분을 명시하지않으면 text로 응답을 받게됨
-          },
-        })
-      ).json();
-      // 토큰 받기
-      if ('access_token' in kakaoTokenRequest) {
-        // 엑세스 토큰이 있는 경우 API에 접근
-        const { access_token } = kakaoTokenRequest;
-        const userRequest = await (
-          await fetch('https://kapi.kakao.com/v2/user/me', {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
-              'Content-type': 'application/json',
-            },
-          })
-        ).json();
-        console.error(userRequest);
-        const kakaoEmail = userRequest.kakao_account.email + '/kakao';
-        const exUser = await User.findOne({
-          where: { email: kakaoEmail },
-        });
-        if (exUser) {
-          const token = jwt.sign(
-            {
-              userId: exUser.id,
-            },
-            env.JWT_SECRET_KEY,
-            { expiresIn: '1h' }
-          );
-          return { token, code: 200, message: '로그인 성공하였습니다.' };
-        } else {
-          return { data: kakaoEmail, code: 200, message: '신규회원가입을 진행합니다.' };
-        }
-      } else {
-        throw errorHandler.nonToken;
+        redirect_uri: 'http://127.0.0.1:3000/socialLogin/google',
+      });
+
+      const authInfo = await Axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: {
+          Authorization: `Bearer ` + authToken.data.access_token,
+        },
+      });
+
+      const userInfo = authInfo.data;
+      const existUser = await this.userRepository.existUser(userInfo.email);
+
+      if (!existUser) {
+        const email = userInfo.email;
+        const name = userInfo.name;
+        const profileImg = userInfo.picture;
+
+        return { code: 200, data: { email, name, profileImg } };
       }
+
+      const token = jwt.sign(
+        {
+          userId: existUser.id,
+        },
+        env.JWT_SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+      return { code: 200, token };
     } catch (err) {
       throw err;
     }
   };
+
+  socialSignUp = async (email, name, address, isSeller, businessRegistrationNumber, profileImg) => {
+    try {
+      const password = 'socialLogin';
+
+      const user = await this.userRepository.signUp(
+        email,
+        name,
+        password,
+        isSeller,
+        profileImg,
+        address,
+        businessRegistrationNumber
+      );
+
+      const token = jwt.sign(
+        {
+          userId: user.id,
+        },
+        env.JWT_SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+      return { token, code: 201, message: '회원 가입을 축하합니다.' };
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  // kakaoLogin = async () => {
+  //   try {
+  //     const baseUrl = 'https://kauth.kakao.com/oauth/authorize';
+  //     const config = {
+  //       client_id: env.KAKAO_CLIENT_ID,
+  //       redirect_uri: env.KAKAO_REDIRECT_URI,
+  //       response_type: 'code',
+  //     };
+  //     const params = new URLSearchParams(config).toString();
+  //     const finalUrl = `${baseUrl}?${params}`;
+  //     return { code: 200, data: finalUrl };
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // };
+
+  // kakaoCallBack = async (code) => {
+  //   try {
+  //     const baseUrl = 'https://kauth.kakao.com/oauth/token';
+  //     const config = {
+  //       client_id: env.KAKAO_CLIENT_ID,
+  //       client_secret: env.KAKAO_CLIENT_SECRET,
+  //       grant_type: 'authorization_code',
+  //       redirect_uri: env.KAKAO_REDIRECT_URI,
+  //       code,
+  //     };
+  //     const params = new URLSearchParams(config).toString(); //URL 형식으로 변환
+  //     const finalUrl = `${baseUrl}?${params}`;
+  //     const kakaoTokenRequest = await (
+  //       await fetch(finalUrl, {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-type': 'application/json', // 이 부분을 명시하지않으면 text로 응답을 받게됨
+  //         },
+  //       })
+  //     ).json();
+  //     // 토큰 받기
+  //     if ('access_token' in kakaoTokenRequest) {
+  //       // 엑세스 토큰이 있는 경우 API에 접근
+  //       const { access_token } = kakaoTokenRequest;
+  //       const userRequest = await (
+  //         await fetch('https://kapi.kakao.com/v2/user/me', {
+  //           headers: {
+  //             Authorization: `Bearer ${access_token}`,
+  //             'Content-type': 'application/json',
+  //           },
+  //         })
+  //       ).json();
+  //       console.error(userRequest);
+  //       const kakaoEmail = userRequest.kakao_account.email + '/kakao';
+  //       const exUser = await User.findOne({
+  //         where: { email: kakaoEmail },
+  //       });
+  //       if (exUser) {
+  //         const token = jwt.sign(
+  //           {
+  //             userId: exUser.id,
+  //           },
+  //           env.JWT_SECRET_KEY,
+  //           { expiresIn: '1h' }
+  //         );
+  //         return { token, code: 200, message: '로그인 성공하였습니다.' };
+  //       } else {
+  //         return { data: kakaoEmail, code: 200, message: '신규회원가입을 진행합니다.' };
+  //       }
+  //     } else {
+  //       throw errorHandler.nonToken;
+  //     }
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // };
 
   getMyReviews = async (userId) => {
     try {

@@ -2,12 +2,13 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user.controller');
 const userController = new UserController();
+const { signUpValidation, loginValidation } = require('../validation/userValidation.js');
 
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware');
 const mailMiddleware = require('../middlewares/mail-middleware');
-router.post('/users/signup', uploadMiddleware, userController.signUp);
-router.post('/users/login', userController.login);
+router.post('/users/signup', signUpValidation, uploadMiddleware, userController.signUp);
+router.post('/users/login', loginValidation, userController.login);
 router.post('/users/logout', authMiddleware, userController.logout);
 router.patch('/users', authMiddleware, userController.updateUser);
 router.post('/users/updateAddress', authMiddleware, userController.updateAddress);
@@ -24,8 +25,11 @@ router.get('/user/myOrders', authMiddleware, userController.getMyOrders);
 router.get('/userInfo', authMiddleware, userController.checkUserInfo);
 
 //카카오
-router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
-router.get('/users/kakao/callback', userController.kakaoCallBack); // 가져온 데이터로 로그인 or 회원가입
-router.post('/users/kakao/signup/:kakaoEmail', uploadMiddleware, userController.kakaoSignUp); // 카카오 회원가입
+router.get('/socialLogin/kakao', userController.kakaoAuth);
+router.get('/socialLogin/google', userController.googleAuth);
+router.post('/socialLogin', userController.socialSignUp);
+// router.get('/users/kakao', userController.kakaoLogin); // 로그인 창
+// router.get('/users/kakao/callback', userController.kakaoCallBack); // 가져온 데이터로 로그인 or 회원가입
+// router.post('/users/kakao/signup/:kakaoEmail', uploadMiddleware, userController.kakaoSignUp); // 카카오 회원가입
 
 module.exports = router;

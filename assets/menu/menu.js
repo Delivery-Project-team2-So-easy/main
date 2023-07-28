@@ -73,8 +73,11 @@ async function getUserInfo() {
   });
 }
 
-function order_menu() {
+//주문 함수(소켓도 같이 보냄)
+async function order() {
   const orders = [];
+  let header = {};
+  let ownerId = 0;
 
   const menuBoxs = document.querySelectorAll('.menu-list .menu-box');
   menuBoxs.forEach((menu) => {
@@ -94,7 +97,19 @@ function order_menu() {
     });
   }
 
-  fetch(`/order/store/${storeId}`, {
+  await $.ajax({
+    type: 'GET',
+    url: `/store/${storeId}`,
+    success: (result) => {
+      const { user_id } = result.data;
+      ownerId = user_id;
+    },
+    error: (error) => {
+      alert(error.responseJSON.errorMessage);
+    },
+  });
+
+  await fetch(`/order/store/${storeId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -102,18 +117,18 @@ function order_menu() {
     body: JSON.stringify(orders),
   })
     .then((res) => {
-      console.log(res);
       return res.json();
     })
     .then((data) => {
-      console.log(data);
       if (data.errorMessage) {
         return Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: err.responseJSON.errorMessage,
+          text: data.responseJSON.errorMessage,
         });
       } else {
+        const [address, totalPrice] = [data.data.address, data.data.totalPrice];
+        header = { address, totalPrice, userId: ownerId };
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -123,7 +138,10 @@ function order_menu() {
         });
       }
     });
+  socket.emit('ORDER', header);
 }
+
+//주소 등록
 function registerAddress(event) {
   event.preventDefault();
   const address = document.querySelector('#userAddress').value;

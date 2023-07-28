@@ -8,11 +8,14 @@ window.addEventListener('DOMContentLoaded', async () => {
   fetch(`/store/${storeId}`)
     .then((response) => response.json())
     .then((data) => {
+      console.log(data);
       const store_name = data.data.store_name;
-      const store_img = data.data.store_img;
+      let Img = '';
+      data.data.store_img
+        ? (Img = `<img src="${data.data.store_img}" class="storeImage" alt="../images/store.png" />`)
+        : (Img = '<img src="../images/store.png" id="preview" class="storeImage" />');
       const store_likes = data.data.likes;
-      const temp_html = `<img class="store-img" src="${store_img}"
-      />
+      const temp_html = `${Img}
       <div class="store-name">${store_name}</div>
       <div class="info"><i class="fa fa-heart" aria-hidden="true"></i> ${store_likes}</div>
       <i id="heart" class="mylike fa fa-heart-o fa-2x" aria-hidden="true"></i> `;

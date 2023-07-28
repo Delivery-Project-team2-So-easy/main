@@ -1,7 +1,7 @@
 class CustomError {
-  constructor(status, errorMessage) {
+  constructor(status, error) {
     this.status = status;
-    this.errorMessage = errorMessage;
+    this.errorMessage = error;
   }
 }
 
@@ -17,6 +17,7 @@ const errorHandler = {
     400,
     '사업자 등록 번호는 숫자와 하이픈으로만 입력 가능합니다.'
   ),
+  notInfo: new CustomError(400, '유저 정보를 전부 입력해 주세요.'),
   notEnteredPassword: new CustomError(400, '유저 정보를 수정하려면 기존 비밀번호를 입력해 주세요.'),
   checkPassword: new CustomError(412, '비밀번호가 일치하지 않습니다.'),
   checkBusinessRegistrationNumber: new CustomError(
@@ -28,6 +29,10 @@ const errorHandler = {
   checkUser: new CustomError(412, '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.'),
   notEnteredAddress: new CustomError(400, '변경하려는 주소를 입력해 주세요.'),
   //auth
+  notExistSession: new CustomError(
+    401,
+    '소셜로그인 인증 이력이 없습니다. 다시 소셜로그인 해주세요.'
+  ),
   notCookie: new CustomError(401, '로그인 후에 이용할 수 있는 기능입니다.'),
   notExistUser: new CustomError(401, '토큰 사용자가 존재하지 않습니다.'),
   expireToken: new CustomError(401, '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.'),
